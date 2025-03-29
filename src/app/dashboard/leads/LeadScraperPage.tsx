@@ -15,6 +15,7 @@ import {
   SelectItem, // ✅ This one!
 } from '@/components/ui/select';
 import { batchScoreLeads } from '@/actions/batchScoreLeads';
+import { LeadTable } from '@/components/lead-table/table';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -46,7 +47,7 @@ export default function LeadScraperPage() {
   const regionList = country === 'Canada' ? canadianProvinces : americanStates;
 
   return (
-    <main className='max-w-xl mx-auto mt-10 p-6 border rounded-lg'>
+    <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
       <h1 className='text-2xl font-semibold mb-4'>Lead Scrapper</h1>
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
@@ -122,6 +123,7 @@ export default function LeadScraperPage() {
           Re-Score Leads
         </Button>
       </form>
+      <LeadTable />
     </main>
   );
 }

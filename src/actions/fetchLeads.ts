@@ -3,6 +3,7 @@
 import { googlePlacesSearch } from '@/lib/google'; // getPlaceDetails added
 import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
 type Props = {
   keyword: string;
@@ -31,7 +32,14 @@ type Place = {
 
 export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
   const supabase = await createClient();
-  const uuid = '9dcd280f-6280-45a2-891e-427e368e6820';
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/auth/login');
+  }
 
   try {
     const places = await googlePlacesSearch(keyword, location);
@@ -52,7 +60,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     const { data: existingLeads, error: fetchError } = await supabase
       .from('leads')
       .select('google_place_id')
-      .eq('user_id', uuid)
+      .eq('user_id', user.id)
       .in('google_place_id', placeIds);
 
     if (fetchError) {
@@ -72,7 +80,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     console.log('leads', newLeads);
 
     const inserts = newLeads.map((lead: Place) => ({
-      user_id: uuid,
+      user_id: user.id,
       name: lead.name,
       address: lead.address || '', // from biz.vicinity
       google_place_id: lead.place_id,

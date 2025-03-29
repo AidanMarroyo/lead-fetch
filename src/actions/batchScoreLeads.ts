@@ -2,15 +2,22 @@
 
 import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
 export async function batchScoreLeads() {
   const supabase = await createClient();
-  const uuid = '9dcd280f-6280-45a2-891e-427e368e6820';
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/auth/login');
+  }
   try {
     const { data: leads, error } = await supabase
       .from('leads')
       .select('id, google_place_id')
-      .eq('user_id', uuid)
+      .eq('user_id', user.id)
       .lte('score', 0); // only leads that haven't been scored
 
     if (error || !leads?.length)

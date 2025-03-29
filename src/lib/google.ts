@@ -1,3 +1,10 @@
+type LeadPhoto = {
+  height: number;
+  html_attributions: string[];
+  photo_reference: string;
+  width: number;
+};
+
 export async function googlePlacesSearch(keyword: string, location: string) {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -28,21 +35,32 @@ export async function googlePlacesSearch(keyword: string, location: string) {
     // Step 3: Fetch additional details for each business
     const businesses = await Promise.all(
       placesData.results.map(
-        async (biz: { name: string; vicinity: string; place_id: string }) => {
+        async (biz: {
+          name: string;
+          rating: number;
+          vicinity: string;
+          place_id: string;
+          user_ratings_total: number;
+          opening_hours: { weekday_text: string[] };
+          photos: LeadPhoto[];
+          types: string[];
+        }) => {
           const detailsRes = await fetch(
             `https://maps.googleapis.com/maps/api/place/details/json?place_id=${biz.place_id}&fields=name,formatted_phone_number,website&key=${apiKey}`
           );
           const detailsData = await detailsRes.json();
 
-          console.log('Details data', detailsData);
           return {
             name: biz.name,
+            rating: biz.rating || null,
+            user_ratings_total: biz.user_ratings_total || null,
+            opening_hours: biz.opening_hours || null,
+            photos: biz.photos || null,
+            types: biz.types || null,
             place_id: biz.place_id, // ← ADD THIS LINE
             address: biz.vicinity || null,
             phone: detailsData.result?.formatted_phone_number || null,
             website: detailsData.result?.website || null,
-            city: location,
-            category: keyword,
           };
         }
       )

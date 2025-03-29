@@ -9,15 +9,24 @@ type Props = {
   location: string;
 };
 
+type LeadPhoto = {
+  height: number;
+  html_attributions: string[];
+  photo_reference: string;
+  width: number;
+};
+
 type Place = {
   name: string;
-  formatted_address: string;
+  rating?: number;
+  user_ratings_total?: number;
+  opening_hours?: { weekday_text: string[] };
+  photos?: LeadPhoto[];
+  types?: string[];
   place_id: string;
-  formatted_phone_number?: string;
-  website?: string;
-  url: string;
-  phone: string;
   address: string;
+  phone: string;
+  website?: string;
 };
 
 export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
@@ -60,8 +69,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       (lead: Place) => !existingIds.has(lead.place_id)
     );
 
-    console.log(newLeads);
-    // Fetch detailed info for each place
+    console.log('leads', newLeads);
 
     const inserts = newLeads.map((lead: Place) => ({
       user_id: uuid,
@@ -72,8 +80,6 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       score: scoreLead(lead),
       category: keyword,
     }));
-
-    console.log('Inserting leads:', inserts); // Debug log
 
     if (inserts.length > 0) {
       const { error: insertError } = await supabase

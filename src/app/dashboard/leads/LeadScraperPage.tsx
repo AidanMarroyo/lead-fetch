@@ -6,17 +6,32 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { fetchLeadsFromGoogle } from '@/actions/fetchLeads';
+import { americanStates, canadianProvinces } from '@/utils/constants';
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectItem, // ✅ This one!
+} from '@/components/ui/select';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [provinceOrState, setProvinceOrState] = useState('');
+  const [country, setCountry] = useState('Canada');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const result = await fetchLeadsFromGoogle({ keyword, location });
+    const fullLocation = `${city}, ${provinceOrState}, ${country}`;
+
+    const result = await fetchLeadsFromGoogle({
+      keyword,
+      location: fullLocation,
+    });
 
     setLoading(false);
 
@@ -26,6 +41,8 @@ export default function LeadScraperPage() {
       toast.error(`${result.message}`);
     }
   };
+
+  const regionList = country === 'Canada' ? canadianProvinces : americanStates;
 
   return (
     <main className='max-w-xl mx-auto mt-10 p-6 border rounded-lg'>
@@ -41,13 +58,45 @@ export default function LeadScraperPage() {
           />
         </div>
         <div>
-          <Label htmlFor='location'>Location</Label>
+          <Label htmlFor='city'>City</Label>
           <Input
-            id='location'
-            placeholder='e.g. New York, NY'
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            id='city'
+            placeholder='e.g. Toronto'
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
           />
+        </div>
+        <div>
+          <Label htmlFor='provinceOrState'>Province/State</Label>
+          <Select
+            onValueChange={(value) => setProvinceOrState(value)}
+            value={provinceOrState}
+          >
+            <SelectTrigger className='w-full border p-2 rounded-md'>
+              <SelectValue
+                placeholder={country === 'Canada' ? 'Province' : 'State'}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {regionList.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor='country'>Country</Label>
+          <Select onValueChange={(value) => setCountry(value)} value={country}>
+            <SelectTrigger className='w-full border p-2 rounded-md'>
+              <SelectValue placeholder='Select Country' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='Canada'>Canada</SelectItem>
+              <SelectItem value='USA'>USA</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Button type='submit' disabled={loading}>
           {loading ? 'Searching...' : 'Find Leads'}

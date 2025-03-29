@@ -1,13 +1,13 @@
 export async function googlePlacesSearch(keyword: string, location: string) {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-  const fullCity = `${location}, Ontario, Canada`;
+
   // const supabase = await createClient();
 
   try {
     // Step 1: Get city coordinates
     const geoRes = await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-        fullCity
+        location
       )}&key=${apiKey}`
     );
     const geoData = await geoRes.json();

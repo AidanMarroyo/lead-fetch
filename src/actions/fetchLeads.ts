@@ -1,6 +1,7 @@
 'use server';
 
 import { googlePlacesSearch } from '@/lib/google'; // getPlaceDetails added
+import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
 
 type Props = {
@@ -59,6 +60,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       (lead: Place) => !existingIds.has(lead.place_id)
     );
 
+    console.log(newLeads);
     // Fetch detailed info for each place
 
     const inserts = newLeads.map((lead: Place) => ({
@@ -67,6 +69,8 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       address: lead.address || '', // from biz.vicinity
       google_place_id: lead.place_id,
       phone: lead.phone || null,
+      score: scoreLead(lead),
+      category: keyword,
     }));
 
     console.log('Inserting leads:', inserts); // Debug log

@@ -14,6 +14,7 @@ import {
   SelectValue,
   SelectItem, // ✅ This one!
 } from '@/components/ui/select';
+import { batchScoreLeads } from '@/actions/batchScoreLeads';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -100,6 +101,25 @@ export default function LeadScraperPage() {
         </div>
         <Button type='submit' disabled={loading}>
           {loading ? 'Searching...' : 'Find Leads'}
+        </Button>
+        <Button
+          type='button'
+          variant='secondary'
+          onClick={async () => {
+            try {
+              const result = await batchScoreLeads();
+              if (result.success) {
+                toast.success(`Scored ${result.updated} leads`);
+              } else {
+                toast.error(result.message);
+              }
+            } catch (err) {
+              toast.error('Unexpected error while scoring leads.');
+              console.error(err);
+            }
+          }}
+        >
+          Re-Score Leads
         </Button>
       </form>
     </main>

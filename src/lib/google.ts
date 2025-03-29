@@ -34,6 +34,7 @@ export async function googlePlacesSearch(keyword: string, location: string) {
           );
           const detailsData = await detailsRes.json();
 
+          console.log('Details data', detailsData);
           return {
             name: biz.name,
             place_id: biz.place_id, // ← ADD THIS LINE

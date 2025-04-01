@@ -5,9 +5,11 @@ import { Lead } from './types';
 export function KanbanColumn({
   status,
   items,
+  onLeadClick,
 }: {
   status: string;
   items: Lead[];
+  onLeadClick: (lead: Lead) => void;
 }) {
   const { setNodeRef } = useDroppable({ id: status });
 
@@ -16,7 +18,11 @@ export function KanbanColumn({
       <h2 className='text-lg font-semibold capitalize mb-3'>{status}</h2>
       <div className='space-y-2'>
         {items.map((lead) => (
-          <LeadCard key={lead.id} lead={lead} />
+          <LeadCard
+            key={lead.id}
+            lead={lead}
+            onClick={() => onLeadClick(lead)}
+          />
         ))}
       </div>
     </div>

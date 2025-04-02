@@ -30,8 +30,6 @@ export function KanbanBoard() {
     items: leads.filter((lead) => lead.status === status),
   }));
 
-  console.log('selectedLead', selectedLead);
-
   return (
     <>
       <DndContext

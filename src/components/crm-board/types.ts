@@ -7,4 +7,5 @@ export type Lead = {
   status: 'new' | 'contacted' | 'in progress' | 'closed';
   notes?: string;
   google_place_id?: string;
+  rating?: number;
 };

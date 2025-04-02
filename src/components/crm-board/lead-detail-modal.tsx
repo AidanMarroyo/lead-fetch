@@ -9,8 +9,11 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { updateLeadNotes } from '@/actions/updateLeadNotes';
+import { LeadProfileAudit } from '../lead-profile-audit';
+import { getPlaceDetails } from '@/actions/getPlaceDetails';
+import { scoreLead } from '@/lib/scoring';
 
 type Props = {
   lead: Lead;
@@ -21,6 +24,8 @@ type Props = {
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [notes, setNotes] = useState(lead.notes || '');
   const [saving, setSaving] = useState(false);
+  const [placeDetails, setPlaceDetails] = useState<any>(null);
+  console.log('place details:', placeDetails);
 
   const handleSave = async () => {
     setSaving(true);
@@ -28,6 +33,17 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     setSaving(false);
     onUpdate({ ...lead, notes: updated.notes });
   };
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      if (!lead.google_place_id) return;
+
+      const details = await getPlaceDetails(lead.google_place_id);
+      setPlaceDetails(details);
+    };
+
+    fetchDetails();
+  }, [lead.google_place_id]);
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -48,6 +64,8 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               View on Google Maps
             </a>
           )}
+          {/* <LeadProfileAudit lead={{ ...lead, phone: lead.phone || '' }} /> */}
+          {placeDetails && <LeadProfileAudit lead={placeDetails} />}
 
           <div className='text-xs'>
             <strong>Score:</strong> {lead.score}

@@ -64,7 +64,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               View on Google Maps
             </a>
           )}
-          {/* <LeadProfileAudit lead={{ ...lead, phone: lead.phone || '' }} /> */}
+
           {placeDetails && <LeadProfileAudit lead={placeDetails} />}
 
           <div className='text-xs'>

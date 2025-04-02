@@ -15,18 +15,6 @@ type LeadDetails = {
   types?: string[];
 };
 
-// export function scoreLead(lead: LeadDetails): number {
-//   let score = 0;
-
-//   if (!lead.phone) score += 10; // Missing phone = bad presence
-//   if (!lead.opening_hours) score += 10; // Missing hours = bad presence
-//   if (!lead.photos?.length) score += 10; // No photos = bad presence
-//   if (!lead.types?.length) score += 10; // Missing types = bad presence
-//   if (lead.user_ratings_total && lead.user_ratings_total < 10) score += 20; // Few reviews = low trust
-//   if (lead.rating && lead.rating < 4.0) score += 20; // Low rating = poor service
-//   return score;
-// }
-
 export function scoreLead(lead: LeadDetails & { website?: string }): number {
   let score = 0;
 
@@ -36,7 +24,7 @@ export function scoreLead(lead: LeadDetails & { website?: string }): number {
   }
 
   // 2. Opening hours check
-  if (!lead.opening_hours || !lead.opening_hours.weekday_text?.length) {
+  if (!lead.opening_hours) {
     score += 10;
   }
 

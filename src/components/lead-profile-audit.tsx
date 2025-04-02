@@ -11,7 +11,7 @@ type Place = {
   name: string;
   rating?: number;
   user_ratings_total?: number;
-  opening_hours?: { weekday_text: string[] };
+  opening_hours?: { weekday_text?: string[]; open_now?: boolean };
   photos?: LeadPhoto[];
   types?: string[];
   place_id?: string;
@@ -33,7 +33,9 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
     {
       label: 'Has Business Hours',
       value:
-        !!lead.opening_hours && lead.opening_hours.weekday_text?.length > 0,
+        !!lead.opening_hours &&
+        ((lead.opening_hours.weekday_text?.length ?? 0) > 0 ||
+          'open_now' in lead.opening_hours),
     },
     {
       label: 'Has Valid Photos',
@@ -52,14 +54,14 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
         ),
     },
     {
-      label: 'More Than 10 Reviews',
+      label: `More Than 10 Reviews (${lead.user_ratings_total ?? 0})`,
       value:
         typeof lead.user_ratings_total === 'number' &&
         lead.user_ratings_total >= 10,
     },
     {
-      label: 'Rating is 4.0 or Higher',
-      value: typeof lead.rating === 'number' ? lead.rating >= 4.0 : false, // Show red X if no rating at all
+      label: `Rating is 4.0 or Higher (${lead.rating ?? 'N/A'})`,
+      value: typeof lead.rating === 'number' ? lead.rating >= 4.0 : false,
     },
   ];
 

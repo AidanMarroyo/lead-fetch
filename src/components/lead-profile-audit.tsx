@@ -42,7 +42,7 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
       value:
         Array.isArray(lead.photos) &&
         lead.photos.length > 0 &&
-        lead.photos.some((photo) => !!photo.photo_reference),
+        lead.photos.every((photo) => !!photo.photo_reference),
     },
     {
       label: 'Has Business Categories',

@@ -46,18 +46,22 @@ export async function googlePlacesSearch(keyword: string, location: string) {
           types: string[];
         }) => {
           const detailsRes = await fetch(
-            `https://maps.googleapis.com/maps/api/place/details/json?place_id=${biz.place_id}&fields=name,formatted_phone_number,website&key=${apiKey}`
+            `https://maps.googleapis.com/maps/api/place/details/json?place_id=${biz.place_id}&fields=name,formatted_phone_number,website,opening_hours,photos,types,rating,user_ratings_total&key=${apiKey}`
           );
+
           const detailsData = await detailsRes.json();
 
           return {
-            name: biz.name,
-            rating: biz.rating || null,
-            user_ratings_total: biz.user_ratings_total || null,
-            opening_hours: biz.opening_hours || null,
-            photos: biz.photos || null,
-            types: biz.types || null,
-            place_id: biz.place_id, // ← ADD THIS LINE
+            name: detailsData.result?.name || biz.name,
+            rating: detailsData.result?.rating ?? biz.rating ?? null,
+            user_ratings_total:
+              detailsData.result?.user_ratings_total ??
+              biz.user_ratings_total ??
+              null,
+            opening_hours: detailsData.result?.opening_hours ?? null,
+            photos: detailsData.result?.photos ?? null,
+            types: detailsData.result?.types ?? null,
+            place_id: biz.place_id,
             address: biz.vicinity || null,
             phone: detailsData.result?.formatted_phone_number || null,
             website: detailsData.result?.website || null,

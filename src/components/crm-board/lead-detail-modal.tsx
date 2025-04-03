@@ -1,5 +1,4 @@
 'use client';
-
 import { Lead } from './types';
 import {
   Dialog,
@@ -13,7 +12,8 @@ import { useEffect, useState } from 'react';
 import { updateLeadNotes } from '@/actions/updateLeadNotes';
 import { LeadProfileAudit } from '../lead-profile-audit';
 import { getPlaceDetails } from '@/actions/getPlaceDetails';
-import { scoreLead } from '@/lib/scoring';
+import { pdf } from '@react-pdf/renderer';
+import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 
 type Props = {
   lead: Lead;
@@ -26,6 +26,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [saving, setSaving] = useState(false);
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   console.log('place details:', placeDetails);
+  console.log('lead-detail-mdal', lead);
 
   const handleSave = async () => {
     setSaving(true);
@@ -90,6 +91,23 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
             />
             <Button className='mt-2' onClick={handleSave} disabled={saving}>
               {saving ? 'Saving...' : 'Save Notes'}
+            </Button>
+            <Button
+              variant='outline'
+              onClick={async () => {
+                if (!placeDetails) return toast.error('Missing place details');
+
+                const blob = await pdf(
+                  <LeadAuditPDF lead={placeDetails} />
+                ).toBlob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${lead.name}-audit.pdf`;
+                link.click();
+              }}
+            >
+              Download Audit Report (PDF)
             </Button>
           </div>
 

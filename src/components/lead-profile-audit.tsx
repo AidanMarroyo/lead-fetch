@@ -7,7 +7,7 @@ type LeadPhoto = {
   width: number;
 };
 
-type Place = {
+export type Place = {
   name: string;
   rating?: number;
   user_ratings_total?: number;
@@ -18,6 +18,8 @@ type Place = {
   address: string;
   formatted_phone_number?: string;
   website?: string;
+  score?: number;
+  phone?: string;
 };
 
 export function LeadProfileAudit({ lead }: { lead: Place }) {

@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { updateLeadNotes } from '@/actions/updateLeadNotes';
-import { LeadProfileAudit } from '../lead-profile-audit';
+import { LeadProfileAudit } from './lead-profile-audit';
 import { getPlaceDetails } from '@/actions/getPlaceDetails';
 import { pdf } from '@react-pdf/renderer';
 import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';

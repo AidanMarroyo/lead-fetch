@@ -1,7 +1,7 @@
 'use client';
 
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { Place } from '@/components/lead-profile-audit';
+import { Place } from '@/components/crm-board/lead-profile-audit';
 
 const styles = StyleSheet.create({
   page: {

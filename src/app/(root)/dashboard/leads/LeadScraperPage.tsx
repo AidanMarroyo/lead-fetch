@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ import {
   SelectValue,
   SelectItem, // ✅ This one!
 } from '@/components/ui/select';
-import { batchScoreLeads } from '@/actions/batchScoreLeads';
 import { LeadTable } from '@/components/lead-table/table';
 
 export default function LeadScraperPage() {
@@ -102,25 +100,6 @@ export default function LeadScraperPage() {
         </div>
         <Button type='submit' disabled={loading}>
           {loading ? 'Searching...' : 'Find Leads'}
-        </Button>
-        <Button
-          type='button'
-          variant='secondary'
-          onClick={async () => {
-            try {
-              const result = await batchScoreLeads();
-              if (result.success) {
-                toast.success(`Scored ${result.updated} leads`);
-              } else {
-                toast.error(result.message);
-              }
-            } catch (err) {
-              toast.error('Unexpected error while scoring leads.');
-              console.error(err);
-            }
-          }}
-        >
-          Re-Score Leads
         </Button>
       </form>
       <LeadTable />

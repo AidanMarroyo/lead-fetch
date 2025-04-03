@@ -15,12 +15,14 @@ const STATUSES = ['new', 'contacted', 'in progress', 'closed'] as const;
 export function KanbanBoard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeads = async () => {
       const res = await fetch('/api/leads');
       const data = await res.json();
       setLeads(data);
+      setLoading(false);
     };
     fetchLeads();
   }, []);
@@ -61,14 +63,18 @@ export function KanbanBoard() {
             items={STATUSES.map((status) => ({ id: status }))}
             strategy={verticalListSortingStrategy}
           >
-            {grouped.map((group) => (
-              <KanbanColumn
-                key={group.status}
-                status={group.status}
-                items={group.items}
-                onLeadClick={(lead) => setSelectedLead(lead)}
-              />
-            ))}
+            {loading
+              ? STATUSES.map((status) => (
+                  <SkeletonColumn key={status} status={status} />
+                ))
+              : grouped.map((group) => (
+                  <KanbanColumn
+                    key={group.status}
+                    status={group.status}
+                    items={group.items}
+                    onLeadClick={(lead) => setSelectedLead(lead)}
+                  />
+                ))}
           </SortableContext>
         </div>
       </DndContext>
@@ -87,5 +93,22 @@ export function KanbanBoard() {
         />
       )}
     </>
+  );
+}
+function SkeletonColumn({ status }: { status: string }) {
+  return (
+    <div className='bg-gray-100 rounded-lg p-4 shadow-md'>
+      <h2 className='text-lg font-semibold mb-4 capitalize text-gray-500'>
+        {status.replace('-', ' ')}
+      </h2>
+      <div className='space-y-4'>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className='h-20 bg-gray-200 rounded-md animate-pulse'
+          ></div>
+        ))}
+      </div>
+    </div>
   );
 }

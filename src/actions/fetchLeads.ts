@@ -17,7 +17,7 @@ type LeadPhoto = {
   width: number;
 };
 
-type Place = {
+export type Place = {
   name: string;
   rating?: number;
   user_ratings_total?: number;

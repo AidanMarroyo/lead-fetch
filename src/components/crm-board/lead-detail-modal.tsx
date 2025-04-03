@@ -14,6 +14,8 @@ import { LeadProfileAudit } from '../lead-profile-audit';
 import { getPlaceDetails } from '@/actions/getPlaceDetails';
 import { pdf } from '@react-pdf/renderer';
 import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
+import { toast } from 'sonner';
+import { Place } from '@/actions/fetchLeads';
 
 type Props = {
   lead: Lead;
@@ -24,7 +26,7 @@ type Props = {
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [notes, setNotes] = useState(lead.notes || '');
   const [saving, setSaving] = useState(false);
-  const [placeDetails, setPlaceDetails] = useState<any>(null);
+  const [placeDetails, setPlaceDetails] = useState<Place | null>(null);
   console.log('place details:', placeDetails);
 
   const handleSave = async () => {

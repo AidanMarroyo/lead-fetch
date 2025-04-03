@@ -104,14 +104,14 @@ export function LeadAuditPDF({
           </View>
 
           <View style={styles.auditItem}>
-            <Text>Has 10+ Reviews({lead.user_ratings_total}): </Text>
+            <Text>Has 10+ Reviews({lead.user_ratings_total} Review(s)): </Text>
             <Text style={styles.bullet}>
               {(lead.user_ratings_total ?? 0) >= 10 ? 'Yes' : 'No'}
             </Text>
           </View>
 
           <View style={styles.auditItem}>
-            <Text>Rating is 4.0 or Higher({lead.rating} Rating): </Text>
+            <Text>Rating is 4.0 or Higher({lead.rating} Star Rating): </Text>
             <Text style={styles.bullet}>
               {(lead.rating ?? 0) >= 4.0 ? 'Yes' : 'No'}
             </Text>

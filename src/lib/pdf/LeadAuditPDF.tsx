@@ -4,62 +4,123 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { Place } from '@/components/lead-profile-audit';
 
 const styles = StyleSheet.create({
-  page: { padding: 30, fontSize: 12 },
-  section: { marginBottom: 12 },
-  heading: { fontSize: 16, marginBottom: 10 },
-  item: { marginBottom: 4 },
+  page: {
+    padding: 30,
+    fontSize: 12,
+    fontFamily: 'Helvetica',
+    lineHeight: 1.5,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  heading: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  paragraph: {
+    marginBottom: 6,
+  },
+  auditItem: {
+    marginBottom: 4,
+    flexDirection: 'row',
+  },
+  bullet: {
+    fontWeight: 'bold',
+    marginRight: 6,
+  },
+  footer: {
+    fontSize: 10,
+    marginTop: 30,
+    textAlign: 'center',
+    color: '#666',
+  },
 });
 
-export function LeadAuditPDF({ lead }: { lead: Place }) {
+export function LeadAuditPDF({
+  lead,
+  address,
+}: {
+  lead: Place;
+  address: string;
+}) {
   return (
     <Document>
       <Page style={styles.page}>
+        {/* Business Profile Section */}
         <View style={styles.section}>
           <Text style={styles.heading}>Business Profile Audit</Text>
-          <Text style={styles.item}>Name: {lead.name}</Text>
-          <Text style={styles.item}>Address: {lead.address}</Text>
-          <Text style={styles.item}>
+          <Text style={styles.paragraph}>Name: {lead.name}</Text>
+          <Text style={styles.paragraph}>Address: {address}</Text>
+          <Text style={styles.paragraph}>
             Phone: {lead.formatted_phone_number || 'N/A'}
           </Text>
-          <Text style={styles.item}>Website: {lead.website || 'N/A'}</Text>
-          <Text style={styles.item}>Rating: {lead.rating ?? 'N/A'}</Text>
-          <Text style={styles.item}>
+          <Text style={styles.paragraph}>Website: {lead.website || 'N/A'}</Text>
+          <Text style={styles.paragraph}>Rating: {lead.rating ?? 'N/A'}</Text>
+          <Text style={styles.paragraph}>
             Total Reviews: {lead.user_ratings_total ?? 0}
           </Text>
         </View>
 
+        {/* Audit Checklist Section */}
         <View style={styles.section}>
           <Text style={styles.heading}>Audit Checklist</Text>
-          <Text style={styles.item}>
-            Has Website: {lead.website ? 'Yes' : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            Has Phone Number: {lead.formatted_phone_number ? 'Yes' : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            Has Business Hours:{' '}
-            {lead.opening_hours?.weekday_text?.length ? 'Yes' : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            Has Valid Photos:{' '}
-            {Array.isArray(lead.photos) && lead.photos.length > 0
-              ? 'Yes'
-              : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            Has Categories:{' '}
-            {Array.isArray(lead.types) && lead.types.length > 0 ? 'Yes' : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            ≥ 10 Reviews: {(lead.user_ratings_total ?? 0) >= 10 ? 'Yes' : 'No'}
-          </Text>
-          <Text style={styles.item}>
-            Rating ≥ 4.0: {(lead.rating ?? 0) >= 4.0 ? 'Yes' : 'No'}
-          </Text>
+
+          <View style={styles.auditItem}>
+            <Text>Has Website: </Text>
+            <Text style={styles.bullet}>{lead.website ? 'Yes' : 'No'}</Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Has Phone Number: </Text>
+            <Text style={styles.bullet}>
+              {lead.formatted_phone_number ? 'Yes' : 'No'}
+            </Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Has Business Hours: </Text>
+            <Text style={styles.bullet}>
+              {lead.opening_hours?.weekday_text?.length ? 'Yes' : 'No'}
+            </Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Has Valid Photos: </Text>
+            <Text style={styles.bullet}>
+              {Array.isArray(lead.photos) && lead.photos.length > 0
+                ? 'Yes'
+                : 'No'}
+            </Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Has Business Categories: </Text>
+            <Text style={styles.bullet}>
+              {Array.isArray(lead.types) && lead.types.length > 0
+                ? 'Yes'
+                : 'No'}
+            </Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Has 10+ Reviews({lead.user_ratings_total}): </Text>
+            <Text style={styles.bullet}>
+              {(lead.user_ratings_total ?? 0) >= 10 ? 'Yes' : 'No'}
+            </Text>
+          </View>
+
+          <View style={styles.auditItem}>
+            <Text>Rating is 4.0 or Higher({lead.rating} Rating): </Text>
+            <Text style={styles.bullet}>
+              {(lead.rating ?? 0) >= 4.0 ? 'Yes' : 'No'}
+            </Text>
+          </View>
         </View>
 
-        <Text style={{ fontSize: 10, marginTop: 20 }}>
-          Generated by Your App | https://yourapp.com
+        {/* Footer */}
+        <Text style={styles.footer}>
+          Generated by Your App • https://yourapp.com
         </Text>
       </Page>
     </Document>

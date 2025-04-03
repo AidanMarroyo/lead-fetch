@@ -26,7 +26,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [saving, setSaving] = useState(false);
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   console.log('place details:', placeDetails);
-  console.log('lead-detail-mdal', lead);
 
   const handleSave = async () => {
     setSaving(true);
@@ -98,7 +97,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                 if (!placeDetails) return toast.error('Missing place details');
 
                 const blob = await pdf(
-                  <LeadAuditPDF lead={placeDetails} />
+                  <LeadAuditPDF lead={placeDetails} address={lead.address} />
                 ).toBlob();
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');

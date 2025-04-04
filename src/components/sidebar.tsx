@@ -20,7 +20,7 @@ export function Sidebar() {
       icon: KanbanSquare,
     },
     {
-      href: '/settings',
+      href: '/dashboard/settings',
       label: 'Settings',
       icon: Settings,
     },

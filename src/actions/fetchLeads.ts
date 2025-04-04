@@ -41,6 +41,43 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     redirect('/auth/login');
   }
 
+  // 🔐 STEP 1: Fetch user subscription plan
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('plan')
+    .eq('user_id', user.id)
+    .single();
+
+  const plan = subscription?.plan ?? 'free';
+
+  // 🔒 STEP 2: Enforce 3-lead monthly limit for free users
+  if (plan === 'free') {
+    const firstOfMonth = new Date();
+    firstOfMonth.setDate(1);
+    firstOfMonth.setHours(0, 0, 0, 0);
+
+    const { count: monthlyLeadCount, error: countError } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', firstOfMonth.toISOString());
+
+    if (countError) {
+      console.error('Error checking monthly limit:', countError);
+      return { success: false, message: 'Failed to check lead limits.' };
+    }
+
+    if ((monthlyLeadCount ?? 0) >= 3) {
+      return {
+        success: false,
+        message:
+          'You’ve reached your 3-lead limit for the month on the free plan.',
+      };
+    }
+  }
+
+  // STEP 3: Fetch leads from Google
+
   try {
     const places = await googlePlacesSearch(keyword, location);
 

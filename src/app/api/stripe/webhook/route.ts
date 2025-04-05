@@ -60,6 +60,50 @@ export async function POST(req: NextRequest) {
       } else {
         console.log('✅ Supabase subscription updated');
       }
+
+      // ✅ TEAM PLAN: Create team + add user as admin if they don't have one yet
+      if (plan === 'team') {
+        const { data: user } = await supabase
+          .from('subscriptions')
+          .select('user_id')
+          .eq('stripe_customer_id', custId)
+          .single();
+
+        if (user?.user_id) {
+          const userId = user.user_id;
+
+          const { data: existingTeam } = await supabase
+            .from('team_members')
+            .select('id')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+          if (!existingTeam) {
+            const { data: team, error: teamError } = await supabase
+              .from('teams')
+              .insert({
+                owner_id: userId,
+                name: 'My Team',
+              })
+              .select()
+              .single();
+
+            if (!teamError && team?.id) {
+              await supabase.from('team_members').insert({
+                user_id: userId,
+                team_id: team.id,
+                role: 'admin',
+              });
+
+              console.log('✅ Team created and user linked as admin');
+            } else {
+              console.error('❌ Error creating team:', teamError);
+            }
+          } else {
+            console.log('ℹ️ User already in a team, skipping team creation');
+          }
+        }
+      }
     }
 
     if (event.type === 'customer.subscription.deleted') {

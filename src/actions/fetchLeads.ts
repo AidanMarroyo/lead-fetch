@@ -131,8 +131,18 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       allowedNewLeads = newLeads.slice(0, remaining);
     }
 
+    // ✅ Get team_id if user is part of a team
+    const { data: membership } = await supabase
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const teamId = membership?.team_id || null;
+
     const inserts = allowedNewLeads.map((lead: Place) => ({
       user_id: user.id,
+      team_id: teamId, // ✅ shared across team if present
       name: lead.name,
       address: lead.address || '',
       google_place_id: lead.place_id,

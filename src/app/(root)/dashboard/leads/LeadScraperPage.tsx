@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -21,6 +21,16 @@ export default function LeadScraperPage() {
   const [provinceOrState, setProvinceOrState] = useState('');
   const [country, setCountry] = useState('Canada');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const cookies = document.cookie.split(';').map((c) => c.trim());
+    const reasonCookie = cookies.find((c) => c.startsWith('redirect_reason='));
+
+    if (reasonCookie && reasonCookie.includes('upgrade')) {
+      toast.error('Upgrade required to access the CRM pipeline.');
+      document.cookie = 'redirect_reason=; Max-Age=0; path=/';
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

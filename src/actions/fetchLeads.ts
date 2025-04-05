@@ -1,6 +1,6 @@
 'use server';
 
-import { googlePlacesSearch } from '@/lib/google'; // getPlaceDetails added
+import { googlePlacesSearch } from '@/lib/google';
 import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
@@ -51,12 +51,14 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
   const plan = subscription?.plan ?? 'free';
 
   // 🔒 STEP 2: Enforce 3-lead monthly limit for free users
+  let monthlyLeadCount = 0;
+
   if (plan === 'free') {
     const firstOfMonth = new Date();
     firstOfMonth.setDate(1);
     firstOfMonth.setHours(0, 0, 0, 0);
 
-    const { count: monthlyLeadCount, error: countError } = await supabase
+    const { count, error: countError } = await supabase
       .from('leads')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
@@ -67,7 +69,9 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       return { success: false, message: 'Failed to check lead limits.' };
     }
 
-    if ((monthlyLeadCount ?? 0) >= 3) {
+    monthlyLeadCount = count ?? 0;
+
+    if (monthlyLeadCount >= 3) {
       return {
         success: false,
         message:
@@ -77,7 +81,6 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
   }
 
   // STEP 3: Fetch leads from Google
-
   try {
     const places = await googlePlacesSearch(keyword, location);
 
@@ -86,11 +89,9 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       return { success: false, message: 'Error fetching places.' };
     }
 
-    // Only keep places without websites
     const leadsWithoutWebsites = places.filter(
       (place: Place) => !place.website
     );
-
     const placeIds = leadsWithoutWebsites.map((p) => p.place_id);
 
     // Prevent duplicates
@@ -109,17 +110,31 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     }
 
     const existingIds = new Set(existingLeads.map((l) => l.google_place_id));
-
     const newLeads = leadsWithoutWebsites.filter(
       (lead: Place) => !existingIds.has(lead.place_id)
     );
 
-    console.log('leads', newLeads);
+    // ✅ Enforce free-tier limit
+    let allowedNewLeads = newLeads;
 
-    const inserts = newLeads.map((lead: Place) => ({
+    if (plan === 'free') {
+      const remaining = 3 - monthlyLeadCount;
+
+      if (remaining <= 0) {
+        return {
+          success: false,
+          message:
+            'You’ve reached your 3-lead limit for the month on the free plan.',
+        };
+      }
+
+      allowedNewLeads = newLeads.slice(0, remaining);
+    }
+
+    const inserts = allowedNewLeads.map((lead: Place) => ({
       user_id: user.id,
       name: lead.name,
-      address: lead.address || '', // from biz.vicinity
+      address: lead.address || '',
       google_place_id: lead.place_id,
       phone: lead.phone || null,
       score: scoreLead(lead),
@@ -140,7 +155,14 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       }
     }
 
-    return { success: true, count: inserts.length };
+    return {
+      success: true,
+      count: inserts.length,
+      message:
+        inserts.length === 0
+          ? 'No new leads found.'
+          : `Saved ${inserts.length} new lead${inserts.length > 1 ? 's' : ''}.`,
+    };
   } catch (error) {
     console.error('Unexpected error:', error);
     return { success: false, message: (error as Error).message };

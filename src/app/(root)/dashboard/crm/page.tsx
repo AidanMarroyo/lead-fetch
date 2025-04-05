@@ -1,13 +1,8 @@
 import { KanbanBoard } from '@/components/crm-board/kanban-board';
-import { getUserSubscription } from '@/lib/subscriptions';
-import { redirect } from 'next/navigation';
+import { protectCRMAccess } from '@/lib/protect';
 
 export default async function CRMPage() {
-  const sub = await getUserSubscription();
-
-  if (!sub || (sub.plan !== 'individual' && sub.plan !== 'team')) {
-    redirect('/dashboard/leads'); // not allowed
-  }
+  await protectCRMAccess(); // 🔒 Enforce plan and handle redirect
 
   return (
     <div className='p-6'>

@@ -262,9 +262,11 @@ function UserDropdown() {
           <Link href='#'>Earnings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href='#'>Sign out</Link>
-        </DropdownMenuItem>
+        <form action='/auth/signout' method='post'>
+          <DropdownMenuItem asChild>
+            <button>Sign out</button>
+          </DropdownMenuItem>
+        </form>
       </DropdownMenuContent>
     </DropdownMenu>
   );

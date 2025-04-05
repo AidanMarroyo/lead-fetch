@@ -35,9 +35,20 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const { data: userData, error } = await supabase.auth.signUp(data);
 
   if (error) {
+    redirect('/error');
+  }
+
+  const { error: userInsertError } = await supabase
+    .from('subscriptions')
+    .insert({
+      user_id: userData.user?.id,
+      plan: 'free',
+      status: 'inactive',
+    });
+  if (userInsertError) {
     redirect('/error');
   }
 

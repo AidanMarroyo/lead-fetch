@@ -19,7 +19,7 @@ export function KanbanBoard() {
 
   useEffect(() => {
     const fetchLeads = async () => {
-      const res = await fetch('/api/leads');
+      const res = await fetch('/api/leads/crm');
       const data = await res.json();
       setLeads(data);
       setLoading(false);

@@ -28,6 +28,7 @@ export type Place = {
   address: string;
   phone: string;
   website?: string;
+  city?: string;
 };
 
 export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
@@ -149,6 +150,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       phone: lead.phone || null,
       score: scoreLead(lead),
       category: keyword,
+      location: location,
     }));
 
     if (inserts.length > 0) {

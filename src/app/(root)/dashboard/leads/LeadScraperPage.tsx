@@ -14,6 +14,8 @@ import {
   SelectItem, // ✅ This one!
 } from '@/components/ui/select';
 import { LeadTable } from '@/components/lead-table/table';
+import { LeadFilters } from '@/components/leads/LeadFilter';
+import { LeadFilter } from '@/lib/types';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -21,6 +23,12 @@ export default function LeadScraperPage() {
   const [provinceOrState, setProvinceOrState] = useState('');
   const [country, setCountry] = useState('Canada');
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState<LeadFilter>({
+    status: undefined,
+    location: '',
+    minScore: 0,
+    maxScore: 100,
+  });
 
   useEffect(() => {
     const cookies = document.cookie.split(';').map((c) => c.trim());
@@ -112,7 +120,8 @@ export default function LeadScraperPage() {
           {loading ? 'Searching...' : 'Find Leads'}
         </Button>
       </form>
-      <LeadTable />
+      <LeadFilters onApply={setFilters} />
+      <LeadTable filters={filters} />
     </main>
   );
 }

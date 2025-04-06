@@ -19,13 +19,13 @@ export function LeadFilters({
   onApply: (filters: LeadFilter) => void;
 }) {
   const [location, setLocation] = useState('');
-  const [status, setStatus] = useState<StatusOption>();
+  const [status, setStatus] = useState<StatusOption>('all');
   const [score, setScore] = useState([0, 100]);
 
   const handleApply = () => {
     onApply({
       location,
-      status,
+      status: status === 'all' ? undefined : status,
       minScore: score[0],
       maxScore: score[1],
     });
@@ -48,6 +48,7 @@ export function LeadFilters({
             <SelectValue placeholder='Status' />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value='all'>Select All</SelectItem>
             <SelectItem value='new'>New</SelectItem>
             <SelectItem value='contacted'>Contacted</SelectItem>
             <SelectItem value='in progress'>In Progress</SelectItem>

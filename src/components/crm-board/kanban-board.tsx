@@ -9,23 +9,27 @@ import {
 import { Lead } from './types';
 import { KanbanColumn } from './kanban-column';
 import { LeadDetailModal } from './lead-detail-modal';
+import { LeadFilter } from '@/lib/types';
 
 const STATUSES = ['new', 'contacted', 'in progress', 'closed'] as const;
 
-export function KanbanBoard() {
+export function KanbanBoard({ filters }: { filters: LeadFilter }) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeads = async () => {
-      const res = await fetch('/api/leads/crm');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        body: JSON.stringify({ filters }),
+      });
       const data = await res.json();
       setLeads(data);
       setLoading(false);
     };
     fetchLeads();
-  }, []);
+  }, [filters]);
 
   const grouped = STATUSES.map((status) => ({
     status,

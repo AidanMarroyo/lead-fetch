@@ -1,13 +1,12 @@
-import { KanbanBoard } from '@/components/crm-board/kanban-board';
 import { protectCRMAccess } from '@/lib/protect';
+import PipelinePage from './PipelinePage';
 
 export default async function CRMPage() {
   await protectCRMAccess(); // 🔒 Enforce plan and handle redirect
 
   return (
-    <div className='p-6'>
-      <h1 className='text-2xl font-semibold mb-6'>CRM Pipeline</h1>
-      <KanbanBoard />
-    </div>
+    <main>
+      <PipelinePage />
+    </main>
   );
 }

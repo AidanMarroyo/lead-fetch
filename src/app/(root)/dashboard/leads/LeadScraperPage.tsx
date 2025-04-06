@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,11 +12,13 @@ import {
   SelectContent,
   SelectTrigger,
   SelectValue,
-  SelectItem, // ✅ This one!
+  SelectItem,
 } from '@/components/ui/select';
+
 import { LeadTable } from '@/components/lead-table/table';
 import { LeadFilters } from '@/components/leads/LeadFilter';
 import { LeadFilter } from '@/lib/types';
+import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -23,6 +26,7 @@ export default function LeadScraperPage() {
   const [provinceOrState, setProvinceOrState] = useState('');
   const [country, setCountry] = useState('Canada');
   const [loading, setLoading] = useState(false);
+  const [mapView, setMapView] = useState(false); // ✅ NEW
   const [filters, setFilters] = useState<LeadFilter>({
     status: undefined,
     location: '',
@@ -33,7 +37,6 @@ export default function LeadScraperPage() {
   useEffect(() => {
     const cookies = document.cookie.split(';').map((c) => c.trim());
     const reasonCookie = cookies.find((c) => c.startsWith('redirect_reason='));
-
     if (reasonCookie && reasonCookie.includes('upgrade')) {
       toast.error('Upgrade required to access the CRM pipeline.');
       document.cookie = 'redirect_reason=; Max-Age=0; path=/';
@@ -43,16 +46,12 @@ export default function LeadScraperPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     const fullLocation = `${city}, ${provinceOrState}, ${country}`;
-
     const result = await fetchLeadsFromGoogle({
       keyword,
       location: fullLocation,
     });
-
     setLoading(false);
-
     if (result?.success) {
       toast.success(`${result.count} leads found and stored`);
     } else {
@@ -64,7 +63,8 @@ export default function LeadScraperPage() {
 
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
-      <h1 className='text-2xl font-semibold mb-4'>Lead Scrapper</h1>
+      <h1 className='text-2xl font-semibold mb-4'>Lead Scraper</h1>
+
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
           <Label htmlFor='keyword'>Business Type</Label>
@@ -120,8 +120,21 @@ export default function LeadScraperPage() {
           {loading ? 'Searching...' : 'Find Leads'}
         </Button>
       </form>
+
+      <div className='flex items-center justify-between mt-10 mb-4'>
+        <h2 className='text-xl font-semibold'>Lead Results</h2>
+        <Button variant='outline' onClick={() => setMapView(!mapView)}>
+          {mapView ? 'Show Table View' : 'Show Map View'}
+        </Button>
+      </div>
+
       <LeadFilters onApply={setFilters} />
-      <LeadTable filters={filters} />
+
+      {mapView ? (
+        <LeadsMap filters={filters} />
+      ) : (
+        <LeadTable filters={filters} />
+      )}
     </main>
   );
 }

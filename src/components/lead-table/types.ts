@@ -8,4 +8,6 @@ export type Lead = {
   score: number;
   status: 'new' | 'contacted' | 'in progress' | 'closed';
   created_at: string;
+  lat?: number;
+  lng?: number;
 };

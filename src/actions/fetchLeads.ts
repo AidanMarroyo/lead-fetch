@@ -9,6 +9,7 @@ import { geocodeFromPlaceId } from './geocodePlace';
 type Props = {
   keyword: string;
   location: string;
+  user_id?: string; // ✅ override for cron
 };
 
 type LeadPhoto = {
@@ -34,22 +35,33 @@ export type Place = {
   lng?: number;
 };
 
-export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
+export async function fetchLeadsFromGoogle({
+  keyword,
+  location,
+  user_id,
+}: Props) {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // ✅ Step 1: Get current user or use override
+  let userId = user_id;
 
-  if (!user) {
-    redirect('/auth/login');
+  if (!userId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect('/auth/login');
+    }
+
+    userId = user.id;
   }
 
   // 🔐 STEP 1: Fetch user subscription plan
   const { data: subscription } = await supabase
     .from('subscriptions')
     .select('plan')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .single();
 
   const plan = subscription?.plan ?? 'free';
@@ -65,7 +77,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     const { count, error: countError } = await supabase
       .from('leads')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .gte('created_at', firstOfMonth.toISOString());
 
     if (countError) {
@@ -102,7 +114,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     const { data: existingLeads, error: fetchError } = await supabase
       .from('leads')
       .select('google_place_id')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .in('google_place_id', placeIds);
 
     if (fetchError) {
@@ -139,7 +151,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
     const { data: membership } = await supabase
       .from('team_members')
       .select('team_id')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .maybeSingle();
 
     const teamId = membership?.team_id || null;
@@ -148,7 +160,7 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
       allowedNewLeads.map(async (lead: Place) => {
         const coords = await geocodeFromPlaceId(lead.place_id);
         return {
-          user_id: user.id,
+          user_id: userId,
           team_id: teamId, // ✅ shared across team if present
           name: lead.name,
           address: lead.address || '',

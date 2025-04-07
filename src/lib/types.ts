@@ -3,4 +3,5 @@ export type LeadFilter = {
   minScore?: number;
   maxScore?: number;
   location?: string;
+  recentOnly?: boolean;
 };

@@ -21,6 +21,7 @@ import { LeadFilter } from '@/lib/types';
 import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
 import { LeadScoreLegend } from '@/components/LeadScoreLegend';
 import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
+import { SaveSearchButton } from '@/components/leads/SaveSearchButton';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -48,7 +49,8 @@ export default function LeadScraperPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const fullLocation = `${city}, ${provinceOrState}, ${country}`;
+    const fullLocation =
+      `${city}, ${provinceOrState}, ${country}`.toLowerCase();
     const result = await fetchLeadsFromGoogle({
       keyword,
       location: fullLocation,
@@ -134,7 +136,10 @@ export default function LeadScraperPage() {
       </div>
 
       <LeadFilters onApply={setFilters} />
-
+      <SaveSearchButton
+        keyword={keyword}
+        location={`${city}, ${provinceOrState}`}
+      />
       <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />

@@ -76,6 +76,12 @@ export async function POST(req: NextRequest) {
     query = query.ilike('address', `%${filters.location}%`);
   }
 
+  if (filters?.recentOnly) {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    query = query.gte('created_at', oneWeekAgo.toISOString());
+  }
+
   const { data, error } = await query;
 
   if (error) {

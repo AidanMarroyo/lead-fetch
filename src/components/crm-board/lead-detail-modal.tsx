@@ -1,5 +1,6 @@
 'use client';
-import { Lead } from './types';
+
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,11 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import { updateLeadNotes } from '@/actions/updateLeadNotes';
+import { Lead } from './types';
 import { LeadProfileAudit } from './lead-profile-audit';
 import { getPlaceDetails } from '@/actions/getPlaceDetails';
+import { createLeadNote } from '@/actions/createLeadNote';
+import { getLeadNotes } from '@/actions/getLeadNotes';
 import { pdf } from '@react-pdf/renderer';
 import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 import { toast } from 'sonner';
@@ -23,29 +25,41 @@ type Props = {
   onUpdate: (lead: Lead) => void;
 };
 
-export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
-  const [notes, setNotes] = useState(lead.notes || '');
-  const [saving, setSaving] = useState(false);
+export function LeadDetailModal({ lead, onClose }: Props) {
+  const [newNote, setNewNote] = useState('');
+  const [notes, setNotes] = useState<
+    {
+      id: string;
+      message: string;
+      author_name: string;
+      created_at: string;
+    }[]
+  >([]);
   const [placeDetails, setPlaceDetails] = useState<Place | null>(null);
-  console.log('place details:', placeDetails);
-
-  const handleSave = async () => {
-    setSaving(true);
-    const updated = await updateLeadNotes(lead.id, notes);
-    setSaving(false);
-    onUpdate({ ...lead, notes: updated.notes });
-  };
 
   useEffect(() => {
     const fetchDetails = async () => {
       if (!lead.google_place_id) return;
-
       const details = await getPlaceDetails(lead.google_place_id);
       setPlaceDetails(details);
     };
 
+    const loadNotes = async () => {
+      const data = await getLeadNotes(lead.id);
+      setNotes(data);
+    };
+
     fetchDetails();
-  }, [lead.google_place_id]);
+    loadNotes();
+  }, [lead.id, lead.google_place_id]);
+
+  const handleSaveNote = async () => {
+    if (!newNote.trim()) return;
+    await createLeadNote(lead.id, newNote);
+    setNewNote('');
+    const updated = await getLeadNotes(lead.id);
+    setNotes(updated);
+  };
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -85,32 +99,57 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
             <label className='text-sm font-medium'>Internal Notes</label>
             <Textarea
               className='mt-1'
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={4}
-              placeholder='e.g. Spoke to receptionist, interested in web revamp.'
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              rows={3}
+              placeholder='e.g. Called, receptionist said they’d follow up.'
             />
-            <Button className='mt-2' onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving...' : 'Save Notes'}
-            </Button>
             <Button
-              variant='outline'
-              onClick={async () => {
-                if (!placeDetails) return toast.error('Missing place details');
-
-                const blob = await pdf(
-                  <LeadAuditPDF lead={placeDetails} address={lead.address} />
-                ).toBlob();
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${lead.name}-audit.pdf`;
-                link.click();
-              }}
+              className='mt-2'
+              onClick={handleSaveNote}
+              disabled={!newNote.trim()}
             >
-              Download Audit Report (PDF)
+              Add Note
             </Button>
+
+            <div className='mt-4 max-h-64 overflow-y-auto space-y-3 pr-2'>
+              {notes.map((note) => (
+                <div
+                  key={note.id}
+                  className='p-2 border rounded-md text-sm bg-muted'
+                >
+                  <div className='text-xs text-muted-foreground mb-1'>
+                    {note.author_name} •{' '}
+                    {new Date(note.created_at).toLocaleString()}
+                  </div>
+                  <div>{note.message}</div>
+                </div>
+              ))}
+              {notes.length === 0 && (
+                <p className='text-sm text-muted-foreground italic'>
+                  No notes yet.
+                </p>
+              )}
+            </div>
           </div>
+
+          <Button
+            variant='outline'
+            onClick={async () => {
+              if (!placeDetails) return toast.error('Missing place details');
+
+              const blob = await pdf(
+                <LeadAuditPDF lead={placeDetails} address={lead.address} />
+              ).toBlob();
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `${lead.name}-audit.pdf`;
+              link.click();
+            }}
+          >
+            Download Audit Report (PDF)
+          </Button>
 
           <div className='border-t pt-4'>
             <p className='text-sm mb-2 font-medium'>Google Maps</p>

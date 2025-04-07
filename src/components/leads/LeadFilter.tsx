@@ -32,7 +32,7 @@ export function LeadFilters({
       minScore: score[0],
       maxScore: score[1],
     });
-  }, [location, status, score, recentOnly]);
+  }, [location, status, score, recentOnly, onApply]);
 
   function capitalize(status: string | undefined): string {
     if (!status) return '';

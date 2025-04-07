@@ -3,7 +3,7 @@
 import { KanbanBoard } from '@/components/crm-board/kanban-board';
 import { LeadFilters } from '@/components/leads/LeadFilter';
 import { LeadFilter } from '@/lib/types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export default function PipelinePage() {
   const [filters, setFilters] = useState<LeadFilter>({
@@ -13,10 +13,14 @@ export default function PipelinePage() {
     maxScore: 100,
   });
 
+  const handleApplyFilters = useCallback((filters: LeadFilter) => {
+    setFilters(filters);
+  }, []);
+
   return (
     <div className='p-6'>
       <h1 className='text-2xl font-semibold mb-6'>Webbed CRM</h1>
-      <LeadFilters onApply={setFilters} />
+      <LeadFilters onApply={handleApplyFilters} />;
       <KanbanBoard filters={filters} />
     </div>
   );

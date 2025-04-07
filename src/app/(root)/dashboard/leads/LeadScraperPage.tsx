@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -81,6 +81,10 @@ export default function LeadScraperPage() {
     setMapView(!mapView);
   };
 
+  const handleApplyFilters = useCallback((filters: LeadFilter) => {
+    setFilters(filters);
+  }, []);
+
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
       <h1 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
@@ -91,7 +95,6 @@ export default function LeadScraperPage() {
           </span>
         )}
       </h1>
-
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
           <Label htmlFor='keyword'>Business Type</Label>
@@ -147,7 +150,6 @@ export default function LeadScraperPage() {
           {loading ? 'Searching...' : 'Find Leads'}
         </Button>
       </form>
-
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
@@ -186,8 +188,7 @@ export default function LeadScraperPage() {
           </Button>
         </div>
       </div>
-
-      <LeadFilters onApply={setFilters} />
+      <LeadFilters onApply={handleApplyFilters} />;
       {plan !== 'free' ? (
         <SaveSearchButton
           keyword={keyword}

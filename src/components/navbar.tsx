@@ -6,7 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   Tooltip,
   TooltipTrigger,
@@ -30,8 +29,10 @@ import {
   Users,
   LayoutGrid,
 } from 'lucide-react';
+import { useUserPlan } from '@/lib/userUserPlan';
 
 export function DashboardNavbar() {
+  const { plan } = useUserPlan();
   //   const sidebar = useSidebarContext();
   //   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
@@ -56,26 +57,8 @@ export function DashboardNavbar() {
                 width={32}
                 height={32}
               />
-              <span className='self-center whitespace-nowrap text-2xl font-semibold dark:text-white'>
-                Flowbite
-              </span>
+              <h1 className='text-xl font-bold'>WebbedLead</h1>
             </Link>
-            <form className='hidden lg:block lg:pl-2'>
-              <label htmlFor='search' className='sr-only'>
-                Search
-              </label>
-              <div className='relative w-full lg:w-96'>
-                <Search className='absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500 dark:text-gray-400' />
-                <Input
-                  className='pl-10'
-                  id='search'
-                  name='search'
-                  placeholder='Search'
-                  required
-                  type='search'
-                />
-              </div>
-            </form>
           </div>
           <div className='flex items-center lg:gap-3'>
             <div className='flex items-center'>
@@ -99,7 +82,7 @@ export function DashboardNavbar() {
                 <TooltipContent>Toggle theme</TooltipContent>
               </Tooltip>
               <div className='ml-3 flex items-center'>
-                <UserDropdown />
+                <UserDropdown plan={plan} />
               </div>
             </div>
           </div>
@@ -235,7 +218,7 @@ function AppDrawerDropdown() {
   );
 }
 
-function UserDropdown() {
+function UserDropdown({ plan }: { plan: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -249,7 +232,13 @@ function UserDropdown() {
       <DropdownMenuContent align='end' className='w-56'>
         <div className='px-4 py-3'>
           <p className='text-sm'>Neil Sims</p>
-          <p className='truncate text-sm font-medium'>neil.sims@flowbite.com</p>
+          <div className='text-sm text-muted-foreground'>
+            {plan === 'free'
+              ? '🌱 Free Plan'
+              : plan === 'individual'
+                ? '💼 Pro Plan'
+                : '👥 Team Plan'}
+          </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

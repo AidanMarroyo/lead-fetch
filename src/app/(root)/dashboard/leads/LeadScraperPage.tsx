@@ -22,8 +22,11 @@ import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
 import { LeadScoreLegend } from '@/components/LeadScoreLegend';
 import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
 import { SaveSearchButton } from '@/components/leads/SaveSearchButton';
+import { useUserPlan } from '@/lib/userUserPlan';
+import { ProTag } from '@/components/ui/ProTag';
 
 export default function LeadScraperPage() {
+  const { plan } = useUserPlan();
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
   const [provinceOrState, setProvinceOrState] = useState('');
@@ -64,6 +67,14 @@ export default function LeadScraperPage() {
   };
 
   const regionList = country === 'Canada' ? canadianProvinces : americanStates;
+
+  const handleToggleMap = () => {
+    if (plan === 'free') {
+      toast.error('Upgrade required to access the map view.');
+      return;
+    }
+    setMapView(!mapView);
+  };
 
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
@@ -128,18 +139,44 @@ export default function LeadScraperPage() {
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Lead Results</h2>
         <div className='flex items-center gap-4'>
-          <DownloadCSVButton filters={filters} />
-          <Button variant='outline' onClick={() => setMapView(!mapView)}>
+          {plan !== 'free' ? (
+            <DownloadCSVButton filters={filters} />
+          ) : (
+            <Button
+              variant='outline'
+              disabled
+              className='relative'
+              onClick={() => toast.error('Upgrade required to export leads.')}
+            >
+              Export CSV <ProTag />
+            </Button>
+          )}
+
+          <Button
+            variant='outline'
+            onClick={handleToggleMap}
+            className='relative'
+          >
             {mapView ? 'Table View' : 'Map View'}
+            {plan === 'free' && <ProTag />}
           </Button>
         </div>
       </div>
 
       <LeadFilters onApply={setFilters} />
-      <SaveSearchButton
-        keyword={keyword}
-        location={`${city}, ${provinceOrState}`}
-      />
+      {plan !== 'free' ? (
+        <SaveSearchButton
+          keyword={keyword}
+          location={`${city}, ${provinceOrState}`}
+        />
+      ) : (
+        <p className='text-sm text-muted-foreground mt-2'>
+          Want to automate lead discovery?{' '}
+          <span className='font-medium'>
+            Upgrade to Pro <ProTag />
+          </span>
+        </p>
+      )}
       <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />

@@ -1,27 +1,24 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
-  darkMode: 'media',
-  content: [
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './lib/**/*.{ts,tsx}',
-  ],
+// tailwind.config.ts (if using Tailwind v4)
+const config = {
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+      colors: {
+        primary: '#00d084',
+        muted: '#1e293b',
+        background: '#0f172a',
+        border: '#334155',
+        card: '#1e293b',
       },
       borderRadius: {
+        lg: '0.75rem',
         xl: '1rem',
         '2xl': '1.5rem',
       },
-      boxShadow: {
-        card: '0 4px 20px rgba(0, 0, 0, 0.1)',
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'sans-serif'],
       },
     },
   },
-  plugins: [],
 };
 
 export default config;

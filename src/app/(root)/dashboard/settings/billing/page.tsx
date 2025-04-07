@@ -2,8 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { toast } from 'sonner';
+import { BadgeCheck, Users, Briefcase } from 'lucide-react';
 
 type Subscription = {
   plan: string;
@@ -36,30 +43,50 @@ export default function BillingPage() {
   };
 
   return (
-    <div className='max-w-3xl mx-auto mt-10'>
-      <h1 className='text-2xl font-semibold mb-6'>Billing</h1>
+    <div className='max-w-4xl mx-auto mt-10'>
+      <h1 className='text-3xl font-bold mb-6 text-center'>
+        💳 WebbedLead Billing
+      </h1>
 
       <Card className='mb-6'>
         <CardHeader>
-          <CardTitle>Your Plan</CardTitle>
+          <CardTitle className='flex items-center gap-2'>
+            <BadgeCheck className='w-5 h-5 text-green-600' />
+            Your Current Plan
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p>
-            <strong>Plan:</strong> {sub?.plan ?? 'free'}
-            <br />
-            <strong>Status:</strong> {sub?.status ?? 'inactive'}
-          </p>
+          <div className='text-sm leading-relaxed'>
+            <p>
+              <strong>Plan:</strong>{' '}
+              <span className='capitalize'>{sub?.plan ?? 'free'}</span>
+            </p>
+            <p>
+              <strong>Status:</strong> {sub?.status ?? 'inactive'}
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Individual Plan</CardTitle>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <Card className='border border-gray-300 shadow-sm hover:shadow-md transition'>
+          <CardHeader className='flex flex-row items-center gap-3'>
+            <Briefcase className='w-6 h-6 text-blue-600' />
+            <div>
+              <CardTitle>Individual Plan</CardTitle>
+              <CardDescription className='text-muted-foreground'>
+                Perfect for solo web agencies.
+              </CardDescription>
+            </div>
           </CardHeader>
-          <CardContent className='space-y-3'>
-            <p>$29.99/month — Unlimited leads, CRM access</p>
+          <CardContent className='space-y-4'>
+            <p className='text-sm'>
+              <span className='text-lg font-bold'>$69.99 USD/month</span> — Full
+              CRM access, unlimited leads, map view, CSV export, and weekly
+              discovery.
+            </p>
             <Button
+              className='w-full'
               onClick={() => handleUpgrade('individual')}
               disabled={loading}
             >
@@ -68,13 +95,27 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Plan</CardTitle>
+        <Card className='border border-gray-300 shadow-sm hover:shadow-md transition'>
+          <CardHeader className='flex flex-row items-center gap-3'>
+            <Users className='w-6 h-6 text-green-600' />
+            <div>
+              <CardTitle>Team Plan</CardTitle>
+              <CardDescription className='text-muted-foreground'>
+                For agencies with collaborators.
+              </CardDescription>
+            </div>
           </CardHeader>
-          <CardContent className='space-y-3'>
-            <p>$79.99/month — Everything in Individual + team members</p>
-            <Button onClick={() => handleUpgrade('team')} disabled={loading}>
+          <CardContent className='space-y-4'>
+            <p className='text-sm'>
+              <span className='text-lg font-bold'>$199.99 USD/month</span> — All
+              Individual features plus team invites, lead assignment, and
+              activity tracking.
+            </p>
+            <Button
+              className='w-full'
+              onClick={() => handleUpgrade('team')}
+              disabled={loading}
+            >
               Upgrade to Team
             </Button>
           </CardContent>

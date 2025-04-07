@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  Archive,
-  DollarSign,
-  Inbox,
-  LayoutGrid,
-  LogOut,
-  Settings,
-  ShoppingBag,
-  Ticket,
-  User,
-  Users,
-} from 'lucide-react';
+import { Kanban, LayoutGrid, ScanSearch, Ticket } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -51,13 +40,13 @@ export default function MenuDropdown() {
 }
 
 const menuItems = [
-  { icon: ShoppingBag, label: 'Sales', href: '#' },
-  { icon: Users, label: 'Users', href: '#' },
-  { icon: Inbox, label: 'Inbox', href: '#' },
-  { icon: User, label: 'Profile', href: '#' },
-  { icon: Settings, label: 'Settings', href: '#' },
-  { icon: Archive, label: 'Products', href: '#' },
-  { icon: DollarSign, label: 'Pricing', href: '#' },
-  { icon: Ticket, label: 'Billing', href: '#' },
-  { icon: LogOut, label: 'Logout', href: '#' },
+  { icon: ScanSearch, label: 'Leads', href: '/dashboard/leads' },
+  { icon: Kanban, label: 'Pipeline', href: '/dashboard/crm' },
+  // { icon: Users, label: 'Users', href: '#' },
+  // { icon: User, label: 'Profile', href: '#' },
+  // { icon: Settings, label: 'Settings', href: '#' },
+  // { icon: Archive, label: 'Products', href: '#' },
+  // { icon: DollarSign, label: 'Pricing', href: '#' },
+  { icon: Ticket, label: 'Billing', href: '/dashboard/settings/billing' },
+  // { icon: LogOut, label: 'Logout', href: '#' },
 ];

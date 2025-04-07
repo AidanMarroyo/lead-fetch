@@ -25,9 +25,7 @@ export function StatusDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='sm'>
-          {current}
-        </Button>
+        <Button variant='outline'>{current}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {statuses.map((status) => (

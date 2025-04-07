@@ -1,6 +1,6 @@
 export function ProTag() {
   return (
-    <span className='ml-1 inline-block bg-yellow-400 text-black text-[10px] px-1 py-0.5 rounded font-bold'>
+    <span className='ml-2 inline-block rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black shadow-sm'>
       PRO
     </span>
   );

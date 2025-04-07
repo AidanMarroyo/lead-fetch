@@ -1,6 +1,8 @@
 'use client';
 
 import { LeadFilter } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { DownloadIcon } from 'lucide-react';
 
 export function DownloadCSVButton({ filters }: { filters: LeadFilter }) {
   const handleDownload = async () => {
@@ -22,11 +24,14 @@ export function DownloadCSVButton({ filters }: { filters: LeadFilter }) {
   };
 
   return (
-    <button
+    <Button
       onClick={handleDownload}
-      className='text-sm px-3 py-2 rounded border bg-white hover:bg-muted'
+      variant='outline'
+      className='gap-2'
+      aria-label='Export leads to CSV'
     >
-      📤 Export to CSV
-    </button>
+      <DownloadIcon className='w-4 h-4' />
+      Export CSV
+    </Button>
   );
 }

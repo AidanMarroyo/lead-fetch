@@ -56,29 +56,31 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
         ),
     },
     {
-      label: `More Than 10 Reviews (${lead.user_ratings_total ?? 0})`,
+      label: `Has 10+ Reviews (${lead.user_ratings_total ?? 0})`,
       value:
         typeof lead.user_ratings_total === 'number' &&
         lead.user_ratings_total >= 10,
     },
     {
-      label: `Rating is 4.0 or Higher (${lead.rating ?? 'N/A'})`,
+      label: `Rating 4.0+ (${lead.rating ?? 'N/A'})`,
       value: typeof lead.rating === 'number' ? lead.rating >= 4.0 : false,
     },
   ];
 
   return (
-    <div className='mt-4 border-t pt-4'>
-      <h3 className='text-sm font-semibold mb-2'>Profile Audit</h3>
-      <ul className='space-y-1 text-sm'>
+    <div className='mt-6 border-t pt-4'>
+      <h3 className='text-sm font-semibold mb-2 text-foreground'>
+        🧾 Profile Audit
+      </h3>
+      <ul className='space-y-2 text-sm'>
         {auditItems.map((item, i) => (
           <li key={i} className='flex items-center gap-2'>
             {item.value ? (
-              <Check className='w-4 h-4 text-green-500' />
+              <Check className='text-green-600 w-4 h-4' />
             ) : (
-              <X className='w-4 h-4 text-red-500' />
+              <X className='text-red-500 w-4 h-4' />
             )}
-            <span>{item.label}</span>
+            <span className='text-muted-foreground'>{item.label}</span>
           </li>
         ))}
       </ul>

@@ -12,6 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Trash2Icon } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type SavedSearch = {
   id: string;
@@ -68,8 +75,8 @@ export function SavedSearchList() {
   }
 
   return (
-    <div className='space-y-3 mt-6'>
-      <h3 className='text-sm font-medium'>
+    <div className='space-y-4 mt-6'>
+      <h3 className='text-sm font-semibold tracking-tight'>
         📌 Saved Searches (Auto Discovery)
       </h3>
 
@@ -77,28 +84,36 @@ export function SavedSearchList() {
         {searches.map((search) => (
           <li
             key={search.id}
-            className='flex items-center justify-between border p-2 rounded-md bg-muted'
+            className='flex items-center justify-between gap-4 border bg-muted px-4 py-3 rounded-lg hover:shadow-sm transition'
           >
-            <div className='text-sm'>
+            <div className='text-sm space-y-0.5'>
               <div>
                 <span className='font-medium'>{search.keyword}</span> in{' '}
                 {search.location}
               </div>
               {search.last_ran && (
                 <div className='text-xs text-muted-foreground'>
-                  Last ran: {new Date(search.last_ran).toLocaleDateString()}
+                  Last ran: {new Date(search.last_ran).toLocaleString()}
                 </div>
               )}
             </div>
 
-            <Button
-              variant='ghost'
-              size='sm'
-              className='text-red-500 hover:text-red-600'
-              onClick={() => confirmDelete(search.id)}
-            >
-              ✕
-            </Button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='ghost'
+                    className='text-red-500 hover:text-red-600'
+                    onClick={() => confirmDelete(search.id)}
+                  >
+                    <Trash2Icon className='w-4 h-4' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </li>
         ))}
       </ul>
@@ -109,7 +124,7 @@ export function SavedSearchList() {
             <DialogTitle>Are you sure?</DialogTitle>
           </DialogHeader>
           <p className='text-sm text-muted-foreground'>
-            This search will be removed from weekly auto discovery.
+            This search will no longer run automatically.
           </p>
           <DialogFooter>
             <Button variant='outline' onClick={() => setDeleteId(null)}>

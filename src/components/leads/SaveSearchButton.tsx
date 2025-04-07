@@ -2,6 +2,8 @@
 
 import { saveSearch } from '@/actions/saveSearch';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { SaveIcon } from 'lucide-react';
 
 export function SaveSearchButton({
   keyword,
@@ -20,11 +22,14 @@ export function SaveSearchButton({
   };
 
   return (
-    <button
+    <Button
       onClick={handleSave}
-      className='text-sm px-3 py-2 rounded border bg-muted hover:bg-muted/80'
+      variant='outline'
+      className='gap-2'
+      aria-label='Save this search for weekly discovery'
     >
-      💾 Save Search for Weekly Discovery
-    </button>
+      <SaveIcon className='w-4 h-4' />
+      Save Search
+    </Button>
   );
 }

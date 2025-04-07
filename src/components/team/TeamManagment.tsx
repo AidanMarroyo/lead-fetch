@@ -65,7 +65,6 @@ export function TeamManagement() {
               {member.role !== 'admin' && (
                 <Button
                   variant='destructive'
-                  size='sm'
                   onClick={() => handleRemove(member.id)}
                   disabled={loading}
                 >

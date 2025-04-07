@@ -63,13 +63,14 @@ export function LeadDetailModal({ lead, onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className='max-w-2xl'>
+      <DialogContent className='max-w-2xl max-h-[90vh] overflow-hidden flex flex-col'>
         <DialogHeader>
           <DialogTitle>{lead.name}</DialogTitle>
         </DialogHeader>
 
-        <div className='mt-2 space-y-4'>
+        <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
           <p className='text-sm text-muted-foreground'>{lead.address}</p>
+
           {lead.google_place_id && (
             <a
               href={`https://www.google.com/maps/place/?q=place_id:${lead.google_place_id}`}

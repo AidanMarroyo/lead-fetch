@@ -24,6 +24,11 @@ import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
 import { SaveSearchButton } from '@/components/leads/SaveSearchButton';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { ProTag } from '@/components/ui/ProTag';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function LeadScraperPage() {
   const { plan } = useUserPlan();
@@ -78,7 +83,14 @@ export default function LeadScraperPage() {
 
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
-      <h1 className='text-2xl font-semibold mb-4'>Lead Scraper</h1>
+      <h1 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
+        Lead Scraper
+        {plan === 'free' && (
+          <span className='text-xs bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded font-medium'>
+            Free Plan
+          </span>
+        )}
+      </h1>
 
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
@@ -144,11 +156,16 @@ export default function LeadScraperPage() {
           ) : (
             <Button
               variant='outline'
-              disabled
-              className='relative'
+              className='relative opacity-50 cursor-not-allowed'
               onClick={() => toast.error('Upgrade required to export leads.')}
             >
-              Export CSV <ProTag />
+              Export CSV{' '}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ProTag />
+                </TooltipTrigger>
+                <TooltipContent>Available on Pro Plan</TooltipContent>
+              </Tooltip>
             </Button>
           )}
 
@@ -158,7 +175,14 @@ export default function LeadScraperPage() {
             className='relative'
           >
             {mapView ? 'Table View' : 'Map View'}
-            {plan === 'free' && <ProTag />}
+            {plan === 'free' && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ProTag />
+                </TooltipTrigger>
+                <TooltipContent>Available on Pro Plan</TooltipContent>
+              </Tooltip>
+            )}
           </Button>
         </div>
       </div>
@@ -173,7 +197,13 @@ export default function LeadScraperPage() {
         <p className='text-sm text-muted-foreground mt-2'>
           Want to automate lead discovery?{' '}
           <span className='font-medium'>
-            Upgrade to Pro <ProTag />
+            Upgrade to Pro{' '}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <ProTag />
+              </TooltipTrigger>
+              <TooltipContent>Available on Pro Plan</TooltipContent>
+            </Tooltip>
           </span>
         </p>
       )}

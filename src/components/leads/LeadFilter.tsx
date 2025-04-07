@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { LeadFilter } from '@/lib/types';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 type StatusOption = LeadFilter['status'];
 
@@ -30,7 +32,7 @@ export function LeadFilters({
       minScore: score[0],
       maxScore: score[1],
     });
-  }, [location, status, score]);
+  }, [location, status, score, recentOnly]);
 
   function capitalize(status: string | undefined): string {
     if (!status) return '';
@@ -41,34 +43,45 @@ export function LeadFilters({
   }
 
   return (
-    <div className='space-y-4 mb-6'>
-      <div className='flex gap-4 items-end'>
-        <Input
-          placeholder='Location (e.g. Toronto)'
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
+    <div className='mb-6 rounded-lg border bg-muted/50 px-4 py-4 shadow-sm'>
+      <div className='flex flex-wrap gap-4 items-end'>
+        <div className='w-48'>
+          <Label htmlFor='location' className='text-xs mb-1 block'>
+            Location
+          </Label>
+          <Input
+            id='location'
+            placeholder='e.g. Toronto'
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        </div>
 
-        <Select
-          value={status}
-          onValueChange={(v) => setStatus(v as StatusOption)}
-        >
-          <SelectTrigger className='w-40'>
-            <SelectValue>
-              {status === 'all' ? 'Status' : capitalize(status)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>Select All</SelectItem>
-            <SelectItem value='new'>New</SelectItem>
-            <SelectItem value='contacted'>Contacted</SelectItem>
-            <SelectItem value='in progress'>In Progress</SelectItem>
-            <SelectItem value='closed'>Closed</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className='w-40'>
+          <Label htmlFor='status' className='text-xs mb-1 block'>
+            Status
+          </Label>
+          <Select
+            value={status}
+            onValueChange={(v) => setStatus(v as StatusOption)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder='Status'>
+                {status === 'all' ? 'Status' : capitalize(status)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>Select All</SelectItem>
+              <SelectItem value='new'>New</SelectItem>
+              <SelectItem value='contacted'>Contacted</SelectItem>
+              <SelectItem value='in progress'>In Progress</SelectItem>
+              <SelectItem value='closed'>Closed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className='w-64'>
-          <label className='text-xs block mb-1'>Score Range</label>
+          <Label className='text-xs block mb-1'>Score Range</Label>
           <Slider
             value={score}
             onValueChange={(value) => setScore([value[0], value[1]])}
@@ -76,20 +89,21 @@ export function LeadFilters({
             step={5}
             minStepsBetweenThumbs={10}
           />
-          <p className='text-xs mt-1'>
+          <p className='text-xs mt-1 text-muted-foreground'>
             {score[0]} - {score[1]}
           </p>
         </div>
-        <div className='flex items-center gap-2'>
+
+        <div className='flex items-center gap-2 mb-3 '>
           <input
             type='checkbox'
             id='recentOnly'
             checked={recentOnly}
             onChange={() => setRecentOnly(!recentOnly)}
           />
-          <label htmlFor='recentOnly' className='text-sm'>
+          <Label htmlFor='recentOnly' className='text-sm'>
             Show only leads from this week
-          </label>
+          </Label>
         </div>
       </div>
     </div>

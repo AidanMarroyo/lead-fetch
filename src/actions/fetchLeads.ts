@@ -4,6 +4,7 @@ import { googlePlacesSearch } from '@/lib/google';
 import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { geocodeFromPlaceId } from './geocodePlace';
 
 type Props = {
   keyword: string;
@@ -29,6 +30,8 @@ export type Place = {
   phone: string;
   website?: string;
   city?: string;
+  lat?: number;
+  lng?: number;
 };
 
 export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
@@ -141,17 +144,24 @@ export async function fetchLeadsFromGoogle({ keyword, location }: Props) {
 
     const teamId = membership?.team_id || null;
 
-    const inserts = allowedNewLeads.map((lead: Place) => ({
-      user_id: user.id,
-      team_id: teamId, // ✅ shared across team if present
-      name: lead.name,
-      address: lead.address || '',
-      google_place_id: lead.place_id,
-      phone: lead.phone || null,
-      score: scoreLead(lead),
-      category: keyword,
-      location: location,
-    }));
+    const inserts = await Promise.all(
+      allowedNewLeads.map(async (lead: Place) => {
+        const coords = await geocodeFromPlaceId(lead.place_id);
+        return {
+          user_id: user.id,
+          team_id: teamId, // ✅ shared across team if present
+          name: lead.name,
+          address: lead.address || '',
+          google_place_id: lead.place_id,
+          phone: lead.phone || null,
+          score: scoreLead(lead),
+          category: keyword,
+          location: location,
+          lat: coords?.lat || null,
+          lng: coords?.lng || null,
+        };
+      })
+    );
 
     if (inserts.length > 0) {
       const { error: insertError } = await supabase

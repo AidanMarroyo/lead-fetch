@@ -1,15 +1,15 @@
 'use client';
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import { useEffect, useState } from 'react';
+import L, { LatLngBounds } from 'leaflet';
+import { useEffect, useRef, useState } from 'react';
 import { LeadFilter } from '@/lib/types';
 import { Lead } from '../lead-table/types';
 
 const getMarkerColor = (score: number) => {
-  if (score >= 80) return 'green';
-  if (score >= 50) return 'orange';
-  return 'red';
+  if (score >= 71) return 'green'; // best leads
+  if (score >= 31) return 'orange'; // mid
+  return 'red'; // less valuable
 };
 
 const createIcon = (color: string) =>
@@ -21,6 +21,7 @@ const createIcon = (color: string) =>
 
 export function LeadsMap({ filters }: { filters: LeadFilter }) {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -28,8 +29,22 @@ export function LeadsMap({ filters }: { filters: LeadFilter }) {
         method: 'POST',
         body: JSON.stringify({ filters }),
       });
-      const data = await res.json();
+
+      const data: Lead[] = await res.json();
       setLeads(data);
+
+      // After leads load, fit the map to their bounds
+      if (mapRef.current && data.length > 0) {
+        const bounds = new LatLngBounds(
+          data
+            .filter((l) => l.lat && l.lng)
+            .map((l) => [Number(l.lat), Number(l.lng)] as [number, number])
+        );
+
+        if (bounds.isValid()) {
+          mapRef.current.fitBounds(bounds, { padding: [40, 40] });
+        }
+      }
     };
 
     fetchLeads();
@@ -37,11 +52,16 @@ export function LeadsMap({ filters }: { filters: LeadFilter }) {
 
   return (
     <MapContainer
-      center={[43.6532, -79.3832]} // Default center (Toronto)
+      center={[43.6532, -79.3832]} // initial center = Toronto
       zoom={10}
       scrollWheelZoom={true}
       style={{ height: '600px', width: '100%' }}
       className='rounded-lg border'
+      ref={(mapElement) => {
+        if (mapElement) {
+          mapRef.current = mapElement;
+        }
+      }}
     >
       <TileLayer
         attribution='&copy; OpenStreetMap contributors'
@@ -49,7 +69,7 @@ export function LeadsMap({ filters }: { filters: LeadFilter }) {
       />
 
       {leads
-        .filter((lead) => !!lead.lat && !!lead.lng)
+        .filter((lead) => lead.lat && lead.lng)
         .map((lead) => {
           const color = getMarkerColor(lead.score);
           return (

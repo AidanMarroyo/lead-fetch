@@ -19,6 +19,8 @@ import { LeadTable } from '@/components/lead-table/table';
 import { LeadFilters } from '@/components/leads/LeadFilter';
 import { LeadFilter } from '@/lib/types';
 import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
+import { LeadScoreLegend } from '@/components/LeadScoreLegend';
+import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
 
 export default function LeadScraperPage() {
   const [keyword, setKeyword] = useState('');
@@ -123,13 +125,17 @@ export default function LeadScraperPage() {
 
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Lead Results</h2>
-        <Button variant='outline' onClick={() => setMapView(!mapView)}>
-          {mapView ? 'Show Table View' : 'Show Map View'}
-        </Button>
+        <div className='flex items-center gap-4'>
+          <DownloadCSVButton filters={filters} />
+          <Button variant='outline' onClick={() => setMapView(!mapView)}>
+            {mapView ? 'Table View' : 'Map View'}
+          </Button>
+        </div>
       </div>
 
       <LeadFilters onApply={setFilters} />
 
+      <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />
       ) : (

@@ -1,9 +1,8 @@
 'use client';
-
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '../ui/badge';
 import { Lead } from './types';
 import { StatusDropdown } from './status-dropdown';
+import { cn } from '@/lib/utils';
 
 export const columns: ColumnDef<Lead>[] = [
   {
@@ -18,8 +17,21 @@ export const columns: ColumnDef<Lead>[] = [
     accessorKey: 'score',
     header: 'Score',
     cell: ({ row }) => {
-      const score = row.getValue('score') as number;
-      return <Badge variant='outline'>{score}</Badge>;
+      const score = row.original.score;
+      return (
+        <span
+          className={cn(
+            'px-2 py-1 rounded text-xs font-medium',
+            score >= 71
+              ? 'bg-green-100 text-green-700'
+              : score >= 31
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-red-100 text-red-700'
+          )}
+        >
+          {score}
+        </span>
+      );
     },
   },
   {

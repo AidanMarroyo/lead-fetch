@@ -3,6 +3,7 @@ import './globals.css';
 import 'leaflet/dist/leaflet.css';
 import { Toaster } from '@/components/ui/sonner';
 import { Inter } from 'next/font/google';
+import { Providers } from './theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,8 +20,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        {children}
-        <Toaster />
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

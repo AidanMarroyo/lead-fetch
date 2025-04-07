@@ -15,7 +15,7 @@ export default function PipelinePage() {
 
   return (
     <div className='p-6'>
-      <h1 className='text-2xl font-semibold mb-6'>CRM Pipeline</h1>
+      <h1 className='text-2xl font-semibold mb-6'>Webbed CRM</h1>
       <LeadFilters onApply={setFilters} />
       <KanbanBoard filters={filters} />
     </div>

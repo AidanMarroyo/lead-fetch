@@ -1,5 +1,6 @@
 // tailwind.config.ts (if using Tailwind v4)
 const config = {
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

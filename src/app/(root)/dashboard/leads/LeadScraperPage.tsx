@@ -84,7 +84,7 @@ export default function LeadScraperPage() {
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
       <h1 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
-        Lead Scraper
+        Webbed Leads
         {plan === 'free' && (
           <span className='text-xs bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded font-medium'>
             Free Plan
@@ -149,7 +149,7 @@ export default function LeadScraperPage() {
       </form>
 
       <div className='flex items-center justify-between mt-10 mb-4'>
-        <h2 className='text-xl font-semibold'>Lead Results</h2>
+        <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
           {plan !== 'free' ? (
             <DownloadCSVButton filters={filters} />

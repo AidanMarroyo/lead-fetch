@@ -36,8 +36,9 @@ export async function signup(formData: FormData) {
     password,
   });
 
-  if (error) redirect('/error');
-
+  if (error) {
+    console.log('Error signing up:', error.message);
+  }
   const userId = signUpData.user?.id;
   if (!userId) redirect('/error');
 

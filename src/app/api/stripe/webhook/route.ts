@@ -26,20 +26,35 @@ export async function POST(req: NextRequest) {
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log('🔍 Checkout session:', session);
 
       const subId = session.subscription as string;
       const custId = session.customer as string;
 
       if (!subId || !custId) {
-        console.error('❌ Missing customer or subscription in session');
-        return new NextResponse('Missing customer or subscription', {
+        console.error('❌ Missing subscription or customer ID');
+        return new NextResponse('Missing subscription or customer', {
           status: 400,
         });
       }
 
       const subscription = await stripe.subscriptions.retrieve(subId);
-      console.log('✅ Subscription from Stripe:', subscription);
+      const customer = await stripe.customers.retrieve(custId);
+
+      if (
+        typeof customer === 'object' &&
+        'deleted' in customer &&
+        customer.deleted === true
+      ) {
+        console.error('❌ Stripe customer was deleted');
+        return new NextResponse('Customer deleted', { status: 400 });
+      }
+
+      const userId = (customer as Stripe.Customer).metadata?.supabaseUserId;
+
+      if (!userId) {
+        console.error('❌ Missing supabaseUserId in customer metadata');
+        return new NextResponse('Missing user ID', { status: 400 });
+      }
 
       const priceId = subscription.items.data[0].price.id;
       const plan =
@@ -53,55 +68,45 @@ export async function POST(req: NextRequest) {
           status: subscription.status,
           plan,
         })
-        .eq('stripe_customer_id', custId);
+        .eq('user_id', userId);
 
       if (error) {
         console.error('❌ Supabase update error:', error);
       } else {
-        console.log('✅ Supabase subscription updated');
+        console.log('✅ Subscription row updated for user:', userId);
       }
 
-      // ✅ TEAM PLAN: Create team + add user as admin if they don't have one yet
+      // ✅ Optional: create team if they're on the team plan
       if (plan === 'team') {
-        const { data: user } = await supabase
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', custId)
-          .single();
+        const { data: existingTeam } = await supabase
+          .from('team_members')
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle();
 
-        if (user?.user_id) {
-          const userId = user.user_id;
+        if (!existingTeam) {
+          const { data: team, error: teamError } = await supabase
+            .from('teams')
+            .insert({
+              owner_id: userId,
+              name: 'My Team',
+            })
+            .select()
+            .single();
 
-          const { data: existingTeam } = await supabase
-            .from('team_members')
-            .select('id')
-            .eq('user_id', userId)
-            .maybeSingle();
+          if (!teamError && team?.id) {
+            await supabase.from('team_members').insert({
+              user_id: userId,
+              team_id: team.id,
+              role: 'admin',
+            });
 
-          if (!existingTeam) {
-            const { data: team, error: teamError } = await supabase
-              .from('teams')
-              .insert({
-                owner_id: userId,
-                name: 'My Team',
-              })
-              .select()
-              .single();
-
-            if (!teamError && team?.id) {
-              await supabase.from('team_members').insert({
-                user_id: userId,
-                team_id: team.id,
-                role: 'admin',
-              });
-
-              console.log('✅ Team created and user linked as admin');
-            } else {
-              console.error('❌ Error creating team:', teamError);
-            }
+            console.log('✅ Team created and user added as admin');
           } else {
-            console.log('ℹ️ User already in a team, skipping team creation');
+            console.error('❌ Failed to create team:', teamError);
           }
+        } else {
+          console.log('ℹ️ User already in a team');
         }
       }
     }
@@ -109,20 +114,36 @@ export async function POST(req: NextRequest) {
     if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object as Stripe.Subscription;
 
-      await supabase
-        .from('subscriptions')
-        .update({
-          status: 'canceled',
-          plan: 'free',
-        })
-        .eq('stripe_subscription_id', sub.id);
+      const customer = await stripe.customers.retrieve(sub.customer as string);
 
-      console.log('✅ Subscription marked as canceled');
+      // Proper narrowing: handle deleted customers
+      if (
+        typeof customer !== 'string' &&
+        'deleted' in customer &&
+        customer.deleted
+      ) {
+        console.error('❌ Stripe customer was deleted');
+        return new NextResponse('Customer was deleted', { status: 400 });
+      }
+
+      const userId = (customer as Stripe.Customer).metadata?.supabaseUserId;
+
+      if (userId) {
+        await supabase
+          .from('subscriptions')
+          .update({
+            status: 'canceled',
+            plan: 'free',
+          })
+          .eq('user_id', userId);
+
+        console.log('✅ Subscription canceled and user downgraded');
+      }
     }
 
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error('❌ Error processing webhook:', err);
-    return new NextResponse('Webhook handling error', { status: 500 });
+    return new NextResponse('Webhook handler error', { status: 500 });
   }
 }

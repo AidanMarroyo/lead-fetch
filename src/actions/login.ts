@@ -25,49 +25,58 @@ export async function login(formData: FormData) {
   redirect('/dashboard/leads');
 }
 
+// export async function signup(formData: FormData) {
+//   const supabase = await createClient();
+//   const data = {
+//     email: formData.get('email') as string,
+//     password: formData.get('password') as string,
+//   };
+
+//   const { error } = await supabase.auth.signUp(data);
+
+//   if (error) {
+//     console.error('Error signing up:', error.message);
+//   }
+//   revalidatePath('/', 'layout');
+//   redirect('/dashboard/leads');
+// }
+
 export async function signup(formData: FormData) {
   const supabase = await createClient();
 
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const data = {
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+  };
 
-  const { data: signUpData, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  const { data: signUpData, error } = await supabase.auth.signUp(data);
 
-  if (error) {
-    console.log('Error signing up:', error.message);
-  }
+  if (error) console.error('Error signing up:', error.message);
+
   const userId = signUpData.user?.id;
-  // if (!userId) redirect('/error');
+  if (!userId) console.error('No user ID found after sign up.');
 
-  // Check if this user was invited to a team
   const { data: invite } = await supabase
     .from('team_invites')
     .select('team_id')
-    .eq('email', email)
+    .eq('email', data.email)
     .single();
 
   if (invite?.team_id) {
-    // Join the team they were invited to
     await supabase.from('team_members').insert({
       user_id: userId,
       team_id: invite.team_id,
       role: 'member',
     });
 
-    // Delete the invite (optional)
-    await supabase.from('team_invites').delete().eq('email', email);
+    await supabase.from('team_invites').delete().eq('email', data.email);
 
-    // Also add a subscription record
     await supabase.from('subscriptions').insert({
       user_id: userId,
       plan: 'team',
       status: 'active',
     });
   } else {
-    // Default to free plan
     await supabase.from('subscriptions').insert({
       user_id: userId,
       plan: 'free',

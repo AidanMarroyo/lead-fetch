@@ -57,6 +57,11 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
+    subscription_data: {
+      metadata: {
+        supabaseUserId: user.id,
+      },
+    },
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings/billing`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings/billing`,
   });

@@ -40,7 +40,7 @@ export async function signup(formData: FormData) {
     console.log('Error signing up:', error.message);
   }
   const userId = signUpData.user?.id;
-  if (!userId) redirect('/error');
+  // if (!userId) redirect('/error');
 
   // Check if this user was invited to a team
   const { data: invite } = await supabase

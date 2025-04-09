@@ -28,5 +28,13 @@ export async function POST(req: Request) {
     .eq('id', memberId)
     .eq('team_id', myMembership.team_id);
 
+  // change the removed members subscription to free
+  await supabase
+    .from('subscriptions')
+    .update({ plan: 'free', status: 'inactive' })
+    .eq('user_id', memberId);
+
+  await supabase.from('profiles').update({ team_id: null }).eq('id', memberId);
+
   return NextResponse.json({ success: true });
 }

@@ -61,7 +61,7 @@ export function TeamManagement() {
             >
               <div>
                 <p className='font-medium'>
-                  {member.first_name} {member.last_name}
+                  {member.first_name} {member.last_name} {member.id}
                 </p>
                 <p className='text-sm text-muted-foreground'>{member.email}</p>
               </div>

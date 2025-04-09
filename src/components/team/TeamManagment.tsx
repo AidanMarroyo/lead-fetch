@@ -7,9 +7,10 @@ import { toast } from 'sonner';
 
 type Member = {
   id: string;
-  role: string;
-  user_id: string;
-  users: { email: string };
+  first_name: string;
+  last_name: string;
+  owner_id: string;
+  email: string;
 };
 
 export function TeamManagement() {
@@ -59,10 +60,12 @@ export function TeamManagement() {
               className='flex items-center justify-between border rounded-md px-4 py-2'
             >
               <div>
-                <p className='font-medium'>{member.users.email}</p>
-                <p className='text-sm text-muted-foreground'>{member.role}</p>
+                <p className='font-medium'>
+                  {member.first_name} {member.last_name}
+                </p>
+                <p className='text-sm text-muted-foreground'>{member.email}</p>
               </div>
-              {member.role !== 'admin' && (
+              {member.owner_id !== member.id && (
                 <Button
                   variant='destructive'
                   onClick={() => handleRemove(member.id)}

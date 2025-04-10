@@ -191,7 +191,7 @@ export async function fetchLeadsFromGoogle({
         userId: userId,
         teamId: teamId,
         action: 'leads_added',
-        message: `${profile?.first_name} ${profile?.last_name} added ${inserts.length} leads in the city of ${location} for the keyword "${keyword}".`,
+        message: `${profile?.first_name} ${profile?.last_name} added ${inserts.length} leads in ${location} for the keyword "${keyword}".`,
       });
 
       if (insertError) {

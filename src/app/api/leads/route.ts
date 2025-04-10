@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   let query = supabase
     .from('leads')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('score', { ascending: false });
 
   query = isTeam ? query.eq('team_id', teamId) : query.eq('user_id', user.id);
 

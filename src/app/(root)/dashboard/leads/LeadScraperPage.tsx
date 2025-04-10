@@ -188,7 +188,7 @@ export default function LeadScraperPage() {
           </Button>
         </div>
       </div>
-      <LeadFilters onApply={handleApplyFilters} />;
+      <LeadFilters onApply={handleApplyFilters} />
       {plan !== 'free' ? (
         <SaveSearchButton
           keyword={keyword}

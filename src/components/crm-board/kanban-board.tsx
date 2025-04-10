@@ -62,7 +62,7 @@ export function KanbanBoard({ filters }: { filters: LeadFilter }) {
           });
         }}
       >
-        <div className='grid grid-cols-4 gap-4 mt-8'>
+        <div className='mt-8 space-y-4 sm:space-y-0 sm:grid sm:grid-cols-4 sm:gap-4'>
           <SortableContext
             items={STATUSES.map((status) => ({ id: status }))}
             strategy={verticalListSortingStrategy}
@@ -101,15 +101,15 @@ export function KanbanBoard({ filters }: { filters: LeadFilter }) {
 }
 function SkeletonColumn({ status }: { status: string }) {
   return (
-    <div className='bg-gray-100 rounded-lg p-4 shadow-md'>
-      <h2 className='text-lg font-semibold mb-4 capitalize text-gray-500'>
+    <div className='bg-gray-100 dark:bg-muted rounded-lg p-4 shadow-md w-full'>
+      <h2 className='text-lg font-semibold mb-4 capitalize '>
         {status.replace('-', ' ')}
       </h2>
       <div className='space-y-4'>
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className='h-20 bg-gray-200 rounded-md animate-pulse'
+            className='h-20 bg-gray-200 dark:bg-card rounded-md animate-pulse'
           ></div>
         ))}
       </div>

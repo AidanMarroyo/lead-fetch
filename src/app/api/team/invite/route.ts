@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
 import { sendInviteEmail } from '@/lib/email'; // using Resend
+import { logActivity } from '@/actions/logActivity';
 
 type UserRecord = {
   id: string;
@@ -32,7 +33,9 @@ export async function POST(req: Request) {
 
   // Try to find the user by email
   const { data: rawUserData } = await supabase
-    .rpc('get_user_by_email', { input_email: email })
+    .from('profiles')
+    .select('id, email')
+    .eq('email', email)
     .maybeSingle();
 
   const userData = rawUserData as UserRecord | null;
@@ -79,6 +82,25 @@ export async function POST(req: Request) {
   await sendInviteEmail({
     to: email,
     inviterEmail: inviter.email!,
+  });
+
+  const { data: teamData } = await supabase
+    .from('teams')
+    .select('name')
+    .eq('id', teamId)
+    .single();
+
+  const { data: inviterData } = await supabase
+    .from('profiles')
+    .select('first_name, last_name')
+    .eq('id', inviter.id)
+    .single();
+
+  await logActivity({
+    userId: inviter.id,
+    teamId: teamId,
+    action: 'team_member_invite',
+    message: `${inviterData?.first_name} ${inviterData?.last_name} invited ${email} to team ${teamData?.name}`,
   });
 
   return NextResponse.json({ success: true });

@@ -5,6 +5,7 @@ import { scoreLead } from '@/lib/scoring';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { geocodeFromPlaceId } from './geocodePlace';
+import { logActivity } from './logActivity';
 
 type Props = {
   keyword: string;
@@ -175,10 +176,23 @@ export async function fetchLeadsFromGoogle({
       })
     );
 
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', userId)
+      .single();
+
     if (inserts.length > 0) {
       const { error: insertError } = await supabase
         .from('leads')
         .insert(inserts);
+
+      await logActivity({
+        userId: userId,
+        teamId: teamId,
+        action: 'leads_added',
+        message: `${profile?.first_name} ${profile?.last_name} added ${inserts.length} leads in the city of ${location} for the keyword "${keyword}".`,
+      });
 
       if (insertError) {
         console.error('Error inserting new leads:', insertError);

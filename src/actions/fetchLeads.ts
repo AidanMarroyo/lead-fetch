@@ -106,10 +106,10 @@ export async function fetchLeadsFromGoogle({
       return { success: false, message: 'Error fetching places.' };
     }
 
-    const leadsWithoutWebsites = places.filter(
-      (place: Place) => !place.website
-    );
-    const placeIds = leadsWithoutWebsites.map((p) => p.place_id);
+    // const leadsWithoutWebsites = places.filter(
+    //   (place: Place) => !place.website
+    // );
+    const placeIds = places.map((p) => p.place_id);
 
     // Prevent duplicates
     const { data: existingLeads, error: fetchError } = await supabase
@@ -127,7 +127,7 @@ export async function fetchLeadsFromGoogle({
     }
 
     const existingIds = new Set(existingLeads.map((l) => l.google_place_id));
-    const newLeads = leadsWithoutWebsites.filter(
+    const newLeads = places.filter(
       (lead: Place) => !existingIds.has(lead.place_id)
     );
 
@@ -172,6 +172,7 @@ export async function fetchLeadsFromGoogle({
           location: location,
           lat: coords?.lat || null,
           lng: coords?.lng || null,
+          website: lead.website || null,
         };
       })
     );

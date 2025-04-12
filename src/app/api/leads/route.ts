@@ -82,6 +82,14 @@ export async function POST(req: NextRequest) {
     query = query.gte('created_at', oneWeekAgo.toISOString());
   }
 
+  if (filters.websiteStatus === 'has') {
+    query = query.neq('website', null);
+  } else if (filters.websiteStatus === 'none') {
+    query = query.is('website', null);
+  } else if (filters.websiteStatus === 'bad') {
+    query = query.eq('website_grade', 'bad'); // when AI audit is added
+  }
+
   const { data, error } = await query;
 
   if (error) {

@@ -24,6 +24,8 @@ export function LeadFilters({
   const [status, setStatus] = useState<StatusOption>('all');
   const [score, setScore] = useState<[number, number]>([0, 100]);
   const [recentOnly, setRecentOnly] = useState(false);
+  const [websiteStatus, setWebsiteStatus] =
+    useState<LeadFilter['websiteStatus']>();
 
   useEffect(() => {
     onApply({
@@ -31,8 +33,9 @@ export function LeadFilters({
       status: status === 'all' ? undefined : status,
       minScore: score[0],
       maxScore: score[1],
+      websiteStatus,
     });
-  }, [location, status, score, recentOnly, onApply]);
+  }, [location, status, score, recentOnly, onApply, websiteStatus]);
 
   function capitalize(status: string | undefined): string {
     if (!status) return '';
@@ -105,6 +108,21 @@ export function LeadFilters({
             Show only leads from this week
           </Label>
         </div>
+        <Select
+          value={websiteStatus}
+          onValueChange={(v) =>
+            setWebsiteStatus(v as LeadFilter['websiteStatus'])
+          }
+        >
+          <SelectTrigger className='w-40'>
+            <SelectValue placeholder='Website Filter' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='has'>Has Website</SelectItem>
+            <SelectItem value='none'>No Website</SelectItem>
+            <SelectItem value='bad'>Bad Website</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

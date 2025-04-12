@@ -8,4 +8,6 @@ export type Lead = {
   notes?: string;
   google_place_id?: string;
   rating?: number;
+  website?: string;
+  ai_suggestions?: string;
 };

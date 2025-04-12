@@ -18,6 +18,10 @@ import { pdf } from '@react-pdf/renderer';
 import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 import { toast } from 'sonner';
 import { Place } from '@/actions/fetchLeads';
+import { analyzeWebsite } from '@/actions/analyzeWebsite';
+import { suggestWebsiteImprovements } from '@/actions/suggestWebsiteImprovement';
+import { Loader2 } from 'lucide-react';
+import { saveAiSuggestions } from '@/actions/saveAiSuggestion';
 
 type Props = {
   lead: Lead;
@@ -36,6 +40,33 @@ export function LeadDetailModal({ lead, onClose }: Props) {
     }[]
   >([]);
   const [placeDetails, setPlaceDetails] = useState<Place | null>(null);
+
+  const [websiteData, setWebsiteData] = useState<null | {
+    title: string;
+    description: string;
+    favicon: string;
+    usesSSL: boolean;
+    url: string;
+  }>(null);
+
+  const [aiSuggestions, setAiSuggestions] = useState<string | null>(null);
+  const [suggesting, setSuggesting] = useState(false);
+
+  useEffect(() => {
+    const fetchWebsite = async () => {
+      if (!lead.website) return;
+
+      const result = await analyzeWebsite(lead.website);
+      if (result.success) {
+        setWebsiteData(result.data ?? null);
+      }
+
+      if (lead.ai_suggestions) {
+        setAiSuggestions(lead.ai_suggestions);
+      }
+    };
+    fetchWebsite();
+  }, [lead.website, lead.ai_suggestions]);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -83,6 +114,73 @@ export function LeadDetailModal({ lead, onClose }: Props) {
           )}
 
           {placeDetails && <LeadProfileAudit lead={placeDetails} />}
+
+          {websiteData && (
+            <div className='mt-6 space-y-4'>
+              <div className='border p-4 rounded-lg bg-card'>
+                <h3 className='text-sm font-semibold mb-2'>
+                  🌐 Website Metadata
+                </h3>
+                <div className='text-sm space-y-1'>
+                  <p>
+                    <strong>Title:</strong> {websiteData.title}
+                  </p>
+                  <p>
+                    <strong>Description:</strong> {websiteData.description}
+                  </p>
+                  <p>
+                    <strong>SSL:</strong>{' '}
+                    <span
+                      className={
+                        websiteData.usesSSL ? 'text-green-600' : 'text-red-500'
+                      }
+                    >
+                      {websiteData.usesSSL ? 'Secure (SSL)' : 'Not secure'}
+                    </span>
+                  </p>
+                </div>
+                {aiSuggestions ? null : (
+                  <Button
+                    variant='outline'
+                    className='mt-3'
+                    disabled={suggesting}
+                    onClick={async () => {
+                      setSuggesting(true);
+                      const result =
+                        await suggestWebsiteImprovements(websiteData);
+                      if (result.success) {
+                        setAiSuggestions(result.suggestions);
+                        if (result.suggestions) {
+                          await saveAiSuggestions(lead.id, result.suggestions); // 💾 Save to DB
+                        }
+                      }
+                      setSuggesting(false);
+                    }}
+                  >
+                    {suggesting ? (
+                      <span className='flex items-center gap-2'>
+                        <Loader2 className='animate-spin h-4 w-4' />
+                        Generating...
+                      </span>
+                    ) : (
+                      '💡 Generate Suggestions'
+                    )}
+                  </Button>
+                )}
+              </div>
+
+              {aiSuggestions && (
+                <div className='bg-muted border rounded-lg p-4'>
+                  <h4 className='text-sm font-semibold mb-2'>
+                    🤖 AI Suggestions
+                  </h4>
+                  <div className='text-sm text-muted-foreground whitespace-pre-line'>
+                    {aiSuggestions}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className='text-xs'>
             <strong>Score:</strong> {lead.score}

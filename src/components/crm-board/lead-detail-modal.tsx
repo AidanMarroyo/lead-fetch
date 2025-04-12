@@ -150,9 +150,13 @@ export function LeadDetailModal({ lead, onClose }: Props) {
                         await suggestWebsiteImprovements(websiteData);
                       if (result.success) {
                         setAiSuggestions(result.suggestions);
-                        if (result.suggestions) {
-                          await saveAiSuggestions(lead.id, result.suggestions); // 💾 Save to DB
-                        }
+                        await saveAiSuggestions(
+                          lead.id,
+                          result.suggestions,
+                          result.grade
+                        ); // ✅ now includes grade
+                      } else {
+                        toast.error('Failed to fetch suggestions');
                       }
                       setSuggesting(false);
                     }}

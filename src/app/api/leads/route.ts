@@ -82,13 +82,16 @@ export async function POST(req: NextRequest) {
     query = query.gte('created_at', oneWeekAgo.toISOString());
   }
 
-  if (filters.websiteStatus === 'has') {
-    query = query.neq('website', null);
-  } else if (filters.websiteStatus === 'none') {
+  if (filters.websiteStatus === 'no') {
     query = query.is('website', null);
   } else if (filters.websiteStatus === 'bad') {
-    query = query.eq('website_grade', 'bad'); // when AI audit is added
-  }
+    query = query.eq('website_grade', 'bad');
+  } else if (filters.websiteStatus === 'good') {
+    query = query.eq('website_grade', 'good');
+  } else if (filters.websiteStatus === 'has')
+    query = query.neq('website', null);
+  else if (filters.websiteStatus === 'average')
+    query = query.eq('website_grade', 'average');
 
   const { data, error } = await query;
 

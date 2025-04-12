@@ -3,12 +3,19 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-export async function saveAiSuggestions(leadId: string, suggestions: string) {
+export async function saveAiSuggestions(
+  leadId: string,
+  suggestions: string,
+  grade?: 'bad' | 'average' | 'good'
+) {
   const supabase = await createClient();
 
   const { error } = await supabase
     .from('leads')
-    .update({ ai_suggestions: suggestions })
+    .update({
+      ai_suggestions: suggestions,
+      ...(grade && { website_grade: grade }),
+    })
     .eq('id', leadId);
 
   if (error) {

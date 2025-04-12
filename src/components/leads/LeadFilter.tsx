@@ -114,13 +114,16 @@ export function LeadFilters({
             setWebsiteStatus(v as LeadFilter['websiteStatus'])
           }
         >
-          <SelectTrigger className='w-40'>
+          <SelectTrigger className='w-45'>
             <SelectValue placeholder='Website Filter' />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value='all'>All</SelectItem>
+            <SelectItem value='no'>No Website</SelectItem>
             <SelectItem value='has'>Has Website</SelectItem>
-            <SelectItem value='none'>No Website</SelectItem>
+            <SelectItem value='average'>Average Website</SelectItem>
             <SelectItem value='bad'>Bad Website</SelectItem>
+            <SelectItem value='good'>Good Website</SelectItem>
           </SelectContent>
         </Select>
       </div>

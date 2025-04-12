@@ -22,6 +22,7 @@ import { analyzeWebsite } from '@/actions/analyzeWebsite';
 import { suggestWebsiteImprovements } from '@/actions/suggestWebsiteImprovement';
 import { Loader2 } from 'lucide-react';
 import { saveAiSuggestions } from '@/actions/saveAiSuggestion';
+import { fetchAndSaveCompetitorData } from '@/actions/fetchCompetitorData';
 
 type Props = {
   lead: Lead;
@@ -40,7 +41,6 @@ export function LeadDetailModal({ lead, onClose }: Props) {
     }[]
   >([]);
   const [placeDetails, setPlaceDetails] = useState<Place | null>(null);
-
   const [websiteData, setWebsiteData] = useState<null | {
     title: string;
     description: string;
@@ -48,9 +48,15 @@ export function LeadDetailModal({ lead, onClose }: Props) {
     usesSSL: boolean;
     url: string;
   }>(null);
-
   const [aiSuggestions, setAiSuggestions] = useState<string | null>(null);
   const [suggesting, setSuggesting] = useState(false);
+  const [competitorLoading, setCompetitorLoading] = useState(false);
+  const [competitorData, setCompetitorData] = useState<{
+    techStack: string[];
+    trafficRank: number | null;
+    adSpendEstimate: string | null;
+    optimizationLevel: string | null;
+  } | null>(null);
 
   useEffect(() => {
     const fetchWebsite = async () => {
@@ -154,7 +160,7 @@ export function LeadDetailModal({ lead, onClose }: Props) {
                           lead.id,
                           result.suggestions,
                           result.grade
-                        ); // ✅ now includes grade
+                        );
                       } else {
                         toast.error('Failed to fetch suggestions');
                       }
@@ -185,6 +191,82 @@ export function LeadDetailModal({ lead, onClose }: Props) {
               )}
             </div>
           )}
+
+          {/* ✅ Competitor Analysis */}
+          <div className='border-t pt-4'>
+            <div className='flex justify-between items-center mb-2'>
+              <h3 className='text-sm font-semibold'>📈 Competitor Analysis</h3>
+              {lead.website && !competitorData && (
+                <Button
+                  variant='outline'
+                  disabled={competitorLoading}
+                  onClick={async () => {
+                    setCompetitorLoading(true);
+                    try {
+                      const res = await fetchAndSaveCompetitorData(
+                        lead.id,
+                        lead.website!
+                      );
+                      if (res.success && res.data) {
+                        setCompetitorData(res.data);
+                        toast.success('Competitor data added!');
+                      } else {
+                        toast.error(res.message || 'Unknown error');
+                      }
+                    } catch (error) {
+                      toast.error('Something went wrong.');
+                      console.error((error as Error).message);
+                    } finally {
+                      setCompetitorLoading(false); // 🔐 always reset loading
+                    }
+                  }}
+                >
+                  {competitorLoading ? (
+                    <span className='flex items-center gap-2'>
+                      <Loader2 className='animate-spin h-4 w-4' />
+                      Generating...
+                    </span>
+                  ) : (
+                    '📊 Generate'
+                  )}
+                </Button>
+              )}
+            </div>
+
+            {competitorData ? (
+              <div className='space-y-2 text-sm text-muted-foreground'>
+                <p>
+                  <strong>Website Tech Stack:</strong>{' '}
+                  <span className='text-foreground'>
+                    {competitorData.techStack?.join(', ') || '—'}
+                  </span>
+                </p>
+                <p>
+                  <strong>Traffic Rank:</strong>{' '}
+                  <span className='text-foreground'>
+                    {competitorData.trafficRank ?? '—'}
+                  </span>
+                </p>
+                <p>
+                  <strong>Ad Spend Estimate:</strong>{' '}
+                  <span className='text-foreground'>
+                    {competitorData.adSpendEstimate ?? '—'}
+                  </span>
+                </p>
+                <p>
+                  <strong>Optimization Level:</strong>{' '}
+                  <span className='capitalize text-foreground'>
+                    {competitorData.optimizationLevel ?? '—'}
+                  </span>
+                </p>
+              </div>
+            ) : (
+              <p className='text-xs text-muted-foreground mt-1'>
+                This section will auto-populate via APIs like BuiltWith or
+                SimilarWeb.
+              </p>
+            )}
+          </div>
 
           <div className='text-xs'>
             <strong>Score:</strong> {lead.score}

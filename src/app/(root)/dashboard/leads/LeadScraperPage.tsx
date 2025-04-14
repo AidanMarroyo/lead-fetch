@@ -1,19 +1,7 @@
 'use client';
-
 import { useCallback, useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { fetchLeadsFromGoogle } from '@/actions/fetchLeads';
-import { americanStates, canadianProvinces } from '@/utils/constants';
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-} from '@/components/ui/select';
 
 import { LeadTable } from '@/components/lead-table/table';
 import { LeadFilters } from '@/components/leads/LeadFilter';
@@ -21,7 +9,6 @@ import { LeadFilter } from '@/lib/types';
 import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
 import { LeadScoreLegend } from '@/components/LeadScoreLegend';
 import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
-import { SaveSearchButton } from '@/components/leads/SaveSearchButton';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { ProTag } from '@/components/ui/ProTag';
 import {
@@ -29,14 +16,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import ScraperForm from './ScraperForm';
 
 export default function LeadScraperPage() {
   const { plan } = useUserPlan();
-  const [keyword, setKeyword] = useState('');
-  const [city, setCity] = useState('');
-  const [provinceOrState, setProvinceOrState] = useState('');
-  const [country, setCountry] = useState('Canada');
-  const [loading, setLoading] = useState(false);
+
   const [mapView, setMapView] = useState(false); // ✅ NEW
   const [filters, setFilters] = useState<LeadFilter>({
     status: undefined,
@@ -53,25 +37,6 @@ export default function LeadScraperPage() {
       document.cookie = 'redirect_reason=; Max-Age=0; path=/';
     }
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const fullLocation =
-      `${city}, ${provinceOrState}, ${country}`.toLowerCase();
-    const result = await fetchLeadsFromGoogle({
-      keyword,
-      location: fullLocation,
-    });
-    setLoading(false);
-    if (result?.success) {
-      toast.success(`${result.count} leads found and stored`);
-    } else {
-      toast.error(`${result.message}`);
-    }
-  };
-
-  const regionList = country === 'Canada' ? canadianProvinces : americanStates;
 
   const handleToggleMap = () => {
     if (plan === 'free') {
@@ -95,61 +60,7 @@ export default function LeadScraperPage() {
           </span>
         )}
       </h1>
-      <form onSubmit={handleSubmit} className='space-y-4'>
-        <div>
-          <Label htmlFor='keyword'>Business Type</Label>
-          <Input
-            id='keyword'
-            placeholder='e.g. Plumber'
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor='city'>City</Label>
-          <Input
-            id='city'
-            placeholder='e.g. Toronto'
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor='provinceOrState'>Province/State</Label>
-          <Select
-            onValueChange={(value) => setProvinceOrState(value)}
-            value={provinceOrState}
-          >
-            <SelectTrigger className='w-full border p-2 rounded-md'>
-              <SelectValue
-                placeholder={country === 'Canada' ? 'Province' : 'State'}
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {regionList.map((region) => (
-                <SelectItem key={region} value={region}>
-                  {region}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor='country'>Country</Label>
-          <Select onValueChange={(value) => setCountry(value)} value={country}>
-            <SelectTrigger className='w-full border p-2 rounded-md'>
-              <SelectValue placeholder='Select Country' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='Canada'>Canada</SelectItem>
-              <SelectItem value='USA'>USA</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button type='submit' disabled={loading}>
-          {loading ? 'Searching...' : 'Find Leads'}
-        </Button>
-      </form>
+      <ScraperForm />
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
@@ -189,7 +100,7 @@ export default function LeadScraperPage() {
         </div>
       </div>
       <LeadFilters onApply={handleApplyFilters} />
-      {plan !== 'free' ? (
+      {/* {plan !== 'free' ? (
         <SaveSearchButton
           keyword={keyword}
           location={`${city}, ${provinceOrState}`}
@@ -207,7 +118,7 @@ export default function LeadScraperPage() {
             </Tooltip>
           </span>
         </p>
-      )}
+      )} */}
       <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />

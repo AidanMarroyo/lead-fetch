@@ -11,6 +11,7 @@ type Props = {
   keyword: string;
   location: string;
   user_id?: string; // ✅ override for cron
+  withWebsites: boolean; // ✅ override for cron
 };
 
 type LeadPhoto = {
@@ -40,6 +41,7 @@ export async function fetchLeadsFromGoogle({
   keyword,
   location,
   user_id,
+  withWebsites,
 }: Props) {
   const supabase = await createClient();
 
@@ -106,10 +108,12 @@ export async function fetchLeadsFromGoogle({
       return { success: false, message: 'Error fetching places.' };
     }
 
-    // const leadsWithoutWebsites = places.filter(
-    //   (place: Place) => !place.website
-    // );
-    const placeIds = places.map((p) => p.place_id);
+    // Filter based on `withWebsites` flag
+    const filteredPlaces = places.filter((place: Place) =>
+      withWebsites ? !!place.website : !place.website
+    );
+
+    const placeIds = filteredPlaces.map((p) => p.place_id);
 
     // Prevent duplicates
     const { data: existingLeads, error: fetchError } = await supabase
@@ -127,7 +131,7 @@ export async function fetchLeadsFromGoogle({
     }
 
     const existingIds = new Set(existingLeads.map((l) => l.google_place_id));
-    const newLeads = places.filter(
+    const newLeads = filteredPlaces.filter(
       (lead: Place) => !existingIds.has(lead.place_id)
     );
 

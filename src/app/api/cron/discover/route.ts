@@ -27,7 +27,12 @@ export async function GET(req: NextRequest) {
     const { keyword, location, user_id, id } = search;
 
     try {
-      const result = await fetchLeadsFromGoogle({ keyword, location, user_id });
+      const result = await fetchLeadsFromGoogle({
+        keyword,
+        location,
+        user_id,
+        withWebsites: false,
+      });
 
       console.log(
         `🔁 Ran [${keyword} in ${location}] for user ${user_id} → ${

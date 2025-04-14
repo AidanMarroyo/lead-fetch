@@ -43,21 +43,16 @@ export default function ScraperForm() {
     formState: { isSubmitting },
   } = form;
   const country = watch('country');
-  const city = watch('city');
-  const provinceOrState = watch('provinceOrState');
-  const keyword = watch('keyword');
-  const withWebsites = watch('withWebsites');
 
   const regionList = country === 'Canada' ? canadianProvinces : americanStates;
 
   const onSubmit = async (values: SearchLeadValues) => {
-    console.log('values', values);
     const fullLocation =
-      `${city}, ${provinceOrState}, ${country}`.toLowerCase();
+      `${values.city}, ${values.provinceOrState}, ${values.country}`.toLowerCase();
     const result = await fetchLeadsFromGoogle({
-      keyword: keyword.toLowerCase(),
+      keyword: values.keyword,
       location: fullLocation,
-      withWebsites: withWebsites ?? false,
+      withWebsites: values.withWebsites ?? false,
     });
     if (result?.success) {
       toast.success(`${result.count} leads found and stored`);

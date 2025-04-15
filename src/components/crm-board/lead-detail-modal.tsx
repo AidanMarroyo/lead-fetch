@@ -87,7 +87,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
         });
       }
     };
-
     fetchDetails();
   }, [lead]);
 
@@ -175,13 +174,25 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                     setCompetitorLoading(true);
                     try {
                       // 🔹 Step 1: Scrape
-                      const scrapeRes = await fetch('/api/scrape', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: lead.website }),
-                      });
+                      console.log('[SCRAPE] Sending POST to backend...');
+                      const scrapeRes = await fetch(
+                        'https://webbed-leads-api.onrender.com/scrape',
+                        {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ url: lead.website }),
+                        }
+                      );
+
+                      console.log(
+                        '[SCRAPE] Response received:',
+                        scrapeRes.status
+                      );
 
                       const scrapeData = await scrapeRes.json();
+                      console.log('[SCRAPE] JSON response:', scrapeData);
 
                       if (!scrapeData.success) {
                         toast.error('Website scrape failed');
@@ -210,7 +221,10 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                         autoPitch: analysisRes.data.suggestions,
                       });
                       toast.success('Website audit complete!');
-                      const refreshed = await fetch(`/api/leads/${lead.id}`);
+                      const refreshed = await fetch(
+                        `${window.location.origin}/api/leads/${lead.id}`
+                      );
+
                       const updatedLead = await refreshed.json();
                       onUpdate(updatedLead); // rehydrate lead prop for next open
                     } catch (error) {

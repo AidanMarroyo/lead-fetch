@@ -10,4 +10,12 @@ export type Lead = {
   rating?: number;
   website?: string;
   ai_suggestions?: string;
+  tech_stack?: string[];
+  traffic_rank?: number;
+  ad_spend_estimate?: string;
+  optimization_level?: 'basic' | 'intermediate' | 'advanced';
+  website_score?: number;
+  sales_points?: string;
+  auto_pitch?: string;
+  website_grade?: 'bad' | 'average' | 'good';
 };

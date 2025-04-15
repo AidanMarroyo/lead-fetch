@@ -1,82 +1,45 @@
-'use server';
-
-import { createClient } from '@/utils/supabase/server';
+// lib/getBuiltWithData.ts
 import axios from 'axios';
 
-async function getBuiltWithData(domain: string) {
+export async function getBuiltWithData(domain: string) {
   const apiKey = process.env.BUILTWITH_API_KEY;
   const url = `https://api.builtwith.com/v20/api.json?KEY=${apiKey}&LOOKUP=${domain}`;
+  const response = await axios.get(url);
+  const result = response.data?.Results?.[0];
 
-  try {
-    const response = await axios.get(url);
+  const techStack =
+    result?.Result?.Paths?.flatMap(
+      (path: { Technologies?: { Name: string }[] }) =>
+        path.Technologies?.map((t) => t.Name)
+    ) || [];
 
-    const techNames: string[] =
-      response.data?.Results?.[0]?.Result?.Paths?.flatMap(
-        (path: { Technologies?: { Name: string }[] }) =>
-          path.Technologies?.map((tech: { Name: string }) => tech.Name)
-      ) || [];
-
-    return {
-      techStack: Array.from(new Set(techNames)),
-      trafficRank:
-        response.data?.Results?.[0]?.Result?.Alexa?.GlobalRank ?? null,
-      adSpendEstimate: null, // You may supplement this with another API later
-      optimizationLevel: estimateOptimizationLevel(techNames),
-    };
-  } catch (error) {
-    console.error('BuiltWith API error:', error);
-    return null;
-  }
+  return {
+    techStack: Array.from(new Set(techStack)) as string[],
+    trafficRank: result?.Meta?.ARank ?? null,
+    adSpendEstimate: formatAdSpend(result?.Result?.Spend),
+    optimizationLevel: estimateOptimizationLevel(techStack),
+  };
 }
 
-// 🔍 Very simple heuristic – tweak as needed
 function estimateOptimizationLevel(
-  techStack: string[]
+  tech: string[]
 ): 'basic' | 'intermediate' | 'advanced' {
-  const lower = techStack.map((t) => t.toLowerCase());
-  const hasAnalytics = lower.some((t) => t.includes('google analytics'));
+  const lower = tech.map((t) => t.toLowerCase());
   const hasFramework = lower.some((t) =>
-    ['react', 'vue', 'angular', 'next'].some((f) => t.includes(f))
+    ['react', 'vue', 'next'].some((f) => t.includes(f))
   );
-  const hasSEO = lower.some((t) => t.includes('yoast') || t.includes('seo'));
-
+  const hasAnalytics = lower.some((t) => t.includes('analytics'));
+  const hasSEO = lower.some((t) => t.includes('seo') || t.includes('yoast'));
   if (hasFramework && hasAnalytics && hasSEO) return 'advanced';
-  if (hasFramework || hasAnalytics) return 'intermediate';
+  if (hasFramework || hasAnalytics || hasSEO) return 'intermediate';
   return 'basic';
 }
 
-export async function fetchAndSaveCompetitorData(
-  leadId: string,
-  website: string
-) {
-  const supabase = await createClient();
-  const parsedDomain = website.replace(/^https?:\/\//, '').split('/')[0];
-
-  try {
-    const data = await getBuiltWithData(parsedDomain);
-
-    if (!data) {
-      return { success: false, message: 'Failed to retrieve competitor data.' };
-    }
-
-    const { error } = await supabase
-      .from('leads')
-      .update({
-        tech_stack: data.techStack,
-        traffic_rank: data.trafficRank,
-        ad_spend_estimate: data.adSpendEstimate,
-        optimization_level: data.optimizationLevel,
-      })
-      .eq('id', leadId);
-
-    if (error) {
-      console.error('Supabase save error:', error.message);
-      return { success: false, message: 'Failed to save competitor data' };
-    }
-
-    return { success: true, data };
-  } catch (err) {
-    console.error('[Competitor Analysis Error]', err);
-    return { success: false, message: 'Error during competitor analysis.' };
-  }
+function formatAdSpend(spend: number | undefined | null): string | null {
+  if (spend == null) return null;
+  if (spend <= 10) return '$0–100/mo';
+  if (spend <= 30) return '$100–500/mo';
+  if (spend <= 60) return '$500–1,000/mo';
+  if (spend <= 90) return '$1,000–5,000/mo';
+  return '$5,000+/mo';
 }

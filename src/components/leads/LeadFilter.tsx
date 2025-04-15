@@ -121,9 +121,6 @@ export function LeadFilters({
             <SelectItem value='all'>All</SelectItem>
             <SelectItem value='no'>No Website</SelectItem>
             <SelectItem value='has'>Has Website</SelectItem>
-            <SelectItem value='average'>Average Website</SelectItem>
-            <SelectItem value='bad'>Bad Website</SelectItem>
-            <SelectItem value='good'>Good Website</SelectItem>
           </SelectContent>
         </Select>
       </div>

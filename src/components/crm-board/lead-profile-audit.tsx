@@ -1,4 +1,8 @@
 import { Check, X } from 'lucide-react';
+import { Button } from '../ui/button';
+import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
+import { toast } from 'sonner';
+import { pdf } from '@react-pdf/renderer';
 
 type LeadPhoto = {
   height: number;
@@ -22,7 +26,13 @@ export type Place = {
   phone?: string;
 };
 
-export function LeadProfileAudit({ lead }: { lead: Place }) {
+export function LeadProfileAudit({
+  lead,
+  address,
+}: {
+  lead: Place;
+  address: string;
+}) {
   const auditItems = [
     {
       label: 'Has Website',
@@ -70,7 +80,7 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
   return (
     <div className='mt-6 border-t pt-4'>
       <h3 className='text-sm font-semibold mb-2 text-foreground'>
-        🧾 Profile Audit
+        🧾 Google Profile Audit
       </h3>
       <ul className='space-y-2 text-sm'>
         {auditItems.map((item, i) => (
@@ -84,6 +94,25 @@ export function LeadProfileAudit({ lead }: { lead: Place }) {
           </li>
         ))}
       </ul>
+      <div className='mt-4 flex items-center gap-2'>
+        <Button
+          variant='outline'
+          onClick={async () => {
+            if (!lead) return toast.error('Missing place details');
+
+            const blob = await pdf(
+              <LeadAuditPDF lead={lead} address={address} />
+            ).toBlob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${lead.name}-audit.pdf`;
+            link.click();
+          }}
+        >
+          Download Audit Report (PDF)
+        </Button>
+      </div>
     </div>
   );
 }

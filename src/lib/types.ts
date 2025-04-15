@@ -4,5 +4,5 @@ export type LeadFilter = {
   maxScore?: number;
   location?: string;
   recentOnly?: boolean;
-  websiteStatus?: 'all' | 'no' | 'bad' | 'good' | 'has' | 'average';
+  websiteStatus?: 'all' | 'no' | 'has';
 };

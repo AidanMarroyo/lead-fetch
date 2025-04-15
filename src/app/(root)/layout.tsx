@@ -1,11 +1,23 @@
-'use client';
-
 import { DashboardNavbar } from '@/components/navbar/navbar';
+import { getCurrentUser } from '@/lib/auth';
+import { createClient } from '@/utils/supabase/server';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const supabase = await createClient();
+  const user = await getCurrentUser();
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('first_name, last_name')
+    .eq('id', user?.id)
+    .single();
   return (
     <>
-      <DashboardNavbar />
+      <DashboardNavbar userData={data || { first_name: '', last_name: '' }} />
       <div className='flex h-screen pt-16'>
         <div className='flex flex-col flex-1'>
           <main className='p-4 flex-1 overflow-y-auto'>{children}</main>

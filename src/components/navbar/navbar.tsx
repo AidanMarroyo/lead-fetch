@@ -1,11 +1,5 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+'use client';
+
 import {
   Tooltip,
   TooltipTrigger,
@@ -19,8 +13,13 @@ import ActivityDropdown from './activity';
 import MenuDropdown from './menu';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import UserDropdown from './user-dropdown';
 
-export function DashboardNavbar() {
+type Props = {
+  first_name: string;
+  last_name: string;
+};
+export function DashboardNavbar({ userData }: { userData: Props }) {
   const { plan } = useUserPlan();
   const { theme, setTheme } = useTheme();
   const isDark = theme === 'dark';
@@ -61,67 +60,12 @@ export function DashboardNavbar() {
                 <TooltipContent>Toggle theme</TooltipContent>
               </Tooltip>
               <div className='ml-3 flex items-center'>
-                <UserDropdown plan={plan} />
+                <UserDropdown plan={plan} userData={userData} />
               </div>
             </div>
           </div>
         </div>
       </div>
     </nav>
-  );
-}
-
-function UserDropdown({ plan }: { plan: string }) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='rounded-full p-0'>
-          <Avatar>
-            <AvatarImage src='/images/users/neil-sims.png' alt='User' />
-            <AvatarFallback>NS</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-56'>
-        <div className='px-4 py-3'>
-          <p className='text-sm'>Neil Sims</p>
-          <div className='text-sm text-muted-foreground'>
-            {plan && (
-              <span
-                className={`ml-2 mt-0.5 text-xs px-2 py-0.5 rounded font-medium ${
-                  plan === 'free'
-                    ? 'bg-yellow-200 text-yellow-800'
-                    : plan === 'individual'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-green-100 text-green-700'
-                }`}
-              >
-                {plan === 'free'
-                  ? 'Free Plan'
-                  : plan === 'individual'
-                    ? 'Pro Plan'
-                    : 'Team Plan'}
-              </span>
-            )}
-          </div>
-        </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href='#'>Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href='#'>Settings</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href='#'>Earnings</Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <form action='/auth/signout' method='post'>
-          <DropdownMenuItem asChild>
-            <button>Sign out</button>
-          </DropdownMenuItem>
-        </form>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

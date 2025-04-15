@@ -214,7 +214,10 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                       const updatedLead = await refreshed.json();
                       onUpdate(updatedLead); // rehydrate lead prop for next open
                     } catch (error) {
-                      console.error('[scrape + analyze error]', error);
+                      console.error(
+                        '[scrape + analyze error]',
+                        (error as Error).message
+                      );
                       toast.error('Something went wrong.');
                     } finally {
                       setCompetitorLoading(false);

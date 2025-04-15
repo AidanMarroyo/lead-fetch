@@ -24,9 +24,10 @@ import { analyzeWebsite } from '@/actions/analyzeWebsite';
 type Props = {
   lead: Lead;
   onClose: () => void;
+  onUpdate: (lead: Lead) => void; // 👈 Add this back
 };
 
-export function LeadDetailModal({ lead, onClose }: Props) {
+export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [internalLead, setInternalLead] = useState(lead); // ✅ Local copy
   const [newNote, setNewNote] = useState('');
   const [notes, setNotes] = useState<
@@ -98,7 +99,7 @@ export function LeadDetailModal({ lead, onClose }: Props) {
       const refreshed = await fetch(`/api/leads/${internalLead.id}`);
       const updated = await refreshed.json();
       setInternalLead(updated);
-
+      onUpdate(updated); // ✅ inform parent (KanbanBoard)
       toast.success('Website audit complete!');
     } catch (err) {
       console.error('[Audit Error]', err);

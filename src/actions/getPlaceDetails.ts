@@ -21,7 +21,7 @@ export async function getPlaceDetails(placeId: string) {
   );
 
   const data = await res.json();
-  console.log('Google Place Details:', data);
+  
 
   if (data.status === 'OK') {
     return data.result;

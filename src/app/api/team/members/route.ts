@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  console.log('👤 Current user:', user.id);
+
 
   // Step 1: Get the team_id for the current user
   const { data: teamMembership, error: membershipError } = await supabase
@@ -25,7 +25,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Not in a team' }, { status: 404 });
   }
 
-  console.log('✅ Found team ID:', teamMembership.team_id);
+
 
   // Step 2: Get members of that team via profiles
 
@@ -42,7 +42,7 @@ export async function GET() {
     );
   }
 
-  console.log('✅ Members fetched:', members.length);
+
 
   return NextResponse.json({ members });
 }

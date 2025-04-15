@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import {
   Dialog,
@@ -23,18 +24,13 @@ import { analyzeWebsite } from '@/actions/analyzeWebsite';
 type Props = {
   lead: Lead;
   onClose: () => void;
-  onUpdate: (lead: Lead) => void;
 };
 
-export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
+export function LeadDetailModal({ lead, onClose }: Props) {
+  const [internalLead, setInternalLead] = useState(lead); // ✅ Local copy
   const [newNote, setNewNote] = useState('');
   const [notes, setNotes] = useState<
-    {
-      id: string;
-      message: string;
-      author_name: string;
-      created_at: string;
-    }[]
+    { id: string; message: string; author_name: string; created_at: string }[]
   >([]);
   const [placeDetails, setPlaceDetails] = useState<Place | null>(null);
   const [websiteData, setWebsiteData] = useState<null | {
@@ -45,83 +41,107 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     url: string;
   }>(null);
   const [competitorLoading, setCompetitorLoading] = useState(false);
-  const [competitorData, setCompetitorData] = useState<{
-    techStack: string[];
-    trafficRank: number | null;
-    adSpendEstimate: string | null;
-    optimizationLevel: string | null;
-    websiteScore: number | null;
-    autoPitch?: string;
-  } | null>(null);
+
+  const {
+    tech_stack,
+    traffic_rank,
+    ad_spend_estimate,
+    optimization_level,
+    website_score,
+    auto_pitch,
+  } = internalLead;
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      if (lead.google_place_id) {
-        const details = await getPlaceDetails(lead.google_place_id);
-        setPlaceDetails(details);
+    const fetchInitialData = async () => {
+      if (internalLead.google_place_id) {
+        const place = await getPlaceDetails(internalLead.google_place_id);
+        setPlaceDetails(place);
       }
 
-      if (lead.website) {
-        const result = await analyzeWebsite(lead.website);
-        if (result.success) {
-          setWebsiteData(result.data ?? null);
-        }
+      if (internalLead.website) {
+        const meta = await analyzeWebsite(internalLead.website);
+        if (meta.success && meta.data) setWebsiteData(meta.data);
       }
 
-      const notes = await getLeadNotes(lead.id);
-      setNotes(notes);
-
-      if (
-        lead.ad_spend_estimate ||
-        lead.traffic_rank ||
-        lead.tech_stack ||
-        lead.optimization_level
-      ) {
-        setCompetitorData({
-          techStack: lead.tech_stack || [],
-          trafficRank: lead.traffic_rank ?? null,
-          adSpendEstimate: lead.ad_spend_estimate ?? null,
-          optimizationLevel: lead.optimization_level ?? null,
-          websiteScore: lead.website_score ?? null,
-          autoPitch: lead.auto_pitch ?? undefined,
-        });
-      }
+      const leadNotes = await getLeadNotes(internalLead.id);
+      setNotes(leadNotes);
     };
-    fetchDetails();
-  }, [lead]);
+
+    fetchInitialData();
+  }, [internalLead]);
+
+  const handleGenerateAudit = async () => {
+    try {
+      setCompetitorLoading(true);
+
+      const scrapeRes = await fetch(
+        'https://webbed-leads-api.onrender.com/scrape',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: internalLead.website }),
+        }
+      );
+      const scrapeData = await scrapeRes.json();
+      if (!scrapeData.success) return toast.error('Website scrape failed');
+
+      const analysis = await analyzeAndSaveLead(
+        internalLead.id,
+        internalLead.website!,
+        scrapeData
+      );
+
+      if (!analysis.success || !analysis.data?.suggestions)
+        return toast.error('Analysis failed');
+
+      // ✅ Refresh lead data from API and rehydrate local state
+      const refreshed = await fetch(`/api/leads/${internalLead.id}`);
+      const updated = await refreshed.json();
+      setInternalLead(updated);
+
+      toast.success('Website audit complete!');
+    } catch (err) {
+      console.error('[Audit Error]', err);
+      toast.error('Something went wrong.');
+    } finally {
+      setCompetitorLoading(false);
+    }
+  };
 
   const handleSaveNote = async () => {
     if (!newNote.trim()) return;
-    await createLeadNote(lead.id, newNote);
+    await createLeadNote(internalLead.id, newNote);
     setNewNote('');
-    const updated = await getLeadNotes(lead.id);
-    setNotes(updated);
+    const updatedNotes = await getLeadNotes(internalLead.id);
+    setNotes(updatedNotes);
   };
 
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-hidden flex flex-col'>
         <DialogHeader>
-          <DialogTitle>{lead.name}</DialogTitle>
+          <DialogTitle>{internalLead.name}</DialogTitle>
         </DialogHeader>
 
         <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
-          <p className='text-sm text-muted-foreground'>{lead.address}</p>
+          <p className='text-sm text-muted-foreground'>
+            {internalLead.address}
+          </p>
           <div className='text-xs'>
-            <strong>Score:</strong> {lead.score}
+            <strong>Score:</strong> {internalLead.score}
             <br />
-            <strong>Status:</strong> {lead.status}
+            <strong>Status:</strong> {internalLead.status}
             <br />
-            {lead.phone && (
+            {internalLead.phone && (
               <>
-                <strong>Phone:</strong> {lead.phone}
+                <strong>Phone:</strong> {internalLead.phone}
               </>
             )}
           </div>
 
-          {lead.google_place_id && (
+          {internalLead.google_place_id && (
             <a
-              href={`https://www.google.com/maps/place/?q=place_id:${lead.google_place_id}`}
+              href={`https://www.google.com/maps/place/?q=place_id:${internalLead.google_place_id}`}
               target='_blank'
               rel='noopener noreferrer'
               className='inline-block text-sm text-blue-600 hover:underline mt-1'
@@ -131,8 +151,12 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
           )}
 
           {placeDetails && (
-            <LeadProfileAudit lead={placeDetails} address={lead.address} />
+            <LeadProfileAudit
+              lead={placeDetails}
+              address={internalLead.address}
+            />
           )}
+
           {websiteData && (
             <div className='border-t pt-4 mt-6 space-y-4'>
               <div className='bg-card'>
@@ -161,82 +185,15 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
             </div>
           )}
 
-          {/* ✅ Competitor Analysis */}
+          {/* ✅ Audit Section */}
           <div className='border-t pt-4'>
             <div className='flex justify-between items-center mb-3'>
               <h3 className='text-sm font-semibold'>📈 Website Audit</h3>
-
-              {lead.website && !competitorData && (
+              {internalLead.website && !tech_stack?.length && (
                 <Button
                   variant='outline'
                   disabled={competitorLoading}
-                  onClick={async () => {
-                    setCompetitorLoading(true);
-                    try {
-                      // 🔹 Step 1: Scrape
-                      console.log('[SCRAPE] Sending POST to backend...');
-                      const scrapeRes = await fetch(
-                        'https://webbed-leads-api.onrender.com/scrape',
-                        {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ url: lead.website }),
-                        }
-                      );
-
-                      console.log(
-                        '[SCRAPE] Response received:',
-                        scrapeRes.status
-                      );
-
-                      const scrapeData = await scrapeRes.json();
-                      console.log('[SCRAPE] JSON response:', scrapeData);
-
-                      if (!scrapeData.success) {
-                        toast.error('Website scrape failed');
-                        return;
-                      }
-
-                      // 🔹 Step 2: Run analysis + save to DB
-                      const analysisRes = await analyzeAndSaveLead(
-                        lead.id,
-                        lead.website!,
-                        scrapeData
-                      );
-
-                      if (!analysisRes.success || !analysisRes.data) {
-                        toast.error('Analysis failed');
-                        return;
-                      }
-
-                      // 🔹 Step 3: Update local state/UI
-                      setCompetitorData({
-                        techStack: scrapeData.techStack || [],
-                        trafficRank: scrapeData.trafficRank ?? null,
-                        adSpendEstimate: scrapeData.adSpendEstimate ?? null,
-                        optimizationLevel: scrapeData.optimizationLevel ?? null,
-                        websiteScore: scrapeData.websiteScore ?? null,
-                        autoPitch: analysisRes.data.suggestions,
-                      });
-                      toast.success('Website audit complete!');
-                      const refreshed = await fetch(
-                        `${window.location.origin}/api/leads/${lead.id}`
-                      );
-
-                      const updatedLead = await refreshed.json();
-                      onUpdate(updatedLead); // rehydrate lead prop for next open
-                    } catch (error) {
-                      console.error(
-                        '[scrape + analyze error]',
-                        (error as Error).message
-                      );
-                      toast.error('Something went wrong.');
-                    } finally {
-                      setCompetitorLoading(false);
-                    }
-                  }}
+                  onClick={handleGenerateAudit}
                 >
                   {competitorLoading ? (
                     <span className='flex items-center gap-2'>
@@ -250,97 +207,85 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               )}
             </div>
 
-            {competitorData ? (
+            {(tech_stack ?? []).length > 0 && (
               <div className='space-y-4 text-sm'>
-                {/* Website Score Badge */}
                 <div className='flex items-center gap-2'>
                   <span className='font-semibold'>Website Score:</span>
                   <span
                     className={cn(
                       'text-xs font-bold px-2 py-1 rounded',
-                      competitorData.websiteScore !== null &&
-                        competitorData.websiteScore >= 80
+                      (website_score ?? 0) >= 80
                         ? 'bg-green-100 text-green-800'
-                        : competitorData.websiteScore !== null &&
-                            competitorData.websiteScore >= 60
+                        : (website_score ?? 0) >= 60
                           ? 'bg-yellow-100 text-yellow-800'
                           : 'bg-red-100 text-red-800'
                     )}
                   >
-                    {competitorData.websiteScore}/100
+                    {website_score}/100
                   </span>
                 </div>
 
-                {/* Tech Stack */}
                 <div>
                   <span className='font-semibold block mb-1'>Tech Stack:</span>
-                  <div className='flex flex-wrap gap-1 text-xs text-foreground'>
-                    {competitorData.techStack?.map((tech) => (
+                  <div className='flex flex-wrap gap-1 text-xs'>
+                    {(tech_stack ?? []).map((tech: string) => (
                       <span
                         key={tech}
                         className='rounded bg-muted px-2 py-0.5 border text-muted-foreground'
                       >
                         {tech}
                       </span>
-                    )) || '—'}
+                    ))}
                   </div>
                 </div>
 
-                {/* Metrics */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <span className='font-semibold block'>Traffic Rank:</span>
+                    <span className='font-semibold'>Traffic Rank:</span>
                     <span className='text-muted-foreground'>
-                      {competitorData.trafficRank ?? '—'}
+                      {traffic_rank ?? '—'}
                     </span>
                   </div>
                   <div>
-                    <span className='font-semibold block'>
-                      Ad Spend Estimate:
-                    </span>
+                    <span className='font-semibold'>Ad Spend:</span>
                     <span className='text-muted-foreground'>
-                      {competitorData.adSpendEstimate ?? '—'}
+                      {ad_spend_estimate ?? '—'}
                     </span>
                   </div>
                   <div>
-                    <span className='font-semibold block'>
-                      Optimization Level:
-                    </span>
-                    <span className='capitalize text-muted-foreground'>
-                      {competitorData.optimizationLevel ?? '—'}
+                    <span className='font-semibold'>Optimization Level:</span>
+                    <span className='text-muted-foreground capitalize'>
+                      {optimization_level ?? '—'}
                     </span>
                   </div>
                 </div>
 
-                {/* Auto Pitch */}
-                {competitorData.autoPitch && (
-                  <div className='rounded-lg border bg-muted p-4 shadow-sm'>
-                    <div className='mb-2 flex justify-between items-center'>
-                      <h4 className='text-sm font-semibold text-foreground'>
+                {auto_pitch && (
+                  <div className='border bg-muted p-4 rounded'>
+                    <div className='flex justify-between items-center mb-2'>
+                      <h4 className='text-sm font-semibold'>
                         📬 AI Pitch Summary
                       </h4>
                       <Button
                         variant='ghost'
-                        className='text-xs text-blue-600 hover:underline'
                         onClick={() => {
-                          navigator.clipboard.writeText(
-                            competitorData.autoPitch ?? ''
-                          );
+                          navigator.clipboard.writeText(auto_pitch);
                           toast.success('Pitch copied to clipboard');
                         }}
                       >
                         Copy
                       </Button>
                     </div>
-                    <div className='text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed'>
-                      {competitorData.autoPitch}
-                    </div>
+                    <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
+                      {auto_pitch}
+                    </p>
                   </div>
                 )}
               </div>
-            ) : null}
+            )}
           </div>
 
+          {/* ✅ Notes Section */}
           <div>
             <label className='text-sm font-medium'>Internal Notes</label>
             <Textarea
@@ -362,7 +307,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               {notes.map((note) => (
                 <div
                   key={note.id}
-                  className='p-2 border rounded-md text-sm bg-muted'
+                  className='p-2 border rounded bg-muted text-sm'
                 >
                   <div className='text-xs text-muted-foreground mb-1'>
                     {note.author_name} •{' '}
@@ -371,21 +316,16 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   <div>{note.message}</div>
                 </div>
               ))}
-              {notes.length === 0 && (
-                <p className='text-sm text-muted-foreground italic'>
-                  No notes yet.
-                </p>
-              )}
             </div>
           </div>
 
           <div className='border-t pt-4'>
-            <p className='text-sm mb-2 font-medium'>Google Maps</p>
+            <p className='text-sm font-medium mb-2'>Google Maps</p>
             <iframe
-              className='w-full h-64 rounded-md border'
+              className='w-full h-64 rounded border'
               loading='lazy'
               src={`https://www.google.com/maps?q=${encodeURIComponent(
-                lead.address
+                internalLead.address
               )}&output=embed`}
             />
           </div>

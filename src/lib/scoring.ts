@@ -34,7 +34,7 @@ export function scoreLead(lead: LeadDetails & { website?: string }): number {
     lead.photos.length === 0 ||
     lead.photos.some((photo) => !photo.photo_reference)
   ) {
-    console.log('⚠️ Failed photo check', lead.photos);
+
     score += 10;
   }
 

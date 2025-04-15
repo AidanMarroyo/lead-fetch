@@ -27,7 +27,7 @@ interface SettingsLayoutProps {
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return (
-    <div className='container sm:ml-28 py-10'>
+    <div className='container sm:ml-20 py-10'>
       <div className='flex flex-col lg:flex-row gap-8'>
         <aside className='lg:w-1/4'>
           <SidebarNav items={sidebarNavItems} />

@@ -21,7 +21,7 @@ export async function getActivityLogs() {
 
   let query = supabase
     .from('activity_logs')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(first_name, last_name, email)')
     .order('created_at', { ascending: false })
     .limit(30);
 

@@ -11,7 +11,7 @@ export async function createLeadNote(leadId: string, message: string) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('first_name, last_name, team_id')
+    .select('first_name, last_name, team_id, email')
     .eq('id', user.id)
     .single();
 
@@ -21,12 +21,16 @@ export async function createLeadNote(leadId: string, message: string) {
     .eq('id', leadId)
     .single();
 
-  const fullName = `${profile?.first_name} ${profile?.last_name}`;
+    const fullName =
+                  profile?.first_name === null ||
+                  profile?.last_name === null
+                    ? `${profile?.email}`
+                    : `${profile?.first_name} ${profile?.last_name}`;
 
   const { error } = await supabase.from('lead_notes').insert({
     lead_id: leadId,
     author_id: user.id,
-    author_name: fullName || 'Unknown',
+    author_name: fullName,
     message,
   });
 

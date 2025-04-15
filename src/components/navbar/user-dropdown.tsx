@@ -22,43 +22,57 @@ export default function UserDropdown({
   userData: Props;
 }) {
   const { first_name, last_name } = userData;
-  const first_initial = first_name.charAt(0).toUpperCase();
-  const last_initial = last_name.charAt(0).toUpperCase();
+  const first_initial =
+    first_name === null ? 'W' : first_name.charAt(0).toUpperCase();
+  const last_initial =
+    last_name === null ? 'U' : last_name?.charAt(0).toUpperCase();
+  const initials = `${first_initial}${last_initial}`;
+  const name =
+    userData.first_name === null || userData.last_name === null
+      ? 'Webbed User'
+      : `${first_name} ${last_name}`;
+
+  const getPlanLabel = (plan: string) => {
+    switch (plan) {
+      case 'free':
+        return {
+          label: 'Free Plan',
+          className: 'bg-yellow-200 text-yellow-800',
+        };
+      case 'pro':
+        return { label: 'Pro Plan', className: 'bg-blue-100 text-blue-700' };
+      case 'unlimited':
+        return {
+          label: 'Unlimited Plan',
+          className: 'bg-purple-100 text-purple-700',
+        };
+      case 'team':
+        return { label: 'Team Plan', className: 'bg-green-100 text-green-700' };
+      default:
+        return { label: 'Unknown', className: 'bg-gray-200 text-gray-700' };
+    }
+  };
+
+  const { label, className } = getPlanLabel(plan);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' className='rounded-full p-0'>
           <Avatar>
-            <AvatarFallback>
-              {first_initial}
-              {last_initial}
-            </AvatarFallback>
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-56'>
         <div className='px-4 py-3'>
-          <p className='text-sm'>
-            {first_name} {last_name}
-          </p>
+          <p className='text-sm'>{name}</p>
           <div className='text-sm text-muted-foreground'>
-            {plan && (
-              <span
-                className={`ml-2 mt-0.5 text-xs px-2 py-0.5 rounded font-medium ${
-                  plan === 'free'
-                    ? 'bg-yellow-200 text-yellow-800'
-                    : plan === 'individual'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-green-100 text-green-700'
-                }`}
-              >
-                {plan === 'free'
-                  ? 'Free Plan'
-                  : plan === 'individual'
-                    ? 'Pro Plan'
-                    : 'Team Plan'}
-              </span>
-            )}
+            <span
+              className={`ml-2 mt-0.5 text-xs px-2 py-0.5 rounded font-medium ${className}`}
+            >
+              {label}
+            </span>
           </div>
         </div>
         <DropdownMenuSeparator />

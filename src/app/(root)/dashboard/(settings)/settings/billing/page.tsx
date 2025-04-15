@@ -2,15 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { BadgeCheck, Users, Briefcase } from 'lucide-react';
 
 type Subscription = {
   plan: string;
@@ -30,7 +23,7 @@ export default function BillingPage() {
     fetchSub();
   }, []);
 
-  const handleUpgrade = async (plan: 'individual' | 'team') => {
+  const handleUpgrade = async (plan: 'pro' | 'unlimited' | 'team') => {
     setLoading(true);
     const res = await fetch('/api/stripe/create-checkout', {
       method: 'POST',
@@ -43,78 +36,85 @@ export default function BillingPage() {
   };
 
   return (
-    <div className='max-w-4xl mx-auto mt-10'>
-      <h1 className='text-3xl font-bold mb-6 text-center'>
-        💳 WebbedLead Billing
-      </h1>
+    <div className='max-w-5xl mx-auto mt-10 px-4'>
+      <h1 className='text-2xl font-semibold mb-6'>Billing & Plans</h1>
 
-      <Card className='mb-6'>
+      <Card className='mb-8'>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <BadgeCheck className='w-5 h-5 text-green-600' />
-            Your Current Plan
-          </CardTitle>
+          <CardTitle>Current Plan</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='text-sm leading-relaxed'>
-            <p>
-              <strong>Plan:</strong>{' '}
-              <span className='capitalize'>{sub?.plan ?? 'free'}</span>
-            </p>
-            <p>
-              <strong>Status:</strong> {sub?.status ?? 'inactive'}
-            </p>
-          </div>
+          <p>
+            <strong>Plan:</strong> {sub?.plan ?? 'free'}
+            <br />
+            <strong>Status:</strong> {sub?.status ?? 'inactive'}
+          </p>
         </CardContent>
       </Card>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <Card className='border border-gray-300 shadow-sm hover:shadow-md transition'>
-          <CardHeader className='flex flex-row items-center gap-3'>
-            <Briefcase className='w-6 h-6 text-blue-600' />
-            <div>
-              <CardTitle>Individual Plan</CardTitle>
-              <CardDescription className='text-muted-foreground'>
-                Perfect for solo web agencies.
-              </CardDescription>
-            </div>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        {/* PRO PLAN */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Pro</CardTitle>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <p className='text-sm'>
-              <span className='text-lg font-bold'>$69.99 USD/month</span> — Full
-              CRM access, unlimited leads, map view, CSV export, and weekly
-              discovery.
-            </p>
+          <CardContent className='flex flex-col h-full justify-between text-sm'>
+            <p className='text-muted-foreground pb-4'>$49/month USD</p>
+            <ul className='list-disc list-inside space-y-1'>
+              <li>35 leads/month</li>
+              <li>Access USA + Canada</li>
+              <li>Map View & CSV Export</li>
+              <li>Website filters & audits</li>
+              <li>AI-powered improvement suggestions</li>
+            </ul>
             <Button
-              className='w-full'
-              onClick={() => handleUpgrade('individual')}
+              onClick={() => handleUpgrade('pro')}
               disabled={loading}
+              className='w-full mt-4'
             >
-              Upgrade to Individual
+              Upgrade to Pro
             </Button>
           </CardContent>
         </Card>
 
-        <Card className='border border-gray-300 shadow-sm hover:shadow-md transition'>
-          <CardHeader className='flex flex-row items-center gap-3'>
-            <Users className='w-6 h-6 text-green-600' />
-            <div>
-              <CardTitle>Team Plan</CardTitle>
-              <CardDescription className='text-muted-foreground'>
-                For agencies with collaborators.
-              </CardDescription>
-            </div>
+        {/* UNLIMITED PLAN */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Unlimited</CardTitle>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <p className='text-sm'>
-              <span className='text-lg font-bold'>$199.99 USD/month</span> — All
-              Individual features plus team invites, lead assignment, and
-              activity tracking.
-            </p>
+          <CardContent className='flex flex-col h-full justify-between text-sm'>
+            <p className='text-muted-foreground pb-4'>$119/month USD</p>
+            <ul className='list-disc list-inside space-y-1'>
+              <li>Unlimited leads</li>
+              <li>All Pro features included</li>
+              <li>No monthly caps or limits</li>
+            </ul>
             <Button
-              className='w-full'
+              onClick={() => handleUpgrade('unlimited')}
+              disabled={loading}
+              className='w-full mt-4'
+            >
+              Upgrade to Unlimited
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* TEAM PLAN */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Team</CardTitle>
+          </CardHeader>
+          <CardContent className='flex flex-col h-full justify-between text-sm'>
+            <p className='text-muted-foreground pb-4'>$179/month USD</p>
+            <ul className='list-disc list-inside space-y-1'>
+              <li>Everything in Unlimited</li>
+              <li>Team access & collaboration</li>
+              <li>Up to 5 Users</li>
+            </ul>
+            <Button
               onClick={() => handleUpgrade('team')}
               disabled={loading}
+              className='w-full mt-4'
             >
               Upgrade to Team
             </Button>

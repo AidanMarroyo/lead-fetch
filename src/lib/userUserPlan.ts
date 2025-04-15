@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 export function useUserPlan() {
-  const [plan, setPlan] = useState<'free' | 'individual' | 'team'>('free');
+  const [plan, setPlan] = useState<'free' | 'pro' | 'unlimited' | 'team'>('free');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 
 interface ScraperFormProps {
-  plan: 'free' | 'individual' | 'team';
+  plan: 'free' | 'pro' | 'unlimited' | 'team';
 }
 
 export default function ScraperForm({ plan }: ScraperFormProps) {

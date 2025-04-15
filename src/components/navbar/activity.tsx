@@ -27,6 +27,7 @@ type ActivityLog = {
   profiles?: {
     first_name?: string;
     last_name?: string;
+    email?: string;
   };
 };
 
@@ -53,7 +54,7 @@ export default function ActivityDropdown() {
     fetchLogs();
   }, [plan]);
 
-  const isProUser = plan === 'individual' || plan === 'team';
+  const isProUser = plan === 'pro' || plan === 'unlimited' || plan === 'team';
 
   return (
     <DropdownMenu>
@@ -89,14 +90,17 @@ export default function ActivityDropdown() {
               </p>
             ) : (
               logs.slice(0, 5).map((log) => {
-                const fullName = `${log.profiles?.first_name} ${log.profiles?.last_name}`;
+                const fullName =
+                  log.profiles?.first_name === null ||
+                  log.profiles?.last_name === null
+                    ? `${log.profiles?.email}`
+                    : `${log.profiles?.first_name} ${log.profiles?.last_name}`;
                 return (
                   <div
                     key={log.id}
                     className='px-4 py-2 text-sm border-b last:border-none'
                   >
-                    <span className='font-medium'>{fullName ?? 'Someone'}</span>{' '}
-                    {log.action}
+                    <span className='font-medium'>{fullName}</span> {log.action}
                     {log.context && <span> — {log.context}</span>}
                     <div className='text-xs text-muted-foreground mt-1'>
                       {new Date(log.created_at).toLocaleString()}

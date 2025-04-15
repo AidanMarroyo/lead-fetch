@@ -29,6 +29,7 @@ type Props = {
 };
 
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
+  const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
   const { plan } = useUserPlan();
   const [internalLead, setInternalLead] = useState(lead);
   const [newNote, setNewNote] = useState('');
@@ -83,14 +84,16 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     try {
       setCompetitorLoading(true);
 
-      const scrapeRes = await fetch(
-        'https://webbed-leads-api.onrender.com/scrape',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: internalLead.website }),
-        }
-      );
+      if (!api) {
+        throw new Error('API URL is not defined');
+      }
+
+      const scrapeRes = await fetch(api, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: internalLead.website }),
+      });
+
       const scrapeData = await scrapeRes.json();
       if (!scrapeData.success) return toast.error('Website scrape failed');
 

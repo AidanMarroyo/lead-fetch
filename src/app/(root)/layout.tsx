@@ -15,6 +15,7 @@ export default async function Layout({
     .select('first_name, last_name')
     .eq('id', user?.id)
     .single();
+
   return (
     <>
       <DashboardNavbar userData={data || { first_name: '', last_name: '' }} />

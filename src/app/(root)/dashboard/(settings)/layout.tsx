@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 import { SidebarNav } from './settings/sidebar-nav';
+import { getCurrentUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Settings',
@@ -7,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 const sidebarNavItems = [
+  {
+    title: 'Account',
+    href: '/dashboard/settings',
+  },
   {
     title: 'Activity Logs',
     href: '/dashboard/settings/activity-logs',
@@ -25,7 +31,12 @@ interface SettingsLayoutProps {
   children: React.ReactNode;
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function SettingsLayout({
+  children,
+}: SettingsLayoutProps) {
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/auth/login');
   return (
     <div className='container sm:ml-20 py-10'>
       <div className='flex flex-col lg:flex-row gap-8'>

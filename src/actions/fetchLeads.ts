@@ -69,35 +69,39 @@ export async function fetchLeadsFromGoogle({
 
   const plan = subscription?.plan ?? 'free';
 
-  // 🔒 STEP 2: Enforce 3-lead monthly limit for free users
-  let monthlyLeadCount = 0;
+ // 🔒 Enforce monthly limits based on plan
+let monthlyLeadCount = 0;
+let monthlyLimit = 0;
 
-  if (plan === 'free') {
-    const firstOfMonth = new Date();
-    firstOfMonth.setDate(1);
-    firstOfMonth.setHours(0, 0, 0, 0);
+if (plan === 'free') monthlyLimit = 3;
+if (plan === 'pro') monthlyLimit = 35;
+// Pro & Team = unlimited (0 means no cap)
 
-    const { count, error: countError } = await supabase
-      .from('leads')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .gte('created_at', firstOfMonth.toISOString());
+if (monthlyLimit > 0) {
+  const firstOfMonth = new Date();
+  firstOfMonth.setDate(1);
+  firstOfMonth.setHours(0, 0, 0, 0);
 
-    if (countError) {
-      console.error('Error checking monthly limit:', countError);
-      return { success: false, message: 'Failed to check lead limits.' };
-    }
+  const { count, error: countError } = await supabase
+    .from('leads')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .gte('created_at', firstOfMonth.toISOString());
 
-    monthlyLeadCount = count ?? 0;
-
-    if (monthlyLeadCount >= 3) {
-      return {
-        success: false,
-        message:
-          'You’ve reached your 3-lead limit for the month on the free plan.',
-      };
-    }
+  if (countError) {
+    console.error('Error checking monthly limit:', countError);
+    return { success: false, message: 'Failed to check lead limits.' };
   }
+
+  monthlyLeadCount = count ?? 0;
+
+  if (monthlyLeadCount >= monthlyLimit) {
+    return {
+      success: false,
+      message: `You’ve reached your ${monthlyLimit}-lead monthly limit on the ${plan} plan.`,
+    };
+  }
+}
 
   // STEP 3: Fetch leads from Google
   try {

@@ -18,6 +18,7 @@ type ActivityLog = {
   profiles?: {
     first_name?: string;
     last_name?: string;
+    email?: string;
   };
 };
 
@@ -26,7 +27,7 @@ export default function ActivityPage() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const isPro = plan === 'individual' || plan === 'team';
+  const isPro = plan === 'pro' || plan === 'unlimited' || plan === 'team';
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -68,7 +69,11 @@ export default function ActivityPage() {
       ) : (
         <ul className='space-y-4'>
           {logs.map((log) => {
-            const fullName = `${log.profiles?.first_name} ${log.profiles?.last_name}`;
+            const fullName =
+              log.profiles?.first_name === null ||
+              log.profiles?.last_name === null
+                ? `${log.profiles?.email}`
+                : `${log.profiles?.first_name} ${log.profiles?.last_name}`;
             return (
               <Card key={log.id} className='p-4'>
                 <div className='text-sm'>

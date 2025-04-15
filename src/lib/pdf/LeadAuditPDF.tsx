@@ -5,21 +5,34 @@ import { Place } from '@/components/crm-board/lead-profile-audit';
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    fontSize: 12,
+    padding: 32,
+    fontSize: 11,
     fontFamily: 'Helvetica',
-    lineHeight: 1.5,
+    lineHeight: 1.6,
+    color: '#111',
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
-  heading: {
-    fontSize: 16,
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+    color: '#1e40af', // WebbedLead Blue
+  },
+  subheading: {
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#111827',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginRight: 4,
   },
   paragraph: {
-    marginBottom: 6,
+    marginBottom: 4,
   },
   auditItem: {
     marginBottom: 4,
@@ -27,13 +40,20 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontWeight: 'bold',
-    marginRight: 6,
+    color: '#16a34a', // Green
+  },
+  bulletNo: {
+    fontWeight: 'bold',
+    color: '#dc2626', // Red
   },
   footer: {
     fontSize: 10,
-    marginTop: 30,
+    marginTop: 36,
     textAlign: 'center',
-    color: '#666',
+    color: '#6b7280',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingTop: 10,
   },
 });
 
@@ -44,83 +64,83 @@ export function LeadAuditPDF({
   lead: Place;
   address: string;
 }) {
+  const yes = <Text style={styles.bullet}>Yes</Text>;
+  const no = <Text style={styles.bulletNo}>No</Text>;
+
   return (
     <Document>
       <Page style={styles.page}>
-        {/* Business Profile Section */}
+        {/* Brand Header */}
+        <Text style={styles.header}>WebbedLeads Audit Report</Text>
+
+        {/* Business Profile */}
         <View style={styles.section}>
-          <Text style={styles.heading}>Business Profile Audit</Text>
-          <Text style={styles.paragraph}>Name: {lead.name}</Text>
-          <Text style={styles.paragraph}>Address: {address}</Text>
+          <Text style={styles.subheading}>Business Profile</Text>
           <Text style={styles.paragraph}>
-            Phone: {lead.formatted_phone_number || 'N/A'}
+            <Text style={styles.label}>Name:</Text> {lead.name}
           </Text>
-          <Text style={styles.paragraph}>Website: {lead.website || 'N/A'}</Text>
-          <Text style={styles.paragraph}>Rating: {lead.rating ?? 'N/A'}</Text>
           <Text style={styles.paragraph}>
-            Total Reviews: {lead.user_ratings_total ?? 0}
+            <Text style={styles.label}>Address:</Text> {address}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.label}>Phone:</Text>{' '}
+            {lead.formatted_phone_number || 'N/A'}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.label}>Website:</Text> {lead.website || 'N/A'}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.label}>Google Rating:</Text>{' '}
+            {lead.rating ?? 'N/A'}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.label}>Total Reviews:</Text>{' '}
+            {lead.user_ratings_total ?? 0}
           </Text>
         </View>
 
-        {/* Audit Checklist Section */}
+        {/* Audit Checklist */}
         <View style={styles.section}>
-          <Text style={styles.heading}>Audit Checklist</Text>
+          <Text style={styles.subheading}>Optimization Checklist</Text>
 
           <View style={styles.auditItem}>
-            <Text>Has Website: </Text>
-            <Text style={styles.bullet}>{lead.website ? 'Yes' : 'No'}</Text>
+            <Text style={styles.label}>Has Website:</Text>{' '}
+            {lead.website ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Has Phone Number: </Text>
-            <Text style={styles.bullet}>
-              {lead.formatted_phone_number ? 'Yes' : 'No'}
-            </Text>
+            <Text style={styles.label}>Has Phone Number:</Text>{' '}
+            {lead.formatted_phone_number ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Has Business Hours: </Text>
-            <Text style={styles.bullet}>
-              {lead.opening_hours?.weekday_text?.length ? 'Yes' : 'No'}
-            </Text>
+            <Text style={styles.label}>Has Business Hours:</Text>{' '}
+            {lead.opening_hours?.weekday_text?.length ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Has Valid Photos: </Text>
-            <Text style={styles.bullet}>
-              {Array.isArray(lead.photos) && lead.photos.length > 0
-                ? 'Yes'
-                : 'No'}
-            </Text>
+            <Text style={styles.label}>Has Valid Photos:</Text>{' '}
+            {Array.isArray(lead.photos) && lead.photos.length > 0 ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Has Business Categories: </Text>
-            <Text style={styles.bullet}>
-              {Array.isArray(lead.types) && lead.types.length > 0
-                ? 'Yes'
-                : 'No'}
-            </Text>
+            <Text style={styles.label}>Has Business Categories:</Text>{' '}
+            {Array.isArray(lead.types) && lead.types.length > 0 ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Has 10+ Reviews({lead.user_ratings_total} Review(s)): </Text>
-            <Text style={styles.bullet}>
-              {(lead.user_ratings_total ?? 0) >= 10 ? 'Yes' : 'No'}
-            </Text>
+            <Text style={styles.label}>
+              10+ Reviews ({lead.user_ratings_total ?? 0}):
+            </Text>{' '}
+            {(lead.user_ratings_total ?? 0) >= 10 ? yes : no}
           </View>
-
           <View style={styles.auditItem}>
-            <Text>Rating is 4.0 or Higher({lead.rating} Star Rating): </Text>
-            <Text style={styles.bullet}>
-              {(lead.rating ?? 0) >= 4.0 ? 'Yes' : 'No'}
-            </Text>
+            <Text style={styles.label}>
+              4.0+ Rating ({lead.rating ?? 'N/A'}):
+            </Text>{' '}
+            {(lead.rating ?? 0) >= 4.0 ? yes : no}
           </View>
         </View>
 
         {/* Footer */}
         <Text style={styles.footer}>
-          Generated by Your App • https://yourapp.com
+          Generated by WebbedLeads — We Crawl. You Close. •
+          https://webbedleads.com
         </Text>
       </Page>
     </Document>

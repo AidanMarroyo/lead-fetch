@@ -29,15 +29,6 @@ export default function LeadScraperPage() {
     maxScore: 100,
   });
 
-  // useEffect(() => {
-  //   const cookies = document.cookie.split(';').map((c) => c.trim());
-  //   const reasonCookie = cookies.find((c) => c.startsWith('redirect_reason='));
-  //   if (reasonCookie && reasonCookie.includes('upgrade')) {
-  //     toast.error('Upgrade required to access the CRM pipeline.');
-  //     document.cookie = 'redirect_reason=; Max-Age=0; path=/';
-  //   }
-  // }, []);
-
   const handleToggleMap = () => {
     if (plan === 'free') {
       toast.error('Upgrade required to access the map view.');

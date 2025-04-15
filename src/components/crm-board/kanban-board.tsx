@@ -92,7 +92,7 @@ export function KanbanBoard({ filters }: { filters: LeadFilter }) {
             setLeads((prev) =>
               prev.map((l) => (l.id === updated.id ? { ...l, ...updated } : l))
             );
-            setSelectedLead(null);
+            setSelectedLead(updated);
           }}
         />
       )}

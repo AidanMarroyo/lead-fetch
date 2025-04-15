@@ -20,15 +20,17 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { analyzeAndSaveLead } from '@/actions/analyzeAndSaveLead';
 import { analyzeWebsite } from '@/actions/analyzeWebsite';
+import { useUserPlan } from '@/lib/userUserPlan';
 
 type Props = {
   lead: Lead;
   onClose: () => void;
-  onUpdate: (lead: Lead) => void; // 👈 Add this back
+  onUpdate: (updated: Lead) => void;
 };
 
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
-  const [internalLead, setInternalLead] = useState(lead); // ✅ Local copy
+  const { plan } = useUserPlan();
+  const [internalLead, setInternalLead] = useState(lead);
   const [newNote, setNewNote] = useState('');
   const [notes, setNotes] = useState<
     { id: string; message: string; author_name: string; created_at: string }[]
@@ -42,6 +44,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     url: string;
   }>(null);
   const [competitorLoading, setCompetitorLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const {
     tech_stack,
@@ -54,18 +57,23 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      if (internalLead.google_place_id) {
-        const place = await getPlaceDetails(internalLead.google_place_id);
-        setPlaceDetails(place);
-      }
+      try {
+        const [place, meta, leadNotes] = await Promise.all([
+          internalLead.google_place_id
+            ? getPlaceDetails(internalLead.google_place_id)
+            : null,
+          internalLead.website ? analyzeWebsite(internalLead.website) : null,
+          getLeadNotes(internalLead.id),
+        ]);
 
-      if (internalLead.website) {
-        const meta = await analyzeWebsite(internalLead.website);
-        if (meta.success && meta.data) setWebsiteData(meta.data);
+        if (place) setPlaceDetails(place);
+        if (meta?.success && meta.data) setWebsiteData(meta.data);
+        setNotes(leadNotes);
+      } catch (err) {
+        console.error('[Fetch Details Error]', err);
+      } finally {
+        setLoading(false);
       }
-
-      const leadNotes = await getLeadNotes(internalLead.id);
-      setNotes(leadNotes);
     };
 
     fetchInitialData();
@@ -95,11 +103,11 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
       if (!analysis.success || !analysis.data?.suggestions)
         return toast.error('Analysis failed');
 
-      // ✅ Refresh lead data from API and rehydrate local state
       const refreshed = await fetch(`/api/leads/${internalLead.id}`);
       const updated = await refreshed.json();
-      setInternalLead(updated);
-      onUpdate(updated); // ✅ inform parent (KanbanBoard)
+
+      setInternalLead(updated); // Keep modal in-place
+      onUpdate(updated); // Let Kanban board rehydrate
       toast.success('Website audit complete!');
     } catch (err) {
       console.error('[Audit Error]', err);
@@ -120,218 +128,252 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-hidden flex flex-col'>
-        <DialogHeader>
-          <DialogTitle>{internalLead.name}</DialogTitle>
-        </DialogHeader>
+        {loading ? (
+          <ModalLoadingSkeleton />
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>{internalLead.name}</DialogTitle>
+            </DialogHeader>
 
-        <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
-          <p className='text-sm text-muted-foreground'>
-            {internalLead.address}
-          </p>
-          <div className='text-xs'>
-            <strong>Score:</strong> {internalLead.score}
-            <br />
-            <strong>Status:</strong> {internalLead.status}
-            <br />
-            {internalLead.phone && (
-              <>
-                <strong>Phone:</strong> {internalLead.phone}
-              </>
-            )}
-          </div>
-
-          {internalLead.google_place_id && (
-            <a
-              href={`https://www.google.com/maps/place/?q=place_id:${internalLead.google_place_id}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-block text-sm text-blue-600 hover:underline mt-1'
-            >
-              View on Google Maps
-            </a>
-          )}
-
-          {placeDetails && (
-            <LeadProfileAudit
-              lead={placeDetails}
-              address={internalLead.address}
-            />
-          )}
-
-          {websiteData && (
-            <div className='border-t pt-4 mt-6 space-y-4'>
-              <div className='bg-card'>
-                <h3 className='text-sm font-semibold mb-2'>
-                  🌐 Website Metadata
-                </h3>
-                <div className='text-sm space-y-1'>
-                  <p>
-                    <strong>Title:</strong> {websiteData.title}
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {websiteData.description}
-                  </p>
-                  <p>
-                    <strong>SSL:</strong>{' '}
-                    <span
-                      className={
-                        websiteData.usesSSL ? 'text-green-600' : 'text-red-500'
-                      }
-                    >
-                      {websiteData.usesSSL ? 'Secure (SSL)' : 'Not secure'}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ✅ Audit Section */}
-          <div className='border-t pt-4'>
-            <div className='flex justify-between items-center mb-3'>
-              <h3 className='text-sm font-semibold'>📈 Website Audit</h3>
-              {internalLead.website && !tech_stack?.length && (
-                <Button
-                  variant='outline'
-                  disabled={competitorLoading}
-                  onClick={handleGenerateAudit}
-                >
-                  {competitorLoading ? (
-                    <span className='flex items-center gap-2'>
-                      <Loader2 className='animate-spin h-4 w-4' />
-                      Generating...
-                    </span>
-                  ) : (
-                    '📊 Generate Full Analysis'
-                  )}
-                </Button>
-              )}
-            </div>
-
-            {(tech_stack ?? []).length > 0 && (
-              <div className='space-y-4 text-sm'>
-                <div className='flex items-center gap-2'>
-                  <span className='font-semibold'>Website Score:</span>
-                  <span
-                    className={cn(
-                      'text-xs font-bold px-2 py-1 rounded',
-                      (website_score ?? 0) >= 80
-                        ? 'bg-green-100 text-green-800'
-                        : (website_score ?? 0) >= 60
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                    )}
-                  >
-                    {website_score}/100
-                  </span>
-                </div>
-
-                <div>
-                  <span className='font-semibold block mb-1'>Tech Stack:</span>
-                  <div className='flex flex-wrap gap-1 text-xs'>
-                    {(tech_stack ?? []).map((tech: string) => (
-                      <span
-                        key={tech}
-                        className='rounded bg-muted px-2 py-0.5 border text-muted-foreground'
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className='grid grid-cols-2 gap-4'>
-                  <div>
-                    <span className='font-semibold'>Traffic Rank:</span>
-                    <span className='text-muted-foreground'>
-                      {traffic_rank ?? '—'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className='font-semibold'>Ad Spend:</span>
-                    <span className='text-muted-foreground'>
-                      {ad_spend_estimate ?? '—'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className='font-semibold'>Optimization Level:</span>
-                    <span className='text-muted-foreground capitalize'>
-                      {optimization_level ?? '—'}
-                    </span>
-                  </div>
-                </div>
-
-                {auto_pitch && (
-                  <div className='border bg-muted p-4 rounded'>
-                    <div className='flex justify-between items-center mb-2'>
-                      <h4 className='text-sm font-semibold'>
-                        📬 AI Pitch Summary
-                      </h4>
-                      <Button
-                        variant='ghost'
-                        onClick={() => {
-                          navigator.clipboard.writeText(auto_pitch);
-                          toast.success('Pitch copied to clipboard');
-                        }}
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                    <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
-                      {auto_pitch}
-                    </p>
-                  </div>
+            <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
+              <p className='text-sm text-muted-foreground'>
+                {internalLead.address}
+              </p>
+              <div className='text-xs'>
+                <strong>Score:</strong> {internalLead.score}
+                <br />
+                <strong>Status:</strong> {internalLead.status}
+                <br />
+                {internalLead.phone && (
+                  <>
+                    <strong>Phone:</strong> {internalLead.phone}
+                  </>
                 )}
               </div>
-            )}
-          </div>
 
-          {/* ✅ Notes Section */}
-          <div>
-            <label className='text-sm font-medium'>Internal Notes</label>
-            <Textarea
-              className='mt-1'
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              rows={3}
-              placeholder='e.g. Called, receptionist said they’d follow up.'
-            />
-            <Button
-              className='mt-2'
-              onClick={handleSaveNote}
-              disabled={!newNote.trim()}
-            >
-              Add Note
-            </Button>
-
-            <div className='mt-4 max-h-64 overflow-y-auto space-y-3 pr-2'>
-              {notes.map((note) => (
-                <div
-                  key={note.id}
-                  className='p-2 border rounded bg-muted text-sm'
+              {internalLead.google_place_id && (
+                <a
+                  href={`https://www.google.com/maps/place/?q=place_id:${internalLead.google_place_id}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='inline-block text-sm text-blue-600 hover:underline mt-1'
                 >
-                  <div className='text-xs text-muted-foreground mb-1'>
-                    {note.author_name} •{' '}
-                    {new Date(note.created_at).toLocaleString()}
-                  </div>
-                  <div>{note.message}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+                  View on Google Maps
+                </a>
+              )}
 
-          <div className='border-t pt-4'>
-            <p className='text-sm font-medium mb-2'>Google Maps</p>
-            <iframe
-              className='w-full h-64 rounded border'
-              loading='lazy'
-              src={`https://www.google.com/maps?q=${encodeURIComponent(
-                internalLead.address
-              )}&output=embed`}
-            />
-          </div>
-        </div>
+              {plan !== 'free' && placeDetails && (
+                <LeadProfileAudit
+                  lead={placeDetails}
+                  address={internalLead.address}
+                />
+              )}
+
+              {plan !== 'free' && websiteData && (
+                <div className='border-t pt-4 mt-6 space-y-4'>
+                  <div className='bg-card'>
+                    <h3 className='text-sm font-semibold mb-2'>
+                      🌐 Website Metadata
+                    </h3>
+                    <div className='text-sm space-y-1'>
+                      <p>
+                        <strong>Title:</strong> {websiteData.title}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {websiteData.description}
+                      </p>
+                      <p>
+                        <strong>SSL:</strong>{' '}
+                        <span
+                          className={
+                            websiteData.usesSSL
+                              ? 'text-green-600'
+                              : 'text-red-500'
+                          }
+                        >
+                          {websiteData.usesSSL ? 'Secure (SSL)' : 'Not secure'}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {plan !== 'free' && (
+                <div className='border-t pt-4'>
+                  {internalLead.website && !tech_stack?.length && (
+                    <div className='flex justify-between items-center mb-3'>
+                      <h3 className='text-sm font-semibold'>
+                        📈 Website Audit
+                      </h3>
+                      <Button
+                        variant='outline'
+                        disabled={competitorLoading}
+                        onClick={handleGenerateAudit}
+                      >
+                        {competitorLoading ? (
+                          <span className='flex items-center gap-2'>
+                            <Loader2 className='animate-spin h-4 w-4' />
+                            Generating...
+                          </span>
+                        ) : (
+                          '📊 Generate Full Analysis'
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  {(tech_stack ?? []).length > 0 && (
+                    <div className='space-y-4 text-sm'>
+                      <div className='flex items-center gap-2'>
+                        <span className='font-semibold'>Website Score:</span>
+                        <span
+                          className={cn(
+                            'text-xs font-bold px-2 py-1 rounded',
+                            (website_score ?? 0) >= 80
+                              ? 'bg-green-100 text-green-800'
+                              : (website_score ?? 0) >= 60
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                          )}
+                        >
+                          {website_score}/100
+                        </span>
+                      </div>
+
+                      <div>
+                        <span className='font-semibold block mb-1'>
+                          Tech Stack:
+                        </span>
+                        <div className='flex flex-wrap gap-1 text-xs'>
+                          {tech_stack?.map((tech: string) => (
+                            <span
+                              key={tech}
+                              className='rounded bg-muted px-2 py-0.5 border text-muted-foreground'
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className='grid grid-cols-2 gap-4'>
+                        <div>
+                          <span className='font-semibold'>Traffic Rank:</span>
+                          <span className='text-muted-foreground'>
+                            {traffic_rank ?? '—'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className='font-semibold'>Ad Spend:</span>
+                          <span className='text-muted-foreground'>
+                            {ad_spend_estimate ?? '—'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className='font-semibold'>
+                            Optimization Level:
+                          </span>
+                          <span className='text-muted-foreground capitalize'>
+                            {optimization_level ?? '—'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {auto_pitch && (
+                        <div className='border bg-muted p-4 rounded'>
+                          <div className='flex justify-between items-center mb-2'>
+                            <h4 className='text-sm font-semibold'>
+                              📬 AI Pitch Summary
+                            </h4>
+                            <Button
+                              variant='ghost'
+                              onClick={() => {
+                                navigator.clipboard.writeText(auto_pitch);
+                                toast.success('Pitch copied to clipboard');
+                              }}
+                            >
+                              Copy
+                            </Button>
+                          </div>
+                          <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
+                            {auto_pitch}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Notes */}
+              <div>
+                <label className='text-sm font-medium'>Internal Notes</label>
+                <Textarea
+                  className='mt-1'
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  rows={3}
+                  placeholder='e.g. Called, receptionist said they’d follow up.'
+                />
+                <Button
+                  className='mt-2'
+                  onClick={handleSaveNote}
+                  disabled={!newNote.trim()}
+                >
+                  Add Note
+                </Button>
+
+                <div className='mt-4 max-h-64 overflow-y-auto space-y-3 pr-2'>
+                  {notes.map((note) => (
+                    <div
+                      key={note.id}
+                      className='p-2 border rounded bg-muted text-sm'
+                    >
+                      <div className='text-xs text-muted-foreground mb-1'>
+                        {note.author_name} •{' '}
+                        {new Date(note.created_at).toLocaleString()}
+                      </div>
+                      <div>{note.message}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {plan === 'free' && (
+                <div className='border-t pt-4'>
+                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
+                    🔒 Upgrade to Pro to unlock website audits, Google profile
+                    analysis, and AI-powered recommendations.
+                  </div>
+                </div>
+              )}
+
+              <div className='border-t pt-4'>
+                <p className='text-sm font-medium mb-2'>Google Maps</p>
+                <iframe
+                  className='w-full h-64 rounded border'
+                  loading='lazy'
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(
+                    internalLead.address
+                  )}&output=embed`}
+                />
+              </div>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ModalLoadingSkeleton() {
+  return (
+    <div className='space-y-4 animate-pulse'>
+      <div className='h-5 bg-muted w-1/3 rounded' />
+      <div className='h-3 bg-muted w-1/2 rounded' />
+      <div className='h-3 bg-muted w-1/4 rounded' />
+      <div className='h-64 bg-muted rounded' />
+    </div>
   );
 }

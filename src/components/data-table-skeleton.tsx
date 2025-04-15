@@ -1,14 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-
-import {
   Table,
   TableBody,
   TableCell,
@@ -16,75 +8,44 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { ColumnDef, flexRender, HeaderContext } from '@tanstack/react-table';
 
-type DataTableProps<TData, TValue> = {
+type DataTableSkeletonProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  loading?: boolean;
+  rowCount?: number;
 };
 
-export function DataTable<TData, TValue>({
+export function DataTableSkeleton<TData, TValue>({
   columns,
-  data,
-  loading = false,
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
-
+  rowCount = 5,
+}: DataTableSkeletonProps<TData, TValue>) {
   return (
-    <div className='rounded-md border'>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {columns.map((column, index) => (
+            <TableHead key={`skeleton-head-${index}`}>
+              {typeof column.header === 'function'
+                ? flexRender(column.header, {
+                    column,
+                    table: {},
+                  } as HeaderContext<TData, TValue>)
+                : (column.header ?? '')}
+            </TableHead>
           ))}
-        </TableHeader>
-        <TableBody>
-          {loading ? (
-            // 🔄 Skeleton Rows
-            Array.from({ length: 5 }).map((_, rowIdx) => (
-              <TableRow key={`skeleton-${rowIdx}`}>
-                {columns.map((_, colIdx) => (
-                  <TableCell key={`skeleton-${rowIdx}-${colIdx}`}>
-                    <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className='text-center'>
-                No leads found.
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {Array.from({ length: rowCount }).map((_, rowIdx) => (
+          <TableRow key={`skeleton-${rowIdx}`}>
+            {columns.map((_, colIdx) => (
+              <TableCell key={`skeleton-${rowIdx}-${colIdx}`}>
+                <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
               </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

@@ -9,7 +9,14 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const statuses = ['new', 'contacted', 'in progress', 'closed'];
+const statuses = [
+  'new',
+  'contacted',
+  'in progress',
+  'closed',
+  'archived',
+  'not interested',
+];
 
 export function StatusDropdown({
   leadId,

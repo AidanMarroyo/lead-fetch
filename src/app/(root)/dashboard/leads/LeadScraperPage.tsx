@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -29,14 +29,14 @@ export default function LeadScraperPage() {
     maxScore: 100,
   });
 
-  useEffect(() => {
-    const cookies = document.cookie.split(';').map((c) => c.trim());
-    const reasonCookie = cookies.find((c) => c.startsWith('redirect_reason='));
-    if (reasonCookie && reasonCookie.includes('upgrade')) {
-      toast.error('Upgrade required to access the CRM pipeline.');
-      document.cookie = 'redirect_reason=; Max-Age=0; path=/';
-    }
-  }, []);
+  // useEffect(() => {
+  //   const cookies = document.cookie.split(';').map((c) => c.trim());
+  //   const reasonCookie = cookies.find((c) => c.startsWith('redirect_reason='));
+  //   if (reasonCookie && reasonCookie.includes('upgrade')) {
+  //     toast.error('Upgrade required to access the CRM pipeline.');
+  //     document.cookie = 'redirect_reason=; Max-Age=0; path=/';
+  //   }
+  // }, []);
 
   const handleToggleMap = () => {
     if (plan === 'free') {
@@ -60,7 +60,7 @@ export default function LeadScraperPage() {
           </span>
         )}
       </h1>
-      <ScraperForm />
+      <ScraperForm plan={plan} />
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
@@ -100,25 +100,7 @@ export default function LeadScraperPage() {
         </div>
       </div>
       <LeadFilters onApply={handleApplyFilters} />
-      {/* {plan !== 'free' ? (
-        <SaveSearchButton
-          keyword={keyword}
-          location={`${city}, ${provinceOrState}`}
-        />
-      ) : (
-        <p className='text-sm text-muted-foreground mt-2'>
-          Want to automate lead discovery?{' '}
-          <span className='font-medium'>
-            Upgrade to Pro{' '}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <ProTag />
-              </TooltipTrigger>
-              <TooltipContent>Available on Pro Plan</TooltipContent>
-            </Tooltip>
-          </span>
-        </p>
-      )} */}
+
       <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />

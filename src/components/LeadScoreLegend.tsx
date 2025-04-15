@@ -11,7 +11,7 @@ export function LeadScoreLegend() {
     <div className='rounded-xl border border-border bg-muted/30 p-4 shadow-sm mb-6'>
       <div className='flex items-center justify-between'>
         <h2 className='text-sm font-semibold tracking-tight'>
-          🧠 How Lead Scoring Works
+          🧠 How Google Profile Lead Scoring Works
         </h2>
         <Button
           variant='ghost'

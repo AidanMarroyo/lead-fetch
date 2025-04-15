@@ -26,7 +26,6 @@ type DataTableProps<TData, TValue> = {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  loading = false,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -55,18 +54,7 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {loading ? (
-            // 🔄 Skeleton Rows
-            Array.from({ length: 5 }).map((_, rowIdx) => (
-              <TableRow key={`skeleton-${rowIdx}`}>
-                {columns.map((_, colIdx) => (
-                  <TableCell key={`skeleton-${rowIdx}-${colIdx}`}>
-                    <div className='h-4 w-full bg-gray-200 rounded animate-pulse' />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (

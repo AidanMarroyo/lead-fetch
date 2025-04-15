@@ -24,7 +24,11 @@ import { fetchLeadsFromGoogle } from '@/actions/fetchLeads';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export default function ScraperForm() {
+interface ScraperFormProps {
+  plan: 'free' | 'individual' | 'team';
+}
+
+export default function ScraperForm({ plan }: ScraperFormProps) {
   const form = useForm<SearchLeadValues>({
     resolver: zodResolver(SearchLeadSchema),
     defaultValues: {
@@ -84,7 +88,12 @@ export default function ScraperForm() {
             <FormItem>
               <FormLabel>City</FormLabel>
               <FormControl>
-                <Input placeholder='e.g. Toronto' {...field} />
+                <Input
+                  placeholder={
+                    country === 'Canada' ? 'e.g. Toronto' : 'e.g. Los Angeles'
+                  }
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,12 +104,16 @@ export default function ScraperForm() {
           name='provinceOrState'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>State/Province</FormLabel>
+              <FormLabel>
+                {country === 'Canada' ? 'Province' : 'State'}
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue
-                      placeholder={country === 'Canada' ? 'Province' : 'State'}
+                      placeholder={
+                        country === 'Canada' ? 'Ontario' : 'California'
+                      }
                     />
                   </SelectTrigger>
                 </FormControl>
@@ -141,19 +154,41 @@ export default function ScraperForm() {
           control={form.control}
           name='withWebsites'
           render={({ field }) => (
-            <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow'>
+            <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow relative'>
               <FormControl>
                 <Checkbox
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(val) => {
+                    if (plan === 'free') {
+                      toast.error(
+                        'Upgrade to Pro to include businesses with websites.'
+                      );
+                      return;
+                    }
+                    field.onChange(val);
+                  }}
+                  disabled={plan === 'free'}
                 />
               </FormControl>
               <div className='space-y-1 leading-none'>
-                <FormLabel>Include businesses with existing websites</FormLabel>
+                <FormLabel className='flex items-center gap-1'>
+                  Include businesses with existing websites
+                  {plan === 'free' && (
+                    <span className='text-[10px] font-bold bg-yellow-400 text-black px-1 py-0.5 rounded'>
+                      PRO
+                    </span>
+                  )}
+                </FormLabel>
+                {plan === 'free' && (
+                  <p className='text-xs text-muted-foreground'>
+                    Upgrade to unlock this feature.
+                  </p>
+                )}
               </div>
             </FormItem>
           )}
         />
+
         <LoadingButton type='submit' loading={isSubmitting}>
           {isSubmitting ? 'Searching...' : 'Find Leads'}
         </LoadingButton>

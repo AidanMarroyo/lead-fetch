@@ -42,15 +42,5 @@ export default function MenuDropdown() {
 const menuItems = [
   { icon: ScanSearch, label: 'Leads', href: '/dashboard/leads' },
   { icon: Kanban, label: 'Pipeline', href: '/dashboard/crm' },
-  // { icon: Users, label: 'Users', href: '#' },
-  // { icon: User, label: 'Profile', href: '#' },
-  // { icon: Archive, label: 'Products', href: '#' },
-  // { icon: DollarSign, label: 'Pricing', href: '#' },
   { icon: Ticket, label: 'Billing', href: '/dashboard/settings/billing' },
-  // {
-  //   icon: Settings,
-  //   label: 'Settings',
-  //   href: '/dashboard/settings/activity-logs',
-  // },
-  // { icon: LogOut, label: 'Logout', href: '#' },
 ];

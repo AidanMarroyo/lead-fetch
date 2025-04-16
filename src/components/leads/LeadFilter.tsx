@@ -79,6 +79,8 @@ export function LeadFilters({
               <SelectItem value='contacted'>Contacted</SelectItem>
               <SelectItem value='in progress'>In Progress</SelectItem>
               <SelectItem value='closed'>Closed</SelectItem>
+              <SelectItem value='archived'>Archived</SelectItem>
+              <SelectItem value='not interested'>Not interested</SelectItem>
             </SelectContent>
           </Select>
         </div>

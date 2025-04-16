@@ -45,21 +45,35 @@ export async function POST(req: Request) {
 
   const { data: adminData } = await supabase
     .from('profiles')
-    .select('first_name, last_name')
+    .select('first_name, last_name, email')
     .eq('id', user.id)
     .single();
 
+    const adminName =
+    adminData?.first_name === null ||
+    adminData?.last_name === null
+      ? `${adminData?.email}`
+      : `${adminData?.first_name} ${adminData?.last_name}`;
+
+
   const { data: memberData } = await supabase
     .from('profiles')
-    .select('first_name, last_name')
+    .select('first_name, last_name, email')
     .eq('id', memberId)
     .single();
+
+    const fullName =
+    memberData?.first_name === null ||
+    memberData?.last_name === null
+      ? `${memberData?.email}`
+      : `${memberData?.first_name} ${memberData?.last_name}`;
+
 
   await logActivity({
     userId: user.id,
     teamId: myMembership.team_id,
     action: 'team_member_removed',
-    message: `${adminData?.first_name} ${adminData?.last_name} removed ${memberData?.first_name} ${memberData?.last_name} from ${teamData?.name}`,
+    message: `${adminName} removed ${fullName} from ${teamData?.name}`,
   });
 
   return NextResponse.json({ success: true });

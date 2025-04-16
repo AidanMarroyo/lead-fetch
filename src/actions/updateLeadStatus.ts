@@ -11,9 +11,16 @@ export async function updateLeadStatus(leadId: string, status: string) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('first_name, last_name, team_id')
+    .select('first_name, last_name, team_id, email')
     .eq('id', user.id)
     .single();
+
+    const fullName =
+    profile?.first_name === null ||
+    profile?.last_name === null
+      ? `${profile?.email}`
+      : `${profile?.first_name} ${profile?.last_name}`;
+
 
   const { data: lead } = await supabase
     .from('leads')
@@ -27,6 +34,6 @@ export async function updateLeadStatus(leadId: string, status: string) {
     teamId: profile?.team_id,
     leadId,
     action: 'lead_status_changed',
-    message: `${profile?.first_name} ${profile?.last_name} updated the status of lead ${lead?.name} to ${status}`,
+    message: `${fullName} updated the status of lead ${lead?.name} to ${status}`,
   });
 }

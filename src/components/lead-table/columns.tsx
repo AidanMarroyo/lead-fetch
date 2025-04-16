@@ -1,4 +1,3 @@
-'use client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Lead } from './types';
 import { StatusDropdown } from './status-dropdown';

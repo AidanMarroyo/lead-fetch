@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { updateLeadStatus } from '@/actions/updateLeadStatus';
 import {
@@ -25,19 +26,37 @@ export function StatusDropdown({
   leadId: string;
   current: string;
 }) {
-  const handleChange = async (status: string) => {
-    await updateLeadStatus(leadId, status);
+  const [status, setStatus] = useState(current);
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = async (newStatus: string) => {
+    try {
+      setSaving(true);
+      setStatus(newStatus); // ✅ optimistic update
+      await updateLeadStatus(leadId, newStatus);
+    } catch (err) {
+      console.error('Failed to update status:', err);
+      setStatus(current); // ❌ rollback if error
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline'>{current}</Button>
+        <Button variant='outline' disabled={saving}>
+          {saving ? 'Saving...' : status}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {statuses.map((status) => (
-          <DropdownMenuItem key={status} onClick={() => handleChange(status)}>
-            {status}
+        {statuses.map((s) => (
+          <DropdownMenuItem
+            key={s}
+            onClick={() => handleChange(s)}
+            disabled={s === status}
+          >
+            {s}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

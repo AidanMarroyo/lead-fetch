@@ -77,13 +77,10 @@ export default function UserDropdown({
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href='#'>Dashboard</Link>
+          <Link href='/dashboard/analytics'>Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href='/dashboard/settings'>Settings</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href='#'>Earnings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action='/auth/signout' method='post'>

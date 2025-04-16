@@ -187,7 +187,7 @@ if (monthlyLimit > 0) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('first_name, last_name')
+      .select('first_name, last_name, email')
       .eq('id', userId)
       .single();
 
@@ -196,11 +196,18 @@ if (monthlyLimit > 0) {
         .from('leads')
         .insert(inserts);
 
+        const fullName =
+        profile?.first_name === null ||
+        profile?.last_name === null
+          ? `${profile?.email}`
+          : `${profile?.first_name} ${profile?.last_name}`;
+
+
       await logActivity({
         userId: userId,
         teamId: teamId,
         action: 'leads_added',
-        message: `${profile?.first_name} ${profile?.last_name} added ${inserts.length} leads in ${location} for the keyword "${keyword}".`,
+        message: `${fullName} added ${inserts.length} leads in ${location} for the keyword "${keyword}".`,
       });
 
       if (insertError) {

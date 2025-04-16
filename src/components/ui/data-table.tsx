@@ -5,8 +5,11 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
+  SortingState,
 } from '@tanstack/react-table';
+import { useState } from 'react';
 
 import {
   Table,
@@ -16,22 +19,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  loading?: boolean;
 };
 
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -40,16 +48,25 @@ export function DataTable<TData, TValue>({
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
+              {headerGroup.headers.map((header) => {
+                const isSorted = header.column.getIsSorted();
+                return (
+                  <TableHead
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className='cursor-pointer select-none'
+                  >
+                    <div className='flex items-center gap-1'>
+                      {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                </TableHead>
-              ))}
+                      {isSorted === 'asc' && <ArrowUp className='w-3 h-3' />}
+                      {isSorted === 'desc' && <ArrowDown className='w-3 h-3' />}
+                    </div>
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -73,7 +90,8 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      {/* 📄 Pagination Controls */}
+
+      {/* Pagination Controls */}
       <div className='flex items-center justify-end gap-4 px-4 py-2'>
         <button
           onClick={() => table.previousPage()}

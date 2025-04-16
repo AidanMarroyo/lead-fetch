@@ -92,15 +92,22 @@ export async function POST(req: Request) {
 
   const { data: inviterData } = await supabase
     .from('profiles')
-    .select('first_name, last_name')
+    .select('first_name, last_name, email')
     .eq('id', inviter.id)
     .single();
+
+    const fullName =
+    inviterData?.first_name === null ||
+    inviterData?.last_name === null
+      ? `${inviterData?.email}`
+      : `${inviterData?.first_name} ${inviterData?.last_name}`;
+
 
   await logActivity({
     userId: inviter.id,
     teamId: teamId,
     action: 'team_member_invite',
-    message: `${inviterData?.first_name} ${inviterData?.last_name} invited ${email} to team ${teamData?.name}`,
+    message: `${fullName} invited ${email} to team ${teamData?.name}`,
   });
 
   return NextResponse.json({ success: true });

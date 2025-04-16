@@ -28,12 +28,10 @@ export async function POST(req: NextRequest) {
     return new NextResponse('Webhook error', { status: 400 });
   }
 
-  console.log('✅ Stripe event received:', event.type);
 
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log('🔍 Checkout session:', session);
 
       const subId = session.subscription as string;
       const custId = session.customer as string;
@@ -46,7 +44,6 @@ export async function POST(req: NextRequest) {
       }
 
       const subscription = await stripe.subscriptions.retrieve(subId);
-      console.log('✅ Subscription from Stripe:', subscription);
 
       const priceId = subscription.items.data[0].price.id;
 
@@ -111,6 +108,17 @@ export async function POST(req: NextRequest) {
               });
 
               console.log('✅ Team created and user linked as admin');
+
+                // ✅ Update all existing leads for this user with the new team_id
+        const { error: updateLeadsError } = await supabase
+        .from('leads')
+        .update({ team_id: team.id })
+        .eq('user_id', userId);
+
+      if (updateLeadsError) {
+        console.error('❌ Failed to assign team_id to existing leads:', updateLeadsError);
+      }
+              
             } else {
               console.error('❌ Error creating team:', teamError);
             }

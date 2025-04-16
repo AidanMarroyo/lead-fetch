@@ -96,6 +96,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
       const scrapeData = await scrapeRes.json();
       if (!scrapeData.success) return toast.error('Website scrape failed');
+      console.log('[Scrape Data]', scrapeData);
 
       const analysis = await analyzeAndSaveLead(
         internalLead.id,

@@ -10,6 +10,7 @@ interface ScrapeData {
   imagesMissingAlt: number;
   wordCount: number;
   hasMobileMeta: boolean;
+  visibleText?: string;
 }
 
 interface TechData {
@@ -38,6 +39,7 @@ export async function analyzeAndSaveLead(
     optimizationLevel: techData.optimizationLevel,
     trafficRank: techData.trafficRank ?? null,
     adSpendEstimate: techData.adSpendEstimate ?? null,
+    visibleText: scrape.visibleText,
   });
 
   const { error } = await supabase

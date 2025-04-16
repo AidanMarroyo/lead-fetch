@@ -15,6 +15,7 @@ export async function suggestWebsiteImprovements({
   optimizationLevel,
   trafficRank,
   adSpendEstimate,
+  visibleText, 
 }: {
   url: string;
   h1: boolean;
@@ -27,11 +28,24 @@ export async function suggestWebsiteImprovements({
   optimizationLevel: string;
   trafficRank: number | null;
   adSpendEstimate: string | null;
+  visibleText?: string;
 }) {
   const prompt = `
-You are a senior website consultant. Analyze this business website using the provided technical and visual data. Suggest 2–3 improvements to increase conversions, SEO, or user trust.
+You are a professional website consultant. Analyze this business website using the provided technical and visual data.
 
-Give your advice in a human, casual tone. End with:
+Provide actionable improvement suggestions for increasing conversions, SEO, and user trust.
+
+Use a neutral, direct tone with no casual language or personality.
+
+Format the output as a list of bullet points or numbered items, with each recommendation on its own line.
+
+Each point must be on a separate line
+
+Avoid conversational phrases like "buddy", "let's", or "you gotta".
+
+If website content is provided, include suggestions related to improving it for relevance, clarity, and industry alignment.
+
+End with:
 Grade: bad | average | good
 
 ---
@@ -45,6 +59,8 @@ Tech Stack: ${techStack.join(', ')}
 Optimization Level: ${optimizationLevel}
 Traffic Rank: ${trafficRank ?? 'N/A'}
 Ad Spend: ${adSpendEstimate ?? 'N/A'}
+${visibleText ? `\nPage Content:\n${visibleText.slice(0, 1500)}` : ''}
+\n\nList your improvement suggestions below. Each point on its own line.
 `;
 
   const res = await openai.chat.completions.create({

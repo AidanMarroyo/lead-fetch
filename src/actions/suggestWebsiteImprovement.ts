@@ -39,7 +39,7 @@ Use a neutral, direct tone with no casual language or personality.
 
 Format the output as a list of bullet points or numbered items, with each recommendation on its own line.
 
-Each point must be on a separate line
+Each point must be on a separate line with an additional line break between points.
 
 Avoid conversational phrases like "buddy", "let's", or "you gotta".
 

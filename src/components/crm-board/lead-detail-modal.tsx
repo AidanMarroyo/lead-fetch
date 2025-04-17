@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import {
   Dialog,
@@ -18,9 +17,9 @@ import { toast } from 'sonner';
 import { Place } from '@/actions/fetchLeads';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { analyzeAndSaveLead } from '@/actions/analyzeAndSaveLead';
 import { analyzeWebsite } from '@/actions/analyzeWebsite';
 import { useUserPlan } from '@/lib/userUserPlan';
+import { saveAnalysis } from '@/actions/saveAnalysis';
 
 type Props = {
   lead: Lead;
@@ -94,18 +93,24 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
         body: JSON.stringify({ url: internalLead.website }),
       });
 
-      const scrapeData = await scrapeRes.json();
-      if (!scrapeData.success) return toast.error('Website scrape failed');
-      console.log('[Scrape Data]', scrapeData);
+      const data = await scrapeRes.json();
+      if (!data.success) return toast.error('Website scrape failed');
+      console.log('[Scrape Result]', data);
 
-      const analysis = await analyzeAndSaveLead(
-        internalLead.id,
-        internalLead.website!,
-        scrapeData
-      );
+      const updatedLead = {
+        ...internalLead,
+        tech_stack: data.techStack,
+        traffic_rank: data.trafficRank,
+        ad_spend_estimate: data.adSpendEstimate,
+        optimization_level: data.optimizationLevel,
+        website_score: data.website_score,
+        website_grade: data.grade,
+        auto_pitch: data.auto_pitch,
+      };
 
-      if (!analysis.success || !analysis.data?.suggestions)
-        return toast.error('Analysis failed');
+      // Save to DB
+      const saveRes = await saveAnalysis(updatedLead);
+      if (!saveRes.success) return toast.error('Failed to save analysis');
 
       const refreshed = await fetch(`/api/leads/${internalLead.id}`);
       const updated = await refreshed.json();
@@ -128,6 +133,11 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     const updatedNotes = await getLeadNotes(internalLead.id);
     setNotes(updatedNotes);
   };
+
+  const formattedPitch = auto_pitch
+    ?.replace(/\n+/g, ' ') // Remove accidental newlines
+    .replace(/(\d+)\s*\.\s*/g, '\n\n$1. ') // Add line breaks before each numbered point
+    .trim();
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -264,20 +274,20 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
                       <div className='grid grid-cols-2 gap-4'>
                         <div>
-                          <span className='font-semibold'>Traffic Rank:</span>
+                          <span className='font-semibold'>Traffic Rank: </span>
                           <span className='text-muted-foreground'>
                             {traffic_rank ?? '—'}
                           </span>
                         </div>
                         <div>
-                          <span className='font-semibold'>Ad Spend:</span>
+                          <span className='font-semibold'>Ad Spend: </span>
                           <span className='text-muted-foreground'>
                             {ad_spend_estimate ?? '—'}
                           </span>
                         </div>
                         <div>
                           <span className='font-semibold'>
-                            Optimization Level:
+                            Optimization Level:{' '}
                           </span>
                           <span className='text-muted-foreground capitalize'>
                             {optimization_level ?? '—'}
@@ -285,7 +295,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                         </div>
                       </div>
 
-                      {auto_pitch && (
+                      {formattedPitch && (
                         <div className='border bg-muted p-4 rounded'>
                           <div className='flex justify-between items-center mb-2'>
                             <h4 className='text-sm font-semibold'>
@@ -294,7 +304,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                             <Button
                               variant='ghost'
                               onClick={() => {
-                                navigator.clipboard.writeText(auto_pitch);
+                                navigator.clipboard.writeText(formattedPitch);
                                 toast.success('Pitch copied to clipboard');
                               }}
                             >
@@ -302,7 +312,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                             </Button>
                           </div>
                           <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
-                            {auto_pitch}
+                            {formattedPitch}
                           </p>
                         </div>
                       )}

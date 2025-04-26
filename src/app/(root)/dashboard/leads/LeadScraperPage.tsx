@@ -20,7 +20,7 @@ import ScraperForm from './ScraperForm';
 
 export default function LeadScraperPage() {
   const { plan } = useUserPlan();
-
+  const [scrapeKey, setScrapeKey] = useState(0);
   const [mapView, setMapView] = useState(false); // ✅ NEW
   const [filters, setFilters] = useState<LeadFilter>({
     status: undefined,
@@ -51,7 +51,11 @@ export default function LeadScraperPage() {
           </span>
         )}
       </h1>
-      <ScraperForm plan={plan} />
+      <ScraperForm
+        plan={plan}
+        onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
+      />
+
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
@@ -90,13 +94,13 @@ export default function LeadScraperPage() {
           </Button>
         </div>
       </div>
-      <LeadFilters onApply={handleApplyFilters} />
+      <LeadFilters onApply={handleApplyFilters} scrapeKey={scrapeKey} />
 
       <LeadScoreLegend />
       {mapView ? (
         <LeadsMap filters={filters} />
       ) : (
-        <LeadTable filters={filters} />
+        <LeadTable key={scrapeKey} filters={filters} />
       )}
     </main>
   );

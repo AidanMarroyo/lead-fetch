@@ -17,8 +17,10 @@ type StatusOption = LeadFilter['status'];
 
 export function LeadFilters({
   onApply,
+  scrapeKey,
 }: {
   onApply: (filters: LeadFilter) => void;
+  scrapeKey: number;
 }) {
   const [location, setLocation] = useState('');
   const [status, setStatus] = useState<StatusOption>('all');
@@ -26,6 +28,8 @@ export function LeadFilters({
   const [recentOnly, setRecentOnly] = useState(false);
   const [websiteStatus, setWebsiteStatus] =
     useState<LeadFilter['websiteStatus']>();
+  const [categories, setCategories] = useState<string[]>([]);
+  const [category, setCategory] = useState<string>('all');
 
   useEffect(() => {
     onApply({
@@ -34,8 +38,16 @@ export function LeadFilters({
       minScore: score[0],
       maxScore: score[1],
       websiteStatus,
+      recentOnly,
+      category: category === 'all' ? undefined : category,
     });
-  }, [location, status, score, recentOnly, onApply, websiteStatus]);
+  }, [location, status, score, recentOnly, onApply, websiteStatus, category]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((data) => setCategories(data));
+  }, [scrapeKey]);
 
   function capitalize(status: string | undefined): string {
     if (!status) return '';
@@ -125,6 +137,25 @@ export function LeadFilters({
             <SelectItem value='has'>Has Website</SelectItem>
           </SelectContent>
         </Select>
+
+        <div className='w-48'>
+          <Label htmlFor='category' className='text-xs mb-1 block'>
+            Category
+          </Label>
+          <Select value={category} onValueChange={(v) => setCategory(v)}>
+            <SelectTrigger>
+              <SelectValue placeholder='Category' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>All</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );

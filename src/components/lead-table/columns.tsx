@@ -1,12 +1,15 @@
+'use client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Lead } from './types';
 import { StatusDropdown } from './status-dropdown';
 import { cn } from '@/lib/utils';
+import { BusinessNameCell } from './BusinessNameCell';
 
 export const columns: ColumnDef<Lead>[] = [
   {
     accessorKey: 'name',
     header: 'Business Name',
+    cell: ({ row }) => <BusinessNameCell lead={row.original} />,
   },
   {
     accessorKey: 'address',

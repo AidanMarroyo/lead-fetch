@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import { analyzeWebsite } from '@/actions/analyzeWebsite';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { saveAnalysis } from '@/actions/saveAnalysis';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 type Props = {
   lead: Lead;
@@ -384,6 +385,9 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 function ModalLoadingSkeleton() {
   return (
     <div className='space-y-4 animate-pulse'>
+      <VisuallyHidden>
+        <DialogTitle>Loading lead details</DialogTitle>
+      </VisuallyHidden>
       <div className='h-5 bg-muted w-1/3 rounded' />
       <div className='h-3 bg-muted w-1/2 rounded' />
       <div className='h-3 bg-muted w-1/4 rounded' />

@@ -29,9 +29,11 @@ export type Place = {
 export function LeadProfileAudit({
   lead,
   address,
+  compact = false, // ✅ NEW: allow compact mode
 }: {
   lead: Place;
   address: string;
+  compact?: boolean;
 }) {
   const auditItems = [
     {
@@ -78,10 +80,15 @@ export function LeadProfileAudit({
   ];
 
   return (
-    <div className='mt-6 border-t pt-4'>
-      <h3 className='text-sm font-semibold mb-2 text-foreground'>
-        🧾 Google Profile Audit
-      </h3>
+    <div
+      className={
+        compact
+          ? 'p-3 rounded-md bg-white shadow-md text-black dark:bg-gray-900 dark:text-white'
+          : 'mt-6 border-t pt-4'
+      }
+      style={compact ? { maxWidth: '250px' } : {}}
+    >
+      <h3 className='text-sm font-semibold mb-2'>🧾 Google Profile Audit</h3>
       <ul className='space-y-2 text-sm'>
         {auditItems.map((item, i) => (
           <li key={i} className='flex items-center gap-2'>
@@ -90,29 +97,31 @@ export function LeadProfileAudit({
             ) : (
               <X className='text-red-500 w-4 h-4' />
             )}
-            <span className='text-muted-foreground'>{item.label}</span>
+            <span>{item.label}</span>
           </li>
         ))}
       </ul>
-      <div className='mt-4 flex items-center gap-2'>
-        <Button
-          variant='outline'
-          onClick={async () => {
-            if (!lead) return toast.error('Missing place details');
+      {!compact && ( // ✅ Only show download button outside tooltips
+        <div className='mt-4 flex items-center gap-2'>
+          <Button
+            variant='outline'
+            onClick={async () => {
+              if (!lead) return toast.error('Missing place details');
 
-            const blob = await pdf(
-              <LeadAuditPDF lead={lead} address={address} />
-            ).toBlob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${lead.name}-audit.pdf`;
-            link.click();
-          }}
-        >
-          Download Audit Report (PDF)
-        </Button>
-      </div>
+              const blob = await pdf(
+                <LeadAuditPDF lead={lead} address={address} />
+              ).toBlob();
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `${lead.name}-audit.pdf`;
+              link.click();
+            }}
+          >
+            Download Audit Report (PDF)
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

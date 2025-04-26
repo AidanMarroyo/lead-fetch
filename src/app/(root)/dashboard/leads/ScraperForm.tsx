@@ -26,9 +26,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 interface ScraperFormProps {
   plan: 'free' | 'pro' | 'unlimited' | 'team';
+  onScrapeComplete: () => void;
 }
 
-export default function ScraperForm({ plan }: ScraperFormProps) {
+export default function ScraperForm({
+  plan,
+  onScrapeComplete,
+}: ScraperFormProps) {
   const form = useForm<SearchLeadValues>({
     resolver: zodResolver(SearchLeadSchema),
     defaultValues: {
@@ -54,12 +58,13 @@ export default function ScraperForm({ plan }: ScraperFormProps) {
     const fullLocation =
       `${values.city}, ${values.provinceOrState}, ${values.country}`.toLowerCase();
     const result = await fetchLeadsFromGoogle({
-      keyword: values.keyword,
+      keyword: values.keyword.toLowerCase(),
       location: fullLocation,
       withWebsites: values.withWebsites ?? false,
     });
     if (result?.success) {
       toast.success(`${result.count} leads found and stored`);
+      onScrapeComplete(); // trigger refetch via key
     } else {
       toast.error(`${result.message}`);
     }

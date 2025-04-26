@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
   } else if (filters.websiteStatus === 'has')
     query = query.neq('website', null);
 
+  if (filters?.category && filters.category !== 'all') {
+      query = query.eq('category', filters.category);
+    }
+    
+
   const { data, error } = await query;
 
   if (error) {

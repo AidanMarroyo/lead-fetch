@@ -5,4 +5,5 @@ export type LeadFilter = {
   location?: string;
   recentOnly?: boolean;
   websiteStatus?: 'all' | 'no' | 'has';
+  category?: string;
 };

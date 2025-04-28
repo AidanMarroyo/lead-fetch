@@ -68,7 +68,7 @@ export const BusinessNameCell: React.FC<BusinessNameCellProps> = ({ lead }) => {
               href={`https://www.google.com/maps/place/?q=place_id:${lead.google_place_id}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='inline-block text-xs text-blue-600 hover:underline mt-2 ml-1'
+              className='inline-block text-xs text-white hover:underline mt-2 ml-1'
             >
               View on Google Maps
             </a>

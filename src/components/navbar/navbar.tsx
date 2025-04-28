@@ -25,19 +25,25 @@ export function DashboardNavbar({ userData }: { userData: Props }) {
   const isDark = theme === 'dark';
 
   return (
-    <nav className='fixed top-0 z-30 w-full border-b border-gray-200 bg-white p-0 sm:p-0 dark:border-gray-700 dark:bg-gray-800'>
+    <nav className='fixed top-0 z-30 w-full border-b border-gray-200 p-0 sm:p-0 dark:border-gray-700 '>
       <div className='w-full p-3 pr-4'>
         <div className='flex items-center justify-between sm:flex-wrap overflow-x-auto'>
           <div className='flex items-center'>
             <Link href='/' className='mr-14 flex items-center'>
               <Image
-                className='mr-3 h-8'
+                className='mr-3  block dark:hidden'
                 alt=''
-                src='/images/logo.svg'
-                width={32}
-                height={32}
+                src='/logo.png'
+                width={120}
+                height={120}
               />
-              <h1 className='text-xl font-bold'>WebbedLead</h1>
+              <Image
+                className='mr-3 hidden dark:block bg-transparent'
+                alt=''
+                src='/logo-dark.png'
+                width={120}
+                height={120}
+              />
             </Link>
           </div>
           <div className='flex items-center lg:gap-3'>

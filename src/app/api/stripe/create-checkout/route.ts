@@ -60,8 +60,8 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings/billing`,
+    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/settings/billing`,
   });
 
   return NextResponse.json({ url: session.url });

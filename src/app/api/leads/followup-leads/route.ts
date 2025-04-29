@@ -1,3 +1,4 @@
+// app/api/followups/route.ts
 import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
@@ -5,7 +6,9 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const supabase = await createClient();
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  if (!user)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { data: leads, error } = await supabase
     .from('leads')
@@ -18,30 +21,24 @@ export async function GET() {
   }
 
   const today = new Date();
-  
 
   const dueLeads = leads.filter((lead) => {
-    // 1️⃣ If lead has NEVER been contacted, it should show immediately
+
+    // ✅ If never contacted, it's due immediately
     if (!lead.last_contacted_at) return true;
 
-    // 2️⃣ Otherwise, check days since last contact
-    const lastContacted = new Date(lead.last_contacted_at);
-    const daysSinceContact = Math.floor(
-      (today.getTime() - lastContacted.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const followUpDate = lead.next_follow_up_date === null ? today : lead.next_follow_up_date;
 
-    const nextFollowUpGap = (lead.contact_attempts || 0) * 3; // 3 days per attempt
-
-    return daysSinceContact >= nextFollowUpGap;
+    // ✅ Due if today is same or after the calculated follow-up date
+    return today >= followUpDate;
   });
 
+  // ✅ Sort by last contacted (oldest first)
   dueLeads.sort((a, b) => {
-    const aDate = new Date(a.last_contacted_at || 0);
-    const bDate = new Date(b.last_contacted_at || 0);
-    return aDate.getTime() - bDate.getTime();
-  })
-  
-  
+    const aDate = new Date(a.last_contacted_at || 0).getTime();
+    const bDate = new Date(b.last_contacted_at || 0).getTime();
+    return aDate - bDate;
+  });
 
   return NextResponse.json(dueLeads);
 }

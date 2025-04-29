@@ -17,10 +17,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import ScraperForm from './ScraperForm';
-import { User } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/client';
 
-export default function LeadScraperPage({ user }: { user: User }) {
+export default function LeadScraperPage({ userId }: { userId: string }) {
   const { plan } = useUserPlan();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [scrapeKey, setScrapeKey] = useState(0);
@@ -51,7 +50,7 @@ export default function LeadScraperPage({ user }: { user: User }) {
       const { data } = await supabase
         .from('team_members')
         .select('team_id')
-        .eq('user_id', user?.id)
+        .eq('user_id', userId)
         .maybeSingle();
 
       if (data?.team_id) {
@@ -59,10 +58,10 @@ export default function LeadScraperPage({ user }: { user: User }) {
       }
     };
 
-    if (user?.id) {
+    if (userId) {
       fetchTeam();
     }
-  }, [user]);
+  }, [userId]);
 
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>

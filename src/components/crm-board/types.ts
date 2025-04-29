@@ -19,4 +19,5 @@ export type Lead = {
   website_grade?: 'bad' | 'average' | 'good';
   contact_attempts: number;
   last_contacted_at?: string
+  next_follow_up_date?: string;
 };

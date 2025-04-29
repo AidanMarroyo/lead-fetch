@@ -7,5 +7,5 @@ export default async function Page() {
 
   if (!user) redirect('/auth/login');
 
-  return <LeadScraperPage />;
+  return <LeadScraperPage userId={user.id} />;
 }

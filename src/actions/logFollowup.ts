@@ -1,6 +1,7 @@
 'use server';
 
 import { getCurrentUser } from '@/lib/auth';
+import { getNextFollowUpDate } from '@/lib/followup';
 import { createClient } from '@/utils/supabase/server';
 
 export async function logFollowUp(leadId: string) {
@@ -19,13 +20,19 @@ const user = await getCurrentUser();
     throw new Error('Failed to fetch lead.');
   }
 
-  const newAttempts = (lead.contact_attempts ?? 0) + 1;
+  
+const today = new Date().toISOString();
+const newAttempts = lead.contact_attempts + 1;
+
+const nextFollowUpDate = getNextFollowUpDate(newAttempts); // ✅ single param
+
 
   const { error: updateError } = await supabase
     .from('leads')
     .update({
       contact_attempts: newAttempts,
-      last_contacted_at: new Date().toISOString(),
+      last_contacted_at: today,
+      next_follow_up_date: nextFollowUpDate,
     })
     .eq('id', leadId);
 
@@ -34,5 +41,6 @@ const user = await getCurrentUser();
     throw new Error('Failed to log follow-up.');
   }
 
+  
   return { success: true, attempts: newAttempts };
 }

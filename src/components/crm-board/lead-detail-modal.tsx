@@ -22,19 +22,13 @@ import { useUserPlan } from '@/lib/userUserPlan';
 import { saveAnalysis } from '@/actions/saveAnalysis';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { logFollowUp } from '@/actions/logFollowup';
+import { getNextFollowUpDate } from '@/lib/followup';
 
 type Props = {
   lead: Lead;
   onClose: () => void;
   onUpdate: (updated: Lead) => void;
 };
-
-function getNextFollowUp(attempts: number) {
-  const now = new Date();
-  const days = attempts === 0 ? 2 : attempts * 3; // e.g., 2 days, then 6, then 9
-  now.setDate(now.getDate() + days);
-  return now.toLocaleDateString();
-}
 
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
@@ -146,6 +140,9 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               ...prev,
               contact_attempts: (prev.contact_attempts ?? 0) + 1,
               last_contacted_at: new Date().toISOString(),
+              next_follow_up_date: getNextFollowUpDate(
+                prev.contact_attempts + 1
+              ),
             }));
             toast.success('Follow-up logged.');
           } catch (err) {
@@ -174,6 +171,8 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     .replace(/(\d+)\s*\.\s*/g, '\n\n$1. ') // Add line breaks before each numbered point
     .trim();
 
+  const today = new Date();
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-hidden flex flex-col'>
@@ -186,27 +185,23 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
             </DialogHeader>
 
             <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
-              <div className='text-xs flex items-center gap-2'>
-                <Button
-                  variant='outline'
-                  onClick={handleLogFollowUp}
-                  disabled={isPending}
-                >
-                  {isPending ? (
-                    <Loader2 className='animate-spin w-4 h-4' />
-                  ) : (
-                    'Log Follow-Up'
-                  )}
-                </Button>
-                <span className='text-muted-foreground'>
-                  Attempts: {internalLead.contact_attempts ?? 0}
-                </span>
+              {isPending ? (
+                <Loader2 className='animate-spin h-4 w-4' />
+              ) : (
+                <div className='text-xs flex items-center gap-2'>
+                  <span className='text-muted-foreground'>
+                    Attempts: {internalLead.contact_attempts ?? 0}
+                  </span>
 
-                <div className='text-xs text-muted-foreground'>
-                  Next Recommended Follow-Up:{' '}
-                  {getNextFollowUp(internalLead.contact_attempts ?? 0)}
+                  <div className='text-xs text-muted-foreground'>
+                    Next Recommended Follow-Up:{' '}
+                    {internalLead.next_follow_up_date === null
+                      ? today.toISOString().split('T')[0]
+                      : internalLead.next_follow_up_date}
+                  </div>
                 </div>
-              </div>
+              )}
+
               <p className='text-sm text-muted-foreground'>
                 {internalLead.address}
               </p>

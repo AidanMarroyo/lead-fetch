@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { plan } = await req.json();
+  const { plan }: { plan: keyof typeof PRICE_IDS } = await req.json();
 
   if (!PRICE_IDS[plan]) {
     return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });

@@ -23,18 +23,17 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
-    console.error('❌ Invalid webhook signature:', err);
-    return new NextResponse('Invalid signature', { status: 400 });
+    console.error('❌ Stripe webhook signature error:', err);
+    return new NextResponse('Webhook error', { status: 400 });
   }
 
   try {
-    // === Handle checkout completion
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      const subscriptionId = session.subscription as string;
-      const customerId = session.customer as string;
+      const subId = session.subscription as string;
+      const custId = session.customer as string;
 
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const subscription = await stripe.subscriptions.retrieve(subId);
       const priceId = subscription.items.data[0].price.id;
 
       const plan =
@@ -46,8 +45,7 @@ export async function POST(req: NextRequest) {
           ? 'team'
           : 'free';
 
-      // Update subscription record
-      const { error } = await supabase
+      await supabase
         .from('subscriptions')
         .update({
           stripe_subscription_id: subscription.id,
@@ -55,23 +53,18 @@ export async function POST(req: NextRequest) {
           status: subscription.status,
           plan,
         })
-        .eq('stripe_customer_id', customerId);
+        .eq('stripe_customer_id', custId);
 
-      if (error) console.error('❌ Failed to update subscription:', error);
-      else console.log('✅ Updated subscription to', plan);
-
-      // If team plan, create team + assign leads
       if (plan === 'team') {
         const { data: subUser } = await supabase
           .from('subscriptions')
           .select('user_id')
-          .eq('stripe_customer_id', customerId)
+          .eq('stripe_customer_id', custId)
           .single();
 
         const userId = subUser?.user_id;
         if (!userId) return NextResponse.json({ received: true });
 
-        // Check if already in team
         const { data: existing } = await supabase
           .from('team_members')
           .select('id')
@@ -79,13 +72,13 @@ export async function POST(req: NextRequest) {
           .maybeSingle();
 
         if (!existing) {
-          const { data: team, error: teamErr } = await supabase
+          const { data: team } = await supabase
             .from('teams')
             .insert({ owner_id: userId, name: 'My Team' })
             .select()
             .single();
 
-          if (team?.id && !teamErr) {
+          if (team?.id) {
             await supabase.from('team_members').insert({
               user_id: userId,
               team_id: team.id,
@@ -96,33 +89,28 @@ export async function POST(req: NextRequest) {
               .from('leads')
               .update({ team_id: team.id })
               .eq('user_id', userId);
-
-            console.log('✅ Team created and user linked');
-          } else {
-            console.error('❌ Failed to create team:', teamErr);
           }
         }
       }
     }
 
-    // === Handle subscription cancellation
     if (event.type === 'customer.subscription.deleted') {
-      const subscription = event.data.object as Stripe.Subscription;
+      const sub = event.data.object as Stripe.Subscription;
 
       await supabase
         .from('subscriptions')
         .update({
-          plan: 'free',
           status: 'canceled',
+          plan: 'free',
         })
-        .eq('stripe_subscription_id', subscription.id);
+        .eq('stripe_subscription_id', sub.id);
 
-      console.log('✅ Subscription canceled and downgraded to free');
+      console.log('✅ Subscription canceled');
     }
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    console.error('❌ Webhook processing failed:', err);
-    return new NextResponse('Webhook handler error', { status: 500 });
+    console.error('❌ Webhook handler error:', err);
+    return new NextResponse('Webhook handling error', { status: 500 });
   }
 }

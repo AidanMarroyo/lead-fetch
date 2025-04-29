@@ -16,19 +16,19 @@ export async function POST() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: subscription, error } = await supabase
+  const { data: subscription } = await supabase
     .from('subscriptions')
     .select('stripe_subscription_id')
     .eq('user_id', user.id)
     .single();
 
-  if (error || !subscription?.stripe_subscription_id) {
+  if (!subscription?.stripe_subscription_id) {
     return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });
   }
 
   try {
     await stripe.subscriptions.update(subscription.stripe_subscription_id, {
-      cancel_at_period_end: true, // ✅ mark for cancel at the end of billing period
+      cancel_at_period_end: true,
     });
 
     return NextResponse.json({ success: true });

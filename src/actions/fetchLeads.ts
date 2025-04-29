@@ -35,6 +35,8 @@ export type Place = {
   city?: string;
   lat?: number;
   lng?: number;
+  assigned_to_user_id?: string;
+  next_follow_up_date?: string;
 };
 
 export async function fetchLeadsFromGoogle({
@@ -165,6 +167,8 @@ if (monthlyLimit > 0) {
 
     const teamId = membership?.team_id || null;
 
+    const today = new Date()
+
     const inserts = await Promise.all(
       allowedNewLeads.map(async (lead: Place) => {
         const coords = await geocodeFromPlaceId(lead.place_id);
@@ -181,6 +185,8 @@ if (monthlyLimit > 0) {
           lat: coords?.lat || null,
           lng: coords?.lng || null,
           website: lead.website || null,
+          next_follow_up_date: today.toISOString().split('T')[0],
+          assigned_to_user_id: userId
         };
       })
     );

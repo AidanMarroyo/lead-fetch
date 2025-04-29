@@ -8,7 +8,7 @@ import { BusinessNameCell } from './BusinessNameCell';
 import { AssignUserDropdown } from './AssignUserDropdown'; // you’ll add this next
 
 export function getColumns(teamId: string | null): ColumnDef<Lead>[] {
-  return [
+  const columns: (ColumnDef<Lead> | null)[] = [
     {
       accessorKey: 'name',
       header: 'Business Name',
@@ -47,19 +47,23 @@ export function getColumns(teamId: string | null): ColumnDef<Lead>[] {
         return <StatusDropdown leadId={lead.id} current={lead.status} />;
       },
     },
-    {
-      accessorKey: 'assigned_to',
-      header: 'Assigned To',
-      cell: ({ row }) => {
-        const lead = row.original;
-        return (
-          <AssignUserDropdown
-            leadId={lead.id}
-            currentAssignedId={lead.assigned_to}
-            teamId={teamId ?? ''} // ✅ ensure teamId is always a string
-          />
-        );
-      },
-    },
+    teamId
+      ? {
+          accessorKey: 'assigned_to',
+          header: 'Assigned To',
+          cell: ({ row }) => {
+            const lead = row.original;
+            return (
+              <AssignUserDropdown
+                leadId={lead.id}
+                currentAssignedId={lead.assigned_to}
+                teamId={teamId}
+              />
+            );
+          },
+        }
+      : null,
   ];
+
+  return columns.filter(Boolean) as ColumnDef<Lead>[]; // ✅ filters out nulls safely
 }

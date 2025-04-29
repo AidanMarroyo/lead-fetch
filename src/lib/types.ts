@@ -7,4 +7,6 @@ export type LeadFilter = {
   recentOnly?: boolean;
   websiteStatus?: 'all' | 'no' | 'has';
   category?: string;
+  dueOnly?: boolean; 
+  assignedTo?: string; 
 };

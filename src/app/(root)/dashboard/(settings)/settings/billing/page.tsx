@@ -35,6 +35,22 @@ export default function BillingPage() {
     else toast.error('Checkout failed.');
   };
 
+  const handleCancel = async () => {
+    setLoading(true);
+    const res = await fetch('/api/subscription/cancel', {
+      method: 'POST',
+    });
+    const data = await res.json();
+    setLoading(false);
+
+    if (data.success) {
+      toast.success('Subscription canceled.');
+      window.location.reload();
+    } else {
+      toast.error(data.error || 'Cancellation failed.');
+    }
+  };
+
   return (
     <div className='max-w-5xl mx-auto mt-10 px-4'>
       <h1 className='text-2xl font-semibold mb-6'>Billing & Plans</h1>
@@ -49,6 +65,17 @@ export default function BillingPage() {
             <br />
             <strong>Status:</strong> {sub?.status ?? 'inactive'}
           </p>
+
+          {sub?.plan !== 'free' && (
+            <Button
+              variant='destructive'
+              onClick={handleCancel}
+              disabled={loading}
+              className='w-full mt-4'
+            >
+              {loading ? 'Canceling...' : 'Cancel Subscription'}
+            </Button>
+          )}
         </CardContent>
       </Card>
 

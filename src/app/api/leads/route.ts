@@ -74,6 +74,16 @@ export async function POST(req: NextRequest) {
   if (filters?.category && filters.category !== 'all') {
       query = query.eq('category', filters.category);
     }
+
+    if (filters.dueOnly) {
+      const today = new Date().toISOString().split('T')[0];
+      query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`, { foreignTable: 'leads' });
+    }
+    
+
+    if (filters.assignedTo) {
+      query = query.eq('assigned_to_user_id', filters.assignedTo);
+    }
     
 
   const { data, error } = await query;

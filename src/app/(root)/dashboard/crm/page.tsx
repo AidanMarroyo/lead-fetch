@@ -8,7 +8,7 @@ export default async function Page() {
   if (!user) redirect('/auth/login');
   return (
     <main>
-      <PipelinePage />
+      <PipelinePage userId={user.id} />
     </main>
   );
 }

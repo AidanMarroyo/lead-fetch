@@ -30,6 +30,8 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
     location: '',
     minScore: 0,
     maxScore: 100,
+    dueOnly: false,
+    assignedTo: undefined,
   });
 
   const handleToggleMap = () => {

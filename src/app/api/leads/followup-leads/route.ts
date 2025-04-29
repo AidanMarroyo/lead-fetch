@@ -10,14 +10,42 @@ export async function GET() {
   if (!user)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { data: leads, error } = await supabase
-    .from('leads')
-    .select('*')
-    .eq('user_id', user.id);
+  const [{ data: sub }, { data: membership }] = await Promise.all([
+    supabase
+      .from('subscriptions')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single(),
+
+    supabase
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ]);
+
+  const plan = sub?.plan || 'free';
+  const teamId = membership?.team_id;
+
+  // Decide how to scope leads
+  const isTeam = plan === 'team' && teamId;
+
+  let query = supabase
+  .from('leads')
+  .select('*')
+
+  query = isTeam ? query.eq('team_id', teamId) : query.eq('user_id', user.id);
+
+  const { data: leads, error } = await query;
 
   if (error) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (error) {
+    console.error(error);
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 
   const today = new Date();

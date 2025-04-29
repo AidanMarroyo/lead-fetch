@@ -31,6 +31,20 @@ export function LeadFilters({
     useState<LeadFilter['websiteStatus']>();
   const [categories, setCategories] = useState<string[]>([]);
   const [category, setCategory] = useState<string>('all');
+  const [dueOnly, setDueOnly] = useState(false);
+  const [assignedTo, setAssignedTo] = useState('');
+  const [teamMembers, setTeamMembers] = useState<
+    { id: string; first_name: string; last_name: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const res = await fetch('/api/team/members');
+      const data = await res.json();
+      setTeamMembers(data || []);
+    };
+    fetchMembers();
+  }, []);
 
   useEffect(() => {
     onApply({
@@ -42,6 +56,8 @@ export function LeadFilters({
       websiteStatus,
       recentOnly,
       category: category === 'all' ? undefined : category,
+      dueOnly,
+      assignedTo: assignedTo || undefined,
     });
   }, [
     location,
@@ -52,6 +68,8 @@ export function LeadFilters({
     websiteStatus,
     category,
     name,
+    dueOnly,
+    assignedTo,
   ]);
 
   useEffect(() => {
@@ -145,6 +163,39 @@ export function LeadFilters({
             Show only leads from this week
           </Label>
         </div>
+        <div className='flex items-center gap-2 mb-3'>
+          <input
+            type='checkbox'
+            id='dueOnly'
+            checked={dueOnly}
+            onChange={() => setDueOnly(!dueOnly)}
+          />
+          <Label htmlFor='dueOnly' className='text-sm'>
+            Show only due leads
+          </Label>
+        </div>
+
+        {teamMembers.length > 0 && (
+          <div className='w-48'>
+            <Label htmlFor='assignedTo' className='text-xs mb-1 block'>
+              Assigned To
+            </Label>
+            <Select value={assignedTo} onValueChange={(v) => setAssignedTo(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder='All Assignees' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value=''>All</SelectItem>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.first_name} {member.last_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <Select
           value={websiteStatus}
           onValueChange={(v) =>

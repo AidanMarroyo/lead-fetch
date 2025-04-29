@@ -8,14 +8,17 @@ import { useUserPlan } from '@/lib/userUserPlan';
 import { useCallback, useState } from 'react';
 import ScraperForm from '../leads/ScraperForm';
 
-export default function PipelinePage() {
+export default function PipelinePage({ userId }: { userId: string }) {
   const { plan } = useUserPlan();
   const [scrapeKey, setScrapeKey] = useState(0);
   const [filters, setFilters] = useState<LeadFilter>({
+    name: '',
     status: undefined,
     location: '',
     minScore: 0,
     maxScore: 100,
+    dueOnly: false,
+    assignedTo: userId || undefined,
   });
 
   const handleApplyFilters = useCallback((filters: LeadFilter) => {

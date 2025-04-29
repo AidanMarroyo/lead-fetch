@@ -108,6 +108,8 @@ export async function POST(req: NextRequest) {
       console.log('✅ Subscription canceled');
     }
 
+    console.log('✅ Stripe event received:', event.type);
+
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error('❌ Webhook handler error:', err);

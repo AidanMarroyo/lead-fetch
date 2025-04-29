@@ -23,18 +23,6 @@ export default function BillingPage() {
     fetchSub();
   }, []);
 
-  const handleUpgrade = async (plan: 'pro' | 'unlimited' | 'team') => {
-    setLoading(true);
-    const res = await fetch('/api/stripe/create-checkout', {
-      method: 'POST',
-      body: JSON.stringify({ plan }),
-    });
-    const { url } = await res.json();
-    setLoading(false);
-    if (url) window.location.href = url;
-    else toast.error('Checkout failed.');
-  };
-
   const handleCancel = async () => {
     setLoading(true);
     const res = await fetch('/api/subscription/cancel', {
@@ -48,6 +36,33 @@ export default function BillingPage() {
       window.location.reload();
     } else {
       toast.error(data.error || 'Cancellation failed.');
+    }
+  };
+
+  const handleUpgrade = async (plan: 'pro' | 'unlimited' | 'team') => {
+    setLoading(true);
+
+    if (sub?.plan === 'free') {
+      // Free user → Start a brand new checkout session
+      const res = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        body: JSON.stringify({ plan }),
+      });
+      const { url } = await res.json();
+      setLoading(false);
+
+      if (url) window.location.href = url;
+      else toast.error('Checkout failed.');
+    } else {
+      // Already subscribed → Go to customer portal instead
+      const res = await fetch('/api/stripe/create-portal', {
+        method: 'POST',
+      });
+      const { url } = await res.json();
+      setLoading(false);
+
+      if (url) window.location.href = url;
+      else toast.error('Failed to open billing portal.');
     }
   };
 
@@ -99,7 +114,7 @@ export default function BillingPage() {
               disabled={loading}
               className='w-full mt-4'
             >
-              Upgrade to Pro
+              {sub?.plan === 'free' ? 'Upgrade to Pro' : 'Manage Billing'}
             </Button>
           </CardContent>
         </Card>
@@ -121,7 +136,7 @@ export default function BillingPage() {
               disabled={loading}
               className='w-full mt-4'
             >
-              Upgrade to Unlimited
+              {sub?.plan === 'free' ? 'Upgrade to Unlimited' : 'Manage Billing'}
             </Button>
           </CardContent>
         </Card>
@@ -143,7 +158,7 @@ export default function BillingPage() {
               disabled={loading}
               className='w-full mt-4'
             >
-              Upgrade to Team
+              {sub?.plan === 'free' ? 'Upgrade to Team' : 'Manage Billing'}
             </Button>
           </CardContent>
         </Card>

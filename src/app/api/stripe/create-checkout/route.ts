@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
     customer: profile.stripe_customer_id,
     line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
     mode: 'subscription',
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing?success=true`,
+    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing?canceled=true`,
   });
 
   return NextResponse.json({ url: session.url });

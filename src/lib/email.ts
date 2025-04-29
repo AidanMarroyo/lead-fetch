@@ -10,12 +10,12 @@ export async function sendInviteEmail({
   inviterEmail: string;
 }) {
   const { error } = await resend.emails.send({
-    from: 'LeadFetch Team <noreply@yourdomain.com>',
+    from: 'WebbedLeads Team <noreply@webbedleads.com>',
     to,
     subject: `${inviterEmail} invited you to join their team`,
     html: `
       <p>${inviterEmail} invited you to join their team on LeadFetch.</p>
-      <p><a href="https://lead-fetch.vercel.app/auth/signup">Click here to accept your invite</a></p>
+      <p><a href="https://webbedleads.com/auth/signup">Click here to accept your invite</a></p>
     `,
   });
 

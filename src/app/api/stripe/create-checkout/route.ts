@@ -9,7 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const PRICE_IDS = {
   pro: 'price_1R9u8CQ2tJAF8eXe2Qqnmnjz',
-  unlimited: 'price_1REIHjL5eEpzBjLUroAdAwSb',
+  unlimited: 'price_1RJNiGQ2tJAF8eXeMsfSdBBs',
   team: 'price_1RAChiQ2tJAF8eXeYepV4u2L',
 };
 

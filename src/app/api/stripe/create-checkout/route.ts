@@ -24,23 +24,24 @@ export async function POST(req: Request) {
 
   let stripeCustomerId: string;
 
-  // Step 1: Get or create Stripe customer
+  // Step 1: Check for existing stripe_customer_id
   const { data: existing } = await supabase
     .from('subscriptions')
     .select('stripe_customer_id')
     .eq('user_id', user.id)
     .single();
-
+  
   if (existing?.stripe_customer_id) {
     stripeCustomerId = existing.stripe_customer_id;
   } else {
+    // 🔥 create customer and save
     const customer = await stripe.customers.create({
       email: user.email!,
       metadata: { supabaseUserId: user.id },
     });
-
+  
     stripeCustomerId = customer.id;
-
+  
     await supabase.from('subscriptions').upsert({
       user_id: user.id,
       stripe_customer_id: stripeCustomerId,
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       status: 'inactive',
     });
   }
+  
 
   // Step 2: Create checkout session
   const session = await stripe.checkout.sessions.create({

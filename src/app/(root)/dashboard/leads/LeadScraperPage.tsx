@@ -21,8 +21,9 @@ import ScraperForm from './ScraperForm';
 export default function LeadScraperPage() {
   const { plan } = useUserPlan();
   const [scrapeKey, setScrapeKey] = useState(0);
-  const [mapView, setMapView] = useState(false); // ✅ NEW
+  const [mapView, setMapView] = useState(false);
   const [filters, setFilters] = useState<LeadFilter>({
+    name: '',
     status: undefined,
     location: '',
     minScore: 0,

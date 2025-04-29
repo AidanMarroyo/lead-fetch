@@ -1,4 +1,5 @@
 export type LeadFilter = {
+  name?: string;
   status?: 'all' | 'new' | 'contacted' | 'in progress' | 'closed' | 'archived' | 'not interested';
   minScore?: number;
   maxScore?: number;

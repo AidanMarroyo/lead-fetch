@@ -56,6 +56,9 @@ export async function POST(req: NextRequest) {
   if (filters?.location) {
     query = query.ilike('address', `%${filters.location}%`);
   }
+  if (filters?.name) {
+    query = query.ilike('name', `%${filters.name}%`);
+  }
 
   if (filters?.recentOnly) {
     const oneWeekAgo = new Date();

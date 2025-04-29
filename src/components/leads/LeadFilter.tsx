@@ -23,6 +23,7 @@ export function LeadFilters({
   scrapeKey: number;
 }) {
   const [location, setLocation] = useState('');
+  const [name, setName] = useState('');
   const [status, setStatus] = useState<StatusOption>('all');
   const [score, setScore] = useState<[number, number]>([0, 100]);
   const [recentOnly, setRecentOnly] = useState(false);
@@ -33,6 +34,7 @@ export function LeadFilters({
 
   useEffect(() => {
     onApply({
+      name: name.toLowerCase(),
       location: location.toLowerCase(),
       status: status === 'all' ? undefined : status,
       minScore: score[0],
@@ -41,7 +43,16 @@ export function LeadFilters({
       recentOnly,
       category: category === 'all' ? undefined : category,
     });
-  }, [location, status, score, recentOnly, onApply, websiteStatus, category]);
+  }, [
+    location,
+    status,
+    score,
+    recentOnly,
+    onApply,
+    websiteStatus,
+    category,
+    name,
+  ]);
 
   useEffect(() => {
     fetch('/api/categories')
@@ -60,6 +71,18 @@ export function LeadFilters({
   return (
     <div className='mb-6 rounded-lg border bg-muted/50 px-4 py-4 shadow-sm'>
       <div className='flex flex-wrap gap-4 items-end'>
+        <div className='w-48'>
+          <Label htmlFor='location' className='text-xs mb-1 block'>
+            Business Name
+          </Label>
+          <Input
+            id='name'
+            placeholder='Webbed Leads'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
         <div className='w-48'>
           <Label htmlFor='location' className='text-xs mb-1 block'>
             Location

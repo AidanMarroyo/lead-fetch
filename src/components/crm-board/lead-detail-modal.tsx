@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -21,12 +21,20 @@ import { analyzeWebsite } from '@/actions/analyzeWebsite';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { saveAnalysis } from '@/actions/saveAnalysis';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { logFollowUp } from '@/actions/logFollowup';
 
 type Props = {
   lead: Lead;
   onClose: () => void;
   onUpdate: (updated: Lead) => void;
 };
+
+function getNextFollowUp(attempts: number) {
+  const now = new Date();
+  const days = attempts === 0 ? 2 : attempts * 3; // e.g., 2 days, then 6, then 9
+  now.setDate(now.getDate() + days);
+  return now.toLocaleDateString();
+}
 
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
@@ -46,6 +54,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   }>(null);
   const [competitorLoading, setCompetitorLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   const {
     tech_stack,
@@ -127,12 +136,37 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     }
   };
 
+  const handleLogFollowUp = () => {
+    startTransition(async () => {
+      try {
+        startTransition(async () => {
+          try {
+            await logFollowUp(internalLead.id);
+            setInternalLead((prev) => ({
+              ...prev,
+              contact_attempts: (prev.contact_attempts ?? 0) + 1,
+              last_contacted_at: new Date().toISOString(),
+            }));
+            toast.success('Follow-up logged.');
+          } catch (err) {
+            console.error(err);
+            toast.error('Failed to log follow-up.');
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to log follow-up.');
+      }
+    });
+  };
+
   const handleSaveNote = async () => {
     if (!newNote.trim()) return;
     await createLeadNote(internalLead.id, newNote);
     setNewNote('');
     const updatedNotes = await getLeadNotes(internalLead.id);
     setNotes(updatedNotes);
+    handleLogFollowUp();
   };
 
   const formattedPitch = auto_pitch
@@ -152,6 +186,27 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
             </DialogHeader>
 
             <div className='overflow-y-auto pr-2 space-y-4 mt-2'>
+              <div className='text-xs flex items-center gap-2'>
+                <Button
+                  variant='outline'
+                  onClick={handleLogFollowUp}
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <Loader2 className='animate-spin w-4 h-4' />
+                  ) : (
+                    'Log Follow-Up'
+                  )}
+                </Button>
+                <span className='text-muted-foreground'>
+                  Attempts: {internalLead.contact_attempts ?? 0}
+                </span>
+
+                <div className='text-xs text-muted-foreground'>
+                  Next Recommended Follow-Up:{' '}
+                  {getNextFollowUp(internalLead.contact_attempts ?? 0)}
+                </div>
+              </div>
               <p className='text-sm text-muted-foreground'>
                 {internalLead.address}
               </p>

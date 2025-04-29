@@ -17,4 +17,6 @@ export type Lead = {
   sales_points?: string;
   auto_pitch?: string;
   website_grade?: 'bad' | 'average' | 'good';
+  contact_attempts: number;
+  last_contacted_at?: string
 };

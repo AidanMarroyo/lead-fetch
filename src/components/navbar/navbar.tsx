@@ -38,7 +38,7 @@ export function DashboardNavbar({ userData }: { userData: Props }) {
                 height={120}
               />
               <Image
-                className='mr-3 hidden dark:block bg-transparent'
+                className='mr-3 hidden dark:block'
                 alt=''
                 src='/webbed-logo-dark.png'
                 width={120}

@@ -2,12 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { DataTable } from '@/components/ui/data-table';
-import { columns } from './columns';
+import { getColumns } from './columns'; // notice: renamed import
 import { Lead } from './types';
 import { LeadFilter } from '@/lib/types';
 import { DataTableSkeleton } from '../data-table-skeleton';
 
-export function LeadTable({ filters }: { filters: LeadFilter }) {
+export function LeadTable({
+  filters,
+  teamId,
+}: {
+  filters: LeadFilter;
+  teamId: string | null;
+}) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,8 +32,8 @@ export function LeadTable({ filters }: { filters: LeadFilter }) {
   }, [filters]);
 
   return loading ? (
-    <DataTableSkeleton columns={columns} />
+    <DataTableSkeleton columns={getColumns(teamId)} />
   ) : (
-    <DataTable columns={columns} data={leads} />
+    <DataTable columns={getColumns(teamId)} data={leads} />
   );
 }

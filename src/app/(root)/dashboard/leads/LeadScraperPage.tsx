@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -17,9 +17,12 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import ScraperForm from './ScraperForm';
+import { User } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/client';
 
-export default function LeadScraperPage() {
+export default function LeadScraperPage({ user }: { user: User }) {
   const { plan } = useUserPlan();
+  const [teamId, setTeamId] = useState<string | null>(null);
   const [scrapeKey, setScrapeKey] = useState(0);
   const [mapView, setMapView] = useState(false);
   const [filters, setFilters] = useState<LeadFilter>({
@@ -41,6 +44,25 @@ export default function LeadScraperPage() {
   const handleApplyFilters = useCallback((filters: LeadFilter) => {
     setFilters(filters);
   }, []);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('team_members')
+        .select('team_id')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+
+      if (data?.team_id) {
+        setTeamId(data.team_id);
+      }
+    };
+
+    if (user?.id) {
+      fetchTeam();
+    }
+  }, [user]);
 
   return (
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
@@ -101,7 +123,7 @@ export default function LeadScraperPage() {
       {mapView ? (
         <LeadsMap filters={filters} />
       ) : (
-        <LeadTable key={scrapeKey} filters={filters} />
+        <LeadTable key={scrapeKey} filters={filters} teamId={teamId} />
       )}
     </main>
   );

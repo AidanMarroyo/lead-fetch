@@ -10,4 +10,5 @@ export type Lead = {
   created_at: string;
   lat?: number;
   lng?: number;
+  assigned_to?: string;
 };

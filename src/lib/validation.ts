@@ -11,3 +11,20 @@ export const SearchLeadSchema = z.object({
 });
 
 export type SearchLeadValues = z.infer<typeof SearchLeadSchema>;
+
+export const LoginSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+})
+
+export type LoginValues = z.infer<typeof LoginSchema>;
+
+export const SignUpSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+  confirmPassword: z.string().min(8, { message: 'Confirm password is required' }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+})
+
+export type SignUpValues = z.infer<typeof SignUpSchema>;

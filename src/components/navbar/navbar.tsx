@@ -29,7 +29,7 @@ export function DashboardNavbar({ userData }: { userData: Props }) {
       <div className='w-full p-3 pr-4'>
         <div className='flex items-center justify-between sm:flex-wrap overflow-x-auto'>
           <div className='flex items-center'>
-            <Link href='/' className='mr-14 flex items-center'>
+            <Link href='/dashboard/leads' className='mr-14 flex items-center'>
               <Image
                 className='mr-3  block dark:hidden'
                 alt=''

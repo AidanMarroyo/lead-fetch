@@ -118,7 +118,11 @@ export default function BillingPage() {
               <li>AI-powered improvement suggestions</li>
             </ul>
             <Button
-              onClick={() => handleUpgrade('pro')}
+              onClick={
+                sub?.plan === 'pro'
+                  ? () => toast.success('Already on Pro')
+                  : () => handleUpgrade('pro')
+              }
               disabled={loading || sub?.plan === 'pro'}
               className='w-full mt-4'
             >
@@ -140,7 +144,11 @@ export default function BillingPage() {
               <li>No monthly caps or limits</li>
             </ul>
             <Button
-              onClick={() => handleUpgrade('unlimited')}
+              onClick={
+                sub?.plan === 'unlimited'
+                  ? () => toast.success('Already on unlimited')
+                  : () => handleUpgrade('unlimited')
+              }
               disabled={loading || sub?.plan === 'unlimited'}
               className='w-full mt-4'
             >
@@ -162,7 +170,11 @@ export default function BillingPage() {
               <li>Up to 5 Users</li>
             </ul>
             <Button
-              onClick={() => handleUpgrade('team')}
+              onClick={
+                sub?.plan === 'team'
+                  ? () => toast.success('Already on team')
+                  : () => handleUpgrade('team')
+              }
               disabled={loading || sub?.plan === 'team'}
               className='w-full mt-4'
             >

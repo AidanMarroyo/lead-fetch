@@ -42,27 +42,18 @@ export default function BillingPage() {
   const handleUpgrade = async (plan: 'pro' | 'unlimited' | 'team') => {
     setLoading(true);
 
-    if (sub?.plan === 'free') {
-      // Free user → Start a brand new checkout session
-      const res = await fetch('/api/stripe/create-checkout', {
-        method: 'POST',
-        body: JSON.stringify({ plan }),
-      });
-      const { url } = await res.json();
-      setLoading(false);
+    const res = await fetch('/api/stripe/create-checkout', {
+      method: 'POST',
+      body: JSON.stringify({ plan }),
+    });
 
-      if (url) window.location.href = url;
-      else toast.error('Checkout failed.');
+    const { url } = await res.json();
+    setLoading(false);
+
+    if (url) {
+      window.location.href = url;
     } else {
-      // Already subscribed → Go to customer portal instead
-      const res = await fetch('/api/stripe/create-portal', {
-        method: 'POST',
-      });
-      const { url } = await res.json();
-      setLoading(false);
-
-      if (url) window.location.href = url;
-      else toast.error('Failed to open billing portal.');
+      toast.error('Checkout failed.');
     }
   };
 
@@ -111,7 +102,7 @@ export default function BillingPage() {
             </ul>
             <Button
               onClick={() => handleUpgrade('pro')}
-              disabled={loading}
+              disabled={loading || sub?.plan === 'pro'}
               className='w-full mt-4'
             >
               {sub?.plan === 'free' ? 'Upgrade to Pro' : 'Manage Billing'}
@@ -133,7 +124,7 @@ export default function BillingPage() {
             </ul>
             <Button
               onClick={() => handleUpgrade('unlimited')}
-              disabled={loading}
+              disabled={loading || sub?.plan === 'unlimited'}
               className='w-full mt-4'
             >
               {sub?.plan === 'free' ? 'Upgrade to Unlimited' : 'Manage Billing'}
@@ -155,7 +146,7 @@ export default function BillingPage() {
             </ul>
             <Button
               onClick={() => handleUpgrade('team')}
-              disabled={loading}
+              disabled={loading || sub?.plan === 'team'}
               className='w-full mt-4'
             >
               {sub?.plan === 'free' ? 'Upgrade to Team' : 'Manage Billing'}

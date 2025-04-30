@@ -18,9 +18,11 @@ export async function POST() {
 
   const { data: subscription } = await supabase
     .from('subscriptions')
-    .select('stripe_subscription_id')
+    .update({
+      status: 'canceled',
+    })
     .eq('user_id', user.id)
-    .single();
+    .single() as { data: { stripe_subscription_id: string } | null };
 
   if (!subscription?.stripe_subscription_id) {
     return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });

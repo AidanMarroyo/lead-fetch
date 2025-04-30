@@ -16,7 +16,7 @@ type Member = {
 export function TeamManagement() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
-
+  console.log('members', members);
   useEffect(() => {
     const fetchMembers = async () => {
       const res = await fetch('/api/team/members');
@@ -61,7 +61,7 @@ export function TeamManagement() {
             >
               <div>
                 <p className='font-medium'>
-                  {member.first_name} {member.last_name} {member.id}
+                  {member.first_name} {member.last_name}
                 </p>
                 <p className='text-sm text-muted-foreground'>{member.email}</p>
               </div>

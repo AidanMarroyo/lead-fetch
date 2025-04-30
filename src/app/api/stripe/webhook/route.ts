@@ -75,6 +75,13 @@ export async function POST(req: NextRequest) {
           .select('id')
           .eq('user_id', userId)
           .maybeSingle();
+          
+          if (existing) {
+            return NextResponse.json(
+              { error: 'User already in team' },
+              { status: 400 }
+            );
+          }
 
         if (!existing) {
           const { data: team } = await supabase
@@ -94,7 +101,11 @@ export async function POST(req: NextRequest) {
               .from('leads')
               .update({ team_id: team.id })
               .eq('user_id', userId);
+
+            await supabase.from('profiles').update({ team_id: team.id }).eq('id', userId);
           }
+          
+         
         }
       }
     }

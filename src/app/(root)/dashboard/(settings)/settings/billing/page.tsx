@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 type Subscription = {
   plan: string;
   status: string;
+  ends_at: string | null;
 };
 
 export default function BillingPage() {
@@ -57,6 +58,11 @@ export default function BillingPage() {
     }
   };
 
+  const endDate = sub?.ends_at
+    ? new Date(sub.ends_at).toLocaleDateString()
+    : null;
+
+  const today = new Date();
   return (
     <div className='max-w-5xl mx-auto mt-10 px-4'>
       <h1 className='text-2xl font-semibold mb-6'>Billing & Plans</h1>
@@ -70,6 +76,17 @@ export default function BillingPage() {
             <strong>Plan:</strong> {sub?.plan ?? 'free'}
             <br />
             <strong>Status:</strong> {sub?.status ?? 'inactive'}
+            <br />
+            {sub?.ends_at &&
+              (endDate && endDate < today.toLocaleDateString() ? (
+                <>
+                  <strong>Subscription ended on:</strong> {endDate}.
+                </>
+              ) : (
+                <>
+                  <strong>Subscription ending on:</strong> {endDate}.
+                </>
+              ))}
           </p>
 
           {sub?.plan !== 'free' && (

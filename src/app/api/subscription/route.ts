@@ -10,7 +10,7 @@ export async function GET() {
 
   const { data } = await supabase
     .from('subscriptions')
-    .select('plan, status')
+    .select('plan, status, ends_at')
     .eq('user_id', user.id)
     .single();
 

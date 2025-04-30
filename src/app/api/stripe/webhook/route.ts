@@ -99,9 +99,28 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (event.type === 'customer.subscription.updated') {
+      const sub = event.data.object as Stripe.Subscription;
+    
+      if (sub.cancel_at_period_end) {
+        // Cancellation scheduled
+        const cancelAt = sub.cancel_at
+          ? new Date(sub.cancel_at * 1000).toISOString()
+          : null;
+    
+        await supabase
+          .from('subscriptions')
+          .update({
+            status: sub.status,
+            ends_at: cancelAt,
+          })
+          .eq('stripe_subscription_id', sub.id);
+      }
+    }
+    
     if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object as Stripe.Subscription;
-
+    
       await supabase
         .from('subscriptions')
         .update({
@@ -109,11 +128,8 @@ export async function POST(req: NextRequest) {
           plan: 'free',
         })
         .eq('stripe_subscription_id', sub.id);
-
-      console.log('✅ Subscription canceled');
     }
-
-    console.log('✅ Stripe event received:', event.type);
+    
 
     return NextResponse.json({ received: true });
   } catch (err) {

@@ -14,7 +14,7 @@ export async function sendInviteEmail({
     to,
     subject: `${inviterEmail} invited you to join their team`,
     html: `
-      <p>${inviterEmail} invited you to join their team on LeadFetch.</p>
+      <p>${inviterEmail} invited you to join their team on WebbedLeads.</p>
       <p><a href="https://webbedleads.com/auth/signup">Click here to accept your invite</a></p>
     `,
   });

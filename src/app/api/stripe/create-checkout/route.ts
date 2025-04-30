@@ -44,11 +44,8 @@ export async function POST(req: Request) {
     console.log('stripeCustomerId', stripeCustomerId);
   
     await supabase.from('subscriptions').update({
-      user_id: user.id,
       stripe_customer_id: stripeCustomerId,
-      plan: 'free',
-      status: 'inactive',
-    });
+    }).eq('user_id', user.id);
   }
   
 

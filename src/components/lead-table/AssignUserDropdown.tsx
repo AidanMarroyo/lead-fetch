@@ -19,13 +19,11 @@ interface AssignUserDropdownProps {
 
 interface TeamMember {
   user_id: string;
-  profiles:
-    | {
-        first_name: string | null;
-        last_name: string | null;
-        email: string | null;
-      }[]
-    | null;
+  profiles: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+  } | null; // ✅ not an array
 }
 
 export function AssignUserDropdown({
@@ -56,17 +54,19 @@ export function AssignUserDropdown({
       }
 
       if (!data) return;
+      console.log('Fetched team member data:', data);
 
-      const cleaned = data.map((member: TeamMember) => {
-        const profile = member.profiles?.[0];
+      const cleaned = (data as unknown as TeamMember[]).map((member) => {
+        const profile = member.profiles;
         let name = 'Unnamed User';
 
         if (profile) {
-          if (profile.first_name && profile.last_name) {
-            name = `${profile.first_name} ${profile.last_name}`.trim();
-          } else if (profile.email) {
-            name = profile.email;
-          }
+          const fullName = [profile.first_name, profile.last_name]
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+
+          name = fullName || profile.email || 'Unnamed User';
         }
 
         return {

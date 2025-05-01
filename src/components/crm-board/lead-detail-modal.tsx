@@ -32,6 +32,11 @@ type Props = {
 
 export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
+  const [confirmAction, setConfirmAction] = useState<
+    'not_interested' | 'archived' | null
+  >(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
   const { plan } = useUserPlan();
   const [internalLead, setInternalLead] = useState(lead);
   const [newNote, setNewNote] = useState('');
@@ -99,7 +104,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
       const data = await scrapeRes.json();
       if (!data.success) return toast.error('Website scrape failed');
-      console.log('[Scrape Result]', data);
 
       const updatedLead = {
         ...internalLead,
@@ -166,6 +170,31 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     handleLogFollowUp();
   };
 
+  const updateStatus = async (newStatus: 'not interested' | 'archived') => {
+    setUpdatingStatus(true);
+    try {
+      const res = await fetch('/api/update-lead-status', {
+        method: 'POST',
+        body: JSON.stringify({ id: internalLead.id, status: newStatus }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      const updated = { ...internalLead, status: newStatus };
+      setInternalLead(updated);
+      onUpdate(updated);
+      toast.success(`Status updated to "${newStatus}"`);
+      setConfirmAction(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const formattedPitch = auto_pitch
     ?.replace(/\n+/g, ' ') // Remove accidental newlines
     .replace(/(\d+)\s*\.\s*/g, '\n\n$1. ') // Add line breaks before each numbered point
@@ -197,7 +226,12 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                     Next Recommended Follow-Up:{' '}
                     {internalLead.next_follow_up_date === null
                       ? today.toISOString().split('T')[0]
-                      : internalLead.next_follow_up_date}
+                      : internalLead.next_follow_up_date instanceof Date
+                        ? internalLead.next_follow_up_date
+                            .toISOString()
+                            .split('T')[0]
+                        : (internalLead.next_follow_up_date ??
+                          today.toISOString().split('T')[0])}
                   </div>
                 </div>
               )}
@@ -424,10 +458,60 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   )}&output=embed`}
                 />
               </div>
+              <div className='flex gap-4 mt-6'>
+                <Button
+                  variant='destructive'
+                  onClick={() => setConfirmAction('not_interested')}
+                >
+                  Mark as Not Interested
+                </Button>
+                <Button onClick={() => setConfirmAction('archived')}>
+                  Archive Lead
+                </Button>
+              </div>
             </div>
           </>
         )}
       </DialogContent>
+      {confirmAction && (
+        <Dialog open onOpenChange={() => setConfirmAction(null)}>
+          <DialogContent className='max-w-sm text-center'>
+            <DialogHeader>
+              <DialogTitle>
+                Confirm{' '}
+                {confirmAction === 'archived' ? 'Archive' : 'Not Interested'}
+              </DialogTitle>
+            </DialogHeader>
+            <p className='text-sm text-muted-foreground mb-4'>
+              Are you sure you want to mark this lead as{' '}
+              <strong>
+                {confirmAction === 'archived' ? 'Archived' : 'Not Interested'}
+              </strong>
+              ?
+            </p>
+            <div className='flex justify-end gap-2 mt-4'>
+              <Button
+                variant='ghost'
+                onClick={() => setConfirmAction(null)}
+                disabled={updatingStatus}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant='destructive'
+                onClick={() =>
+                  updateStatus(
+                    confirmAction === 'archived' ? 'archived' : 'not interested'
+                  )
+                }
+                disabled={updatingStatus}
+              >
+                {updatingStatus ? 'Updating...' : 'Confirm'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 }

@@ -24,7 +24,6 @@ export async function GET() {
     console.error('❌ Error fetching team membership:', membershipError);
     return NextResponse.json({ error: 'Not in a team' }, { status: 404 });
   }
-  console.log('teamMembership', teamMembership);
 
 
 
@@ -35,7 +34,6 @@ export async function GET() {
     .select('first_name, last_name, email, id, teams(owner_id)')
     .eq('team_id', teamMembership.team_id);
 
-    console.log('members', members);
 
   if (membersError) {
     console.error('❌ Error fetching team members:', membersError);

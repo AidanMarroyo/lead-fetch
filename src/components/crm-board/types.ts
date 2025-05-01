@@ -4,7 +4,7 @@ export type Lead = {
   address: string;
   phone?: string;
   score: number;
-  status: 'new' | 'contacted' | 'in progress' | 'closed';
+  status: 'new' | 'contacted' | 'in progress' | 'closed' | 'archived'| 'not interested';
   notes?: string;
   google_place_id?: string;
   rating?: number;
@@ -19,5 +19,5 @@ export type Lead = {
   website_grade?: 'bad' | 'average' | 'good';
   contact_attempts: number;
   last_contacted_at?: string
-  next_follow_up_date?: string;
+  next_follow_up_date?: Date
 };

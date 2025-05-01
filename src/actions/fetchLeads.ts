@@ -185,7 +185,7 @@ if (monthlyLimit > 0) {
           lat: coords?.lat || null,
           lng: coords?.lng || null,
           website: lead.website || null,
-          next_follow_up_date: today.toISOString().split('T')[0],
+          next_follow_up_date: today,
           assigned_to_user_id: userId
         };
       })

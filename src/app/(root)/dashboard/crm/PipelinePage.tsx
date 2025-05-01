@@ -35,7 +35,7 @@ export default function PipelinePage({ userId }: { userId: string }) {
 
       <LeadFilters onApply={handleApplyFilters} scrapeKey={scrapeKey} />
       <LeadScoreLegend />
-      <KanbanBoard filters={filters} key={scrapeKey} />
+      <KanbanBoard filters={filters} key={`${scrapeKey}-${filters.dueOnly}`} />
     </div>
   );
 }

@@ -76,21 +76,21 @@ export async function POST(req: NextRequest) {
     }
 
     if (filters.dueOnly) {
-      const today = new Date().toISOString().split('T')[0];
-      query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`, { foreignTable: 'leads' });
+      const today = new Date().toISOString().split('T')[0]; // '2025-05-01'
+      query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`);  
     }
     
-
     if (filters.assignedTo) {
       query = query.eq('assigned_to_user_id', filters.assignedTo);
     }
     
 
-  const { data, error } = await query;
+    const { data, error } = await query;
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
+    
+    return NextResponse.json(data);
 }

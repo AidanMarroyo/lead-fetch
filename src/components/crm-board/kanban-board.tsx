@@ -20,14 +20,27 @@ export function KanbanBoard({ filters }: { filters: LeadFilter }) {
 
   useEffect(() => {
     const fetchLeads = async () => {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        body: JSON.stringify({ filters }),
-      });
-      const data = await res.json();
-      setLeads(data);
-      setLoading(false);
+      try {
+        const res = await fetch('/api/leads', {
+          method: 'POST',
+          body: JSON.stringify({ filters }),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          setLeads(data);
+        } else {
+          console.error('API Error:', data.error);
+          setLeads([]); // Fallback to empty list
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        setLeads([]);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchLeads();
   }, [filters]);
 

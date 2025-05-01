@@ -1,5 +1,5 @@
 // lib/followup.ts
-export function getNextFollowUpDate(contactAttempts: number): string {
+export function getNextFollowUpDate(contactAttempts: number){
     const baseDate = new Date(); // Always use now
     let daysToAdd = 0;
   
@@ -25,6 +25,6 @@ export function getNextFollowUpDate(contactAttempts: number): string {
     }
   
     baseDate.setDate(baseDate.getDate() + daysToAdd);
-    return baseDate.toISOString().split('T')[0];
+    return baseDate
   }
   

@@ -89,7 +89,7 @@ export function AssignUserDropdown({
     const supabase = createClient();
     const { error } = await supabase
       .from('leads')
-      .update({ assigned_to: userId }) // ✅ use correct field
+      .update({ assigned_to_user_id: userId }) // ✅ correct field
       .eq('id', leadId);
 
     if (error) {

@@ -41,7 +41,6 @@ export async function POST(req: Request) {
     });
   
     stripeCustomerId = customer.id;
-    console.log('stripeCustomerId', stripeCustomerId);
   
     await supabase.from('subscriptions').update({
       stripe_customer_id: stripeCustomerId,

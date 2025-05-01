@@ -45,9 +45,6 @@ export async function POST(req: NextRequest) {
           ? 'team'
           : 'free';
 
-          console.log('custId', custId);
-      console.log('subId', subId);
-      console.log('session', session);
 
 
       await supabase

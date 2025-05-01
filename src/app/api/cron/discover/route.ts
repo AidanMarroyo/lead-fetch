@@ -34,11 +34,6 @@ export async function GET(req: NextRequest) {
         withWebsites: false,
       });
 
-      console.log(
-        `🔁 Ran [${keyword} in ${location}] for user ${user_id} → ${
-          result.success ? `${result.count} new` : 'failed'
-        }`
-      );
 
       await supabase
         .from('saved_searches')

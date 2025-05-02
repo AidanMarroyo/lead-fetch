@@ -76,6 +76,8 @@ export async function signup(formData: FormData) {
       plan: 'team',
       status: 'active',
     });
+
+    await supabase.from('profiles').update({ team_id: invite.team_id }).eq('id', userId);
   } else {
     await supabase.from('subscriptions').insert({
       user_id: userId,

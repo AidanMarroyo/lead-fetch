@@ -9,7 +9,9 @@ type Member = {
   id: string;
   first_name: string;
   last_name: string;
-  owner_id: string;
+  profiles?: {
+    owner_id: string;
+  };
   email: string;
 };
 
@@ -65,7 +67,7 @@ export function TeamManagement() {
                 </p>
                 <p className='text-sm text-muted-foreground'>{member.email}</p>
               </div>
-              {member.owner_id !== member.id && (
+              {member.profiles?.owner_id === member.id && (
                 <Button
                   variant='destructive'
                   onClick={() => handleRemove(member.id)}

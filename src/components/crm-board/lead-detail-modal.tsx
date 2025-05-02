@@ -224,14 +224,11 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
                   <div className='text-xs text-muted-foreground'>
                     Next Recommended Follow-Up:{' '}
-                    {internalLead.next_follow_up_date === null
-                      ? today.toISOString().split('T')[0]
-                      : internalLead.next_follow_up_date instanceof Date
-                        ? internalLead.next_follow_up_date
-                            .toISOString()
-                            .split('T')[0]
-                        : (internalLead.next_follow_up_date ??
-                          today.toISOString().split('T')[0])}
+                    {internalLead.next_follow_up_date
+                      ? new Date(internalLead.next_follow_up_date)
+                          .toISOString()
+                          .split('T')[0]
+                      : today.toISOString().split('T')[0]}
                   </div>
                 </div>
               )}
@@ -341,7 +338,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                         </span>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <span className='font-semibold block mb-1'>
                           Tech Stack:
                         </span>
@@ -355,7 +352,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                             </span>
                           ))}
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className='grid grid-cols-2 gap-4'>
                         <div>

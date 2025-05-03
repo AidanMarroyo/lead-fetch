@@ -20,7 +20,12 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$49/mo',
+    price: (
+      <>
+        <span className='line-through text-muted-foreground mr-1'>$98</span>
+        $49/mo
+      </>
+    ),
     description: 'Full access for solo freelancers and devs.',
     features: [
       '35 leads/month',
@@ -30,11 +35,35 @@ const plans = [
       'CSV export & filters',
     ],
     cta: 'Upgrade to Pro',
+    highlighted: false,
+  },
+  {
+    name: 'Ultimate',
+    price: (
+      <>
+        <span className='line-through text-muted-foreground mr-1'>$138</span>
+        $69/mo
+      </>
+    ),
+    description: 'Unlimited access for power users.',
+    features: [
+      'Unlimited leads',
+      'All Pro features',
+      'Priority AI audits',
+      'Export insights & trends',
+      'Faster sync & analysis',
+    ],
+    cta: 'Go Ultimate',
     highlighted: true,
   },
   {
     name: 'Team',
-    price: '$179/mo',
+    price: (
+      <>
+        <span className='line-through text-muted-foreground mr-1'>$179</span>
+        $89/mo
+      </>
+    ),
     description: 'All features plus team collaboration tools.',
     features: [
       'Unlimited leads',
@@ -65,7 +94,8 @@ export default function Pricing() {
           fill your pipeline with qualified clients — no fluff, just results.
         </p>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+        {/* Grid of main plans */}
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
           {plans.map((plan) => (
             <motion.div
               key={plan.name}
@@ -95,6 +125,34 @@ export default function Pricing() {
             </motion.div>
           ))}
         </div>
+
+        {/* Enterprise plan - standalone row */}
+        {/* <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className='mt-20 max-w-4xl mx-auto border border-border bg-muted rounded-xl p-8 text-left'
+        >
+          <h3 className='text-xl font-semibold mb-2'>Enterprise</h3>
+          <p className='text-3xl font-bold mb-2'>Custom</p>
+          <p className='text-muted-foreground mb-4'>
+            Custom solutions for large teams or agencies.
+          </p>
+          <ul className='space-y-2 text-sm mb-6'>
+            {[
+              'Unlimited leads',
+              'Dedicated account support',
+              'Custom integrations',
+              'API access & onboarding',
+            ].map((f) => (
+              <li key={f} className='flex items-center gap-2'>
+                <CheckCircle2 className='text-primary w-4 h-4' />
+                {f}
+              </li>
+            ))}
+          </ul>
+          <Button className='w-full'>Contact Sales</Button>
+        </motion.div> */}
       </div>
     </section>
   );

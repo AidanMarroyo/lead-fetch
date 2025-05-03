@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useUserPlan } from '@/lib/userUserPlan';
 import ActivityDropdown from './activity';
 import MenuDropdown from './menu';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Loader2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import UserDropdown from './user-dropdown';
 
@@ -19,10 +19,42 @@ type Props = {
   first_name: string;
   last_name: string;
 };
+
 export function DashboardNavbar({ userData }: { userData: Props }) {
-  const { plan } = useUserPlan();
+  const { plan, loading } = useUserPlan();
   const { theme, setTheme } = useTheme();
   const isDark = theme === 'dark';
+
+  if (loading) {
+    return (
+      <nav className='fixed top-0 z-30 w-full border-b border-gray-200 p-0 sm:p-0 dark:border-gray-700 bg-white dark:bg-black'>
+        <div className='w-full p-4 flex items-center justify-between'>
+          <div className='flex items-center'>
+            <Image
+              alt='Webbed Leads Logo'
+              src='/webbed-logo.png'
+              width={120}
+              height={120}
+              className='block dark:hidden'
+            />
+            <Image
+              alt='Webbed Leads Logo'
+              src='/webbed-logo-dark.png'
+              width={120}
+              height={120}
+              className='hidden dark:block'
+            />
+          </div>
+          <div className='flex items-center gap-3'>
+            <Loader2 className='w-4 h-4 animate-spin text-muted-foreground' />
+            <span className='text-sm text-muted-foreground'>
+              Loading plan...
+            </span>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className='fixed top-0 z-30 w-full border-b border-gray-200 p-0 sm:p-0 dark:border-gray-700 bg-white dark:bg-black'>
@@ -31,7 +63,7 @@ export function DashboardNavbar({ userData }: { userData: Props }) {
           <div className='flex items-center'>
             <Link href='/dashboard/leads' className='mr-14 flex items-center'>
               <Image
-                className='mr-3  block dark:hidden'
+                className='mr-3 block dark:hidden'
                 alt=''
                 src='/webbed-logo.png'
                 width={120}

@@ -19,7 +19,7 @@ const createIcon = (color: string) =>
     iconAnchor: [12, 41],
   });
 
-export function LeadsMap({ filters }: { filters: LeadFilter }) {
+export default function LeadsMap({ filters }: { filters: LeadFilter }) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const mapRef = useRef<L.Map | null>(null);
 

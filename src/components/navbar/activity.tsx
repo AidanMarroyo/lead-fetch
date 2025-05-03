@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Activity, Eye } from 'lucide-react';
+import { Activity, Eye, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-
 import { useUserPlan } from '@/lib/userUserPlan';
 import { toast } from 'sonner';
 import { ProTag } from '../ui/ProTag';
@@ -32,14 +31,16 @@ type ActivityLog = {
 };
 
 export default function ActivityDropdown() {
-  const { plan } = useUserPlan();
+  const { plan, loading: planLoading } = useUserPlan();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [logLoading, setLogLoading] = useState(false);
+
+  const isProUser = plan === 'pro' || plan === 'unlimited' || plan === 'team';
 
   useEffect(() => {
     const fetchLogs = async () => {
-      if (plan === 'free') return;
-      setLoading(true);
+      if (!isProUser) return;
+      setLogLoading(true);
       try {
         const data = await getActivityLogs();
         setLogs(data);
@@ -47,14 +48,12 @@ export default function ActivityDropdown() {
         toast.error('Failed to load activity');
         console.error('Failed to load activity', (error as Error).message);
       } finally {
-        setLoading(false);
+        setLogLoading(false);
       }
     };
 
-    fetchLogs();
-  }, [plan]);
-
-  const isProUser = plan === 'pro' || plan === 'unlimited' || plan === 'team';
+    if (!planLoading) fetchLogs();
+  }, [plan, planLoading, isProUser]);
 
   return (
     <DropdownMenu>
@@ -65,7 +64,7 @@ export default function ActivityDropdown() {
         >
           <span className='sr-only'>Activity Log</span>
           <Activity className='h-6 w-6' />
-          {!isProUser && (
+          {!planLoading && !isProUser && (
             <span className='absolute -top-1.5 -right-1.5'>
               <ProTag />
             </span>
@@ -78,11 +77,16 @@ export default function ActivityDropdown() {
           Activity Log
         </div>
 
-        {isProUser ? (
+        {planLoading ? (
+          <div className='flex items-center justify-center px-4 py-4 text-muted-foreground'>
+            <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+            <span>Loading plan...</span>
+          </div>
+        ) : isProUser ? (
           <>
-            {loading ? (
+            {logLoading ? (
               <p className='text-sm px-4 py-2 text-muted-foreground'>
-                Loading…
+                Loading activity…
               </p>
             ) : logs.length === 0 ? (
               <p className='text-sm px-4 py-2 text-muted-foreground'>

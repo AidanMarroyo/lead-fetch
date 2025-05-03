@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useTeamAdmin } from '@/lib/team-admin';
+import { Loader2 } from 'lucide-react';
 
 export function InviteForm({ onInvited }: { onInvited?: () => void }) {
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ export function InviteForm({ onInvited }: { onInvited?: () => void }) {
     if (res.ok && result.success) {
       toast.success('Team member invited successfully.');
       setEmail('');
-      onInvited?.(); // to refresh the member list in the parent if needed
+      onInvited?.();
     } else {
       toast.error(result.error || 'Failed to invite user.');
     }
@@ -31,7 +32,7 @@ export function InviteForm({ onInvited }: { onInvited?: () => void }) {
     setLoading(false);
   };
 
-  if (!admin) return null; // Only show the invite form if the user is an admin
+  if (!admin) return null;
 
   return (
     <div className='space-y-2 mb-6'>
@@ -42,9 +43,16 @@ export function InviteForm({ onInvited }: { onInvited?: () => void }) {
           placeholder='user@example.com'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <Button onClick={handleInvite} disabled={loading}>
-          {loading ? 'Inviting...' : 'Invite'}
+          {loading ? (
+            <>
+              <Loader2 className='w-4 h-4 mr-2 animate-spin' /> Inviting...
+            </>
+          ) : (
+            'Invite'
+          )}
         </Button>
       </div>
     </div>

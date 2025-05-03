@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 type Subscription = {
   plan: string;
@@ -14,12 +15,19 @@ type Subscription = {
 export default function BillingPage() {
   const [sub, setSub] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const fetchSub = async () => {
-      const res = await fetch('/api/subscription');
-      const data = await res.json();
-      setSub(data);
+      try {
+        const res = await fetch('/api/subscription');
+        const data = await res.json();
+        setSub(data);
+      } catch {
+        toast.error('Failed to load subscription data.');
+      } finally {
+        setInitialLoading(false);
+      }
     };
     fetchSub();
   }, []);
@@ -42,7 +50,6 @@ export default function BillingPage() {
 
   const handleUpgrade = async (plan: 'pro' | 'unlimited' | 'team') => {
     setLoading(true);
-
     const res = await fetch('/api/stripe/create-checkout', {
       method: 'POST',
       body: JSON.stringify({ plan }),
@@ -58,11 +65,23 @@ export default function BillingPage() {
     }
   };
 
+  if (initialLoading) {
+    return (
+      <div className='flex items-center justify-center py-20'>
+        <Loader2 className='w-5 h-5 animate-spin text-muted-foreground' />
+        <span className='ml-2 text-sm text-muted-foreground'>
+          Loading plan...
+        </span>
+      </div>
+    );
+  }
+
   const endDate = sub?.ends_at
     ? new Date(sub.ends_at).toLocaleDateString()
     : null;
 
   const today = new Date();
+
   return (
     <div className='max-w-5xl mx-auto mt-10 px-4'>
       <h1 className='text-2xl font-semibold mb-6'>Billing & Plans</h1>
@@ -96,7 +115,14 @@ export default function BillingPage() {
               disabled={loading}
               className='w-full mt-4'
             >
-              {loading ? 'Canceling...' : 'Cancel Subscription'}
+              {loading ? (
+                <>
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  Canceling...
+                </>
+              ) : (
+                'Cancel Subscription'
+              )}
             </Button>
           )}
         </CardContent>
@@ -126,7 +152,16 @@ export default function BillingPage() {
               disabled={loading || sub?.plan === 'pro'}
               className='w-full mt-4'
             >
-              {sub?.plan === 'free' ? 'Upgrade to Pro' : 'Manage Billing'}
+              {loading && sub?.plan !== 'pro' ? (
+                <>
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  Redirecting...
+                </>
+              ) : sub?.plan === 'pro' ? (
+                'Manage Billing'
+              ) : (
+                'Upgrade to Pro'
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -152,7 +187,16 @@ export default function BillingPage() {
               disabled={loading || sub?.plan === 'unlimited'}
               className='w-full mt-4'
             >
-              {sub?.plan === 'free' ? 'Upgrade to Unlimited' : 'Manage Billing'}
+              {loading && sub?.plan !== 'unlimited' ? (
+                <>
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  Redirecting...
+                </>
+              ) : sub?.plan === 'unlimited' ? (
+                'Manage Billing'
+              ) : (
+                'Upgrade to Unlimited'
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -178,7 +222,16 @@ export default function BillingPage() {
               disabled={loading || sub?.plan === 'team'}
               className='w-full mt-4'
             >
-              {sub?.plan === 'free' ? 'Upgrade to Team' : 'Manage Billing'}
+              {loading && sub?.plan !== 'team' ? (
+                <>
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  Redirecting...
+                </>
+              ) : sub?.plan === 'team' ? (
+                'Manage Billing'
+              ) : (
+                'Upgrade to Team'
+              )}
             </Button>
           </CardContent>
         </Card>

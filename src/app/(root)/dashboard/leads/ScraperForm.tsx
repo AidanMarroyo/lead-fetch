@@ -1,4 +1,5 @@
 'use client';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SearchLeadSchema, SearchLeadValues } from '@/lib/validation';
@@ -23,15 +24,18 @@ import LoadingButton from '@/components/LoadingButton';
 import { fetchLeadsFromGoogle } from '@/actions/fetchLeads';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Loader2 } from 'lucide-react';
 
 interface ScraperFormProps {
-  plan: 'free' | 'pro' | 'unlimited' | 'team';
+  plan: 'free' | 'pro' | 'unlimited' | 'team' | null;
   onScrapeComplete: () => void;
+  loading: boolean; // loading refers to plan loading state
 }
 
 export default function ScraperForm({
   plan,
   onScrapeComplete,
+  loading,
 }: ScraperFormProps) {
   const form = useForm<SearchLeadValues>({
     resolver: zodResolver(SearchLeadSchema),
@@ -50,8 +54,8 @@ export default function ScraperForm({
     control,
     formState: { isSubmitting },
   } = form;
-  const country = watch('country');
 
+  const country = watch('country');
   const regionList = country === 'Canada' ? canadianProvinces : americanStates;
 
   const onSubmit = async (values: SearchLeadValues) => {
@@ -64,11 +68,20 @@ export default function ScraperForm({
     });
     if (result?.success) {
       toast.success(`${result.count} leads found and stored`);
-      onScrapeComplete(); // trigger refetch via key
+      onScrapeComplete();
     } else {
       toast.error(`${result.message}`);
     }
   };
+
+  if (loading || plan === null) {
+    return (
+      <div className='flex items-center justify-center py-20'>
+        <Loader2 className='w-6 h-6 animate-spin text-muted-foreground' />
+        <span className='ml-2 text-muted-foreground'>Loading plan...</span>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>

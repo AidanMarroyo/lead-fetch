@@ -12,17 +12,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 
 type StatusOption = LeadFilter['status'];
 
 export function LeadFilters({
   onApply,
   scrapeKey,
-  userId,
+  filters,
 }: {
   onApply: (filters: LeadFilter) => void;
   scrapeKey: number;
   userId: string;
+  filters: LeadFilter;
 }) {
   const [location, setLocation] = useState('');
   const [name, setName] = useState('');
@@ -33,8 +35,8 @@ export function LeadFilters({
     useState<LeadFilter['websiteStatus']>();
   const [categories, setCategories] = useState<string[]>([]);
   const [category, setCategory] = useState<string>('all');
-  const [dueOnly, setDueOnly] = useState(true);
-  const [assignedTo, setAssignedTo] = useState(userId);
+  const [dueOnly, setDueOnly] = useState(filters.dueOnly || false);
+  const [assignedTo, setAssignedTo] = useState(filters.assignedTo || 'all');
   const [teamMembers, setTeamMembers] = useState<
     {
       id: string;
@@ -44,15 +46,29 @@ export function LeadFilters({
       teams: { owner_id: string };
     }[]
   >([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      const res = await fetch('/api/team/members');
-      const data = await res.json();
-      setTeamMembers(data.members || []);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [membersRes, categoriesRes] = await Promise.all([
+          fetch('/api/team/members'),
+          fetch('/api/categories'),
+        ]);
+        const membersData = await membersRes.json();
+        const categoriesData = await categoriesRes.json();
+        setTeamMembers(membersData.members || []);
+        setCategories(categoriesData || []);
+      } catch (error) {
+        console.error('Failed to load filter data:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchMembers();
-  }, []);
+
+    fetchData();
+  }, [scrapeKey]);
 
   useEffect(() => {
     onApply({
@@ -80,18 +96,23 @@ export function LeadFilters({
     assignedTo,
   ]);
 
-  useEffect(() => {
-    fetch('/api/categories')
-      .then((res) => res.json())
-      .then((data) => setCategories(data));
-  }, [scrapeKey]);
-
   function capitalize(status: string | undefined): string {
     if (!status) return '';
     return status
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-10'>
+        <Loader2 className='w-5 h-5 animate-spin text-muted-foreground' />
+        <span className='ml-2 text-sm text-muted-foreground'>
+          Loading filters…
+        </span>
+      </div>
+    );
   }
 
   return (
@@ -225,7 +246,7 @@ export function LeadFilters({
           </p>
         </div>
 
-        <div className='flex items-center gap-2 my-6 '>
+        <div className='flex items-center gap-2 my-6'>
           <input
             type='checkbox'
             id='recentOnly'

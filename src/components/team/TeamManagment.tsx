@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { useTeamAdmin } from '@/lib/team-admin';
 
@@ -18,14 +19,22 @@ type Member = {
 
 export function TeamManagement() {
   const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // for removing a member
+  const [initialLoading, setInitialLoading] = useState(true); // for fetching members
   const { admin } = useTeamAdmin();
-  console.log('members', members);
+
   useEffect(() => {
     const fetchMembers = async () => {
-      const res = await fetch('/api/team/members');
-      const data = await res.json();
-      setMembers(data.members || []);
+      setInitialLoading(true);
+      try {
+        const res = await fetch('/api/team/members');
+        const data = await res.json();
+        setMembers(data.members || []);
+      } catch {
+        toast.error('Failed to load team members');
+      } finally {
+        setInitialLoading(false);
+      }
     };
 
     fetchMembers();
@@ -58,28 +67,47 @@ export function TeamManagement() {
       </CardHeader>
       <CardContent>
         <div className='space-y-3'>
-          {members.map((member) => (
-            <div
-              key={member.id}
-              className='flex items-center justify-between border rounded-md px-4 py-2'
-            >
-              <div>
-                <p className='font-medium'>
-                  {member.first_name} {member.last_name}
-                </p>
-                <p className='text-sm text-muted-foreground'>{member.email}</p>
+          {initialLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className='flex items-center justify-between border rounded-md px-4 py-2'
+              >
+                <div className='flex flex-col gap-2'>
+                  <Skeleton className='h-4 w-40' />
+                  <Skeleton className='h-3 w-64' />
+                </div>
+                <Skeleton className='h-8 w-20 rounded-md' />
               </div>
-              {admin && (
-                <Button
-                  variant='destructive'
-                  onClick={() => handleRemove(member.id)}
-                  disabled={loading}
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          ))}
+            ))
+          ) : members.length === 0 ? (
+            <p className='text-muted-foreground'>No team members yet.</p>
+          ) : (
+            members.map((member) => (
+              <div
+                key={member.id}
+                className='flex items-center justify-between border rounded-md px-4 py-2'
+              >
+                <div>
+                  <p className='font-medium'>
+                    {member.first_name} {member.last_name}
+                  </p>
+                  <p className='text-sm text-muted-foreground'>
+                    {member.email}
+                  </p>
+                </div>
+                {admin && (
+                  <Button
+                    variant='destructive'
+                    onClick={() => handleRemove(member.id)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Removing…' : 'Remove'}
+                  </Button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>

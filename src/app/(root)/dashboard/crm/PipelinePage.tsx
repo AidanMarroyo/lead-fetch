@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react';
 import ScraperForm from '../leads/ScraperForm';
 
 export default function PipelinePage({ userId }: { userId: string }) {
-  const { plan } = useUserPlan();
+  const { plan, loading } = useUserPlan();
   const [scrapeKey, setScrapeKey] = useState(0);
   const [filters, setFilters] = useState<LeadFilter>({
     name: '',
@@ -17,8 +17,8 @@ export default function PipelinePage({ userId }: { userId: string }) {
     location: '',
     minScore: 0,
     maxScore: 100,
-
-    assignedTo: undefined,
+    dueOnly: true,
+    assignedTo: userId,
   });
 
   const handleApplyFilters = useCallback((filters: LeadFilter) => {
@@ -31,6 +31,7 @@ export default function PipelinePage({ userId }: { userId: string }) {
       <div className='mb-4'>
         <ScraperForm
           plan={plan}
+          loading={loading}
           onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
         />
       </div>
@@ -39,6 +40,7 @@ export default function PipelinePage({ userId }: { userId: string }) {
         onApply={handleApplyFilters}
         scrapeKey={scrapeKey}
         userId={userId}
+        filters={filters}
       />
       <LeadScoreLegend />
       <KanbanBoard filters={filters} key={`${scrapeKey}-${filters.dueOnly}`} />

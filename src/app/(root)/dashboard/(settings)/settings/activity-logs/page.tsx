@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { useUserPlan } from '@/lib/userUserPlan';
 import { toast } from 'sonner';
 import { ProTag } from '@/components/ui/ProTag';
 import { Card } from '@/components/ui/card';
 import { getActivityLogs } from '@/actions/getActivityLog';
+import { Loader2 } from 'lucide-react';
 
 type ActivityLog = {
   id: string;
@@ -23,29 +23,44 @@ type ActivityLog = {
 };
 
 export default function ActivityPage() {
-  const { plan } = useUserPlan();
+  const { plan, loading: planLoading, setLoading } = useUserPlan();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [logsLoading, setLogsLoading] = useState(true);
 
   const isPro = plan === 'pro' || plan === 'unlimited' || plan === 'team';
 
   useEffect(() => {
+    if (!isPro || planLoading) return;
+
     const fetchLogs = async () => {
-      if (!isPro) return;
+      setLogsLoading(true);
       try {
         const data = await getActivityLogs();
         setLogs(data);
       } catch {
         toast.error('Failed to fetch activity logs.');
       } finally {
+        setLogsLoading(false);
         setLoading(false);
       }
     };
 
     fetchLogs();
-  }, [isPro]);
+  }, [isPro, planLoading]);
 
-  if (!isPro) {
+  if (planLoading || logsLoading) {
+    return (
+      <main className='max-w-3xl mx-auto mt-10'>
+        <h1 className='text-2xl font-semibold mb-4'>Activity Log</h1>
+        <div className='flex items-center gap-2'>
+          <p className='text-muted-foreground'>Loading activity…</p>
+          <Loader2 className='h-6 w-6 animate-spin mr-2' />
+        </div>
+      </main>
+    );
+  }
+
+  if (plan === 'free') {
     return (
       <main className='max-w-3xl mx-auto mt-10'>
         <h1 className='text-2xl font-semibold mb-4'>Activity Log</h1>
@@ -62,16 +77,13 @@ export default function ActivityPage() {
     <main className='max-w-3xl mx-auto mt-10'>
       <h1 className='text-2xl font-semibold mb-6'>Activity Log</h1>
 
-      {loading ? (
-        <p className='text-muted-foreground'>Loading activity…</p>
-      ) : logs.length === 0 ? (
+      {logs.length === 0 ? (
         <p className='text-muted-foreground'>No activity logged yet.</p>
       ) : (
         <ul className='space-y-4'>
           {logs.map((log) => {
             const fullName =
-              log.profiles?.first_name === null ||
-              log.profiles?.last_name === null
+              !log.profiles?.first_name || !log.profiles?.last_name
                 ? `${log.profiles?.email}`
                 : `${log.profiles?.first_name} ${log.profiles?.last_name}`;
             return (

@@ -16,5 +16,5 @@ export function useUserPlan() {
     fetchPlan();
   }, []);
 
-  return { plan, loading };
+  return { plan, loading, setLoading };
 }

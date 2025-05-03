@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { LeadTable } from '@/components/lead-table/table';
 import { LeadFilters } from '@/components/leads/LeadFilter';
 import { LeadFilter } from '@/lib/types';
-import { LeadsMap } from '@/components/leads/LeadsMap'; // ✅ NEW
+import LeadsMap from '@/components/leads/LeadsMapWrapper';
 import { LeadScoreLegend } from '@/components/LeadScoreLegend';
 import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
 import { useUserPlan } from '@/lib/userUserPlan';
@@ -20,7 +20,7 @@ import ScraperForm from './ScraperForm';
 import { createClient } from '@/utils/supabase/client';
 
 export default function LeadScraperPage({ userId }: { userId: string }) {
-  const { plan } = useUserPlan();
+  const { plan, loading } = useUserPlan();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [scrapeKey, setScrapeKey] = useState(0);
   const [mapView, setMapView] = useState(false);
@@ -78,6 +78,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
       <ScraperForm
         plan={plan}
         onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
+        loading={loading}
       />
 
       <div className='flex items-center justify-between mt-10 mb-4'>
@@ -122,6 +123,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
         onApply={handleApplyFilters}
         scrapeKey={scrapeKey}
         userId={userId}
+        filters={filters}
       />
 
       <LeadScoreLegend />

@@ -118,7 +118,11 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
           </Button>
         </div>
       </div>
-      <LeadFilters onApply={handleApplyFilters} scrapeKey={scrapeKey} />
+      <LeadFilters
+        onApply={handleApplyFilters}
+        scrapeKey={scrapeKey}
+        userId={userId}
+      />
 
       <LeadScoreLegend />
       {mapView ? (

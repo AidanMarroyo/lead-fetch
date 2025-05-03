@@ -1,4 +1,3 @@
-// /app/api/get-place-details/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -9,7 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing placeId' }, { status: 400 });
   }
 
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,website,url,place_id&key=${apiKey}`;
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,website,formatted_phone_number,rating,user_ratings_total,opening_hours,photos,types,place_id&key=${apiKey}`;
 
   const res = await fetch(url);
   const data = await res.json();
@@ -26,5 +25,10 @@ export async function GET(req: NextRequest) {
     phone: result.formatted_phone_number ?? null,
     website: result.website ?? null,
     google_place_id: result.place_id,
+    rating: result.rating ?? null,
+    user_ratings_total: result.user_ratings_total ?? null,
+    opening_hours: result.opening_hours ?? null,
+    photos: result.photos ?? [],
+    types: result.types ?? [],
   });
 }

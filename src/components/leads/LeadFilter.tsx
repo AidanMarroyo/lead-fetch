@@ -44,7 +44,6 @@ export function LeadFilters({
       teams: { owner_id: string };
     }[]
   >([]);
-  console.log('teamMembers', teamMembers);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -97,9 +96,9 @@ export function LeadFilters({
 
   return (
     <div className='mb-6 rounded-lg border bg-muted/50 px-4 py-4 shadow-sm'>
-      <div className='flex flex-wrap gap-4 items-end'>
+      <div className='flex flex-wrap gap-4 items-start'>
         <div className='w-48'>
-          <Label htmlFor='location' className='text-xs mb-1 block'>
+          <Label htmlFor='name' className='text-xs mb-1 block'>
             Business Name
           </Label>
           <Input
@@ -107,6 +106,7 @@ export function LeadFilters({
             placeholder='Webbed Leads'
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className='w-full'
           />
         </div>
 
@@ -119,10 +119,11 @@ export function LeadFilters({
             placeholder='e.g. Toronto'
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            className='w-full'
           />
         </div>
 
-        <div className='w-40'>
+        <div className='w-48'>
           <Label htmlFor='status' className='text-xs mb-1 block'>
             Status
           </Label>
@@ -130,7 +131,7 @@ export function LeadFilters({
             value={status}
             onValueChange={(v) => setStatus(v as StatusOption)}
           >
-            <SelectTrigger>
+            <SelectTrigger className='w-full h-10 text-sm'>
               <SelectValue placeholder='Status'>
                 {status === 'all' ? 'Status' : capitalize(status)}
               </SelectValue>
@@ -147,41 +148,44 @@ export function LeadFilters({
           </Select>
         </div>
 
-        <div className='w-64'>
-          <Label className='text-xs block mb-1'>Score Range</Label>
-          <Slider
-            value={score}
-            onValueChange={(value) => setScore([value[0], value[1]])}
-            max={100}
-            step={5}
-            minStepsBetweenThumbs={10}
-          />
-          <p className='text-xs mt-1 text-muted-foreground'>
-            {score[0]} - {score[1]}
-          </p>
+        <div className='w-48'>
+          <Label htmlFor='websiteStatus' className='text-xs mb-1 block'>
+            Website Status
+          </Label>
+          <Select
+            value={websiteStatus}
+            onValueChange={(v) =>
+              setWebsiteStatus(v as LeadFilter['websiteStatus'])
+            }
+          >
+            <SelectTrigger className='w-full h-10 text-sm'>
+              <SelectValue placeholder='All' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>All</SelectItem>
+              <SelectItem value='no'>No Website</SelectItem>
+              <SelectItem value='has'>Has Website</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className='flex items-center gap-2 mb-3 '>
-          <input
-            type='checkbox'
-            id='recentOnly'
-            checked={recentOnly}
-            onChange={() => setRecentOnly(!recentOnly)}
-          />
-          <Label htmlFor='recentOnly' className='text-sm'>
-            Show only leads from this week
+        <div className='w-48'>
+          <Label htmlFor='category' className='text-xs mb-1 block'>
+            Category
           </Label>
-        </div>
-        <div className='flex items-center gap-2 mb-3'>
-          <input
-            type='checkbox'
-            id='dueOnly'
-            checked={dueOnly}
-            onChange={() => setDueOnly(!dueOnly)}
-          />
-          <Label htmlFor='dueOnly' className='text-sm'>
-            Show only due leads
-          </Label>
+          <Select value={category} onValueChange={(v) => setCategory(v)}>
+            <SelectTrigger className='w-full h-10 text-sm'>
+              <SelectValue placeholder='Category' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>All</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {teamMembers && (
@@ -190,7 +194,7 @@ export function LeadFilters({
               Assigned To
             </Label>
             <Select value={assignedTo} onValueChange={(v) => setAssignedTo(v)}>
-              <SelectTrigger>
+              <SelectTrigger className='w-full h-10 text-sm'>
                 <SelectValue placeholder='All Assignees' />
               </SelectTrigger>
               <SelectContent>
@@ -207,39 +211,42 @@ export function LeadFilters({
           </div>
         )}
 
-        <Select
-          value={websiteStatus}
-          onValueChange={(v) =>
-            setWebsiteStatus(v as LeadFilter['websiteStatus'])
-          }
-        >
-          <SelectTrigger className='w-45'>
-            <SelectValue placeholder='Website Filter' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>All</SelectItem>
-            <SelectItem value='no'>No Website</SelectItem>
-            <SelectItem value='has'>Has Website</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className='w-64 mt-3'>
+          <Label className='text-xs block mb-1'>Score Range</Label>
+          <Slider
+            value={score}
+            onValueChange={(value) => setScore([value[0], value[1]])}
+            max={100}
+            step={5}
+            minStepsBetweenThumbs={10}
+          />
+          <p className='text-xs mt-1 text-muted-foreground'>
+            {score[0]} - {score[1]}
+          </p>
+        </div>
 
-        <div className='w-48'>
-          <Label htmlFor='category' className='text-xs mb-1 block'>
-            Category
+        <div className='flex items-center gap-2 my-6 '>
+          <input
+            type='checkbox'
+            id='recentOnly'
+            checked={recentOnly}
+            onChange={() => setRecentOnly(!recentOnly)}
+          />
+          <Label htmlFor='recentOnly' className='text-sm'>
+            Show only leads from this week
           </Label>
-          <Select value={category} onValueChange={(v) => setCategory(v)}>
-            <SelectTrigger>
-              <SelectValue placeholder='Category' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        </div>
+
+        <div className='flex items-center gap-2 mb-3'>
+          <input
+            type='checkbox'
+            id='dueOnly'
+            checked={dueOnly}
+            onChange={() => setDueOnly(!dueOnly)}
+          />
+          <Label htmlFor='dueOnly' className='text-sm'>
+            Show only due leads
+          </Label>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { analyzeWebsite } from '@/actions/analyzeWebsite';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useUserPlan } from '@/lib/userUserPlan';
 
 const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
 
@@ -54,6 +55,8 @@ export default function WebsiteAnalysisPage() {
   const [manual, setManual] = useState({ name: '', address: '', phone: '' });
   const [loading, setLoading] = useState(false);
   const [auditing, setAuditing] = useState(false);
+
+  const { plan } = useUserPlan();
 
   const handleAudit = async () => {
     if (!url) return toast.error('Enter a website');
@@ -123,13 +126,13 @@ export default function WebsiteAnalysisPage() {
 
       // Include full website audit if run
       ...(audit && {
-        tech_stack: audit.techStack,
-        traffic_rank: audit.trafficRank,
-        ad_spend_estimate: audit.adSpendEstimate,
-        optimization_level: audit.optimizationLevel,
-        website_score: audit.website_score,
-        website_grade: audit.grade,
-        auto_pitch: audit.auto_pitch,
+        tech_stack: audit.techStack || [],
+        traffic_rank: audit.trafficRank || null,
+        ad_spend_estimate: audit.adSpendEstimate || null,
+        optimization_level: audit.optimizationLevel || null,
+        website_score: audit.website_score || 0,
+        website_grade: audit.grade || null,
+        auto_pitch: audit.auto_pitch || null,
       }),
     };
 
@@ -177,14 +180,16 @@ export default function WebsiteAnalysisPage() {
           <p>
             <strong>URL:</strong> {meta.url}
           </p>
-          <Button
-            onClick={handleFullAudit}
-            disabled={auditing}
-            className='mt-3'
-            variant='outline'
-          >
-            {auditing ? 'Running Audit...' : '📊 Generate Full Analysis'}
-          </Button>
+          {['unlimted', 'team'].some((p) => plan.includes(p)) && (
+            <Button
+              onClick={handleFullAudit}
+              disabled={auditing}
+              className='mt-3'
+              variant='outline'
+            >
+              {auditing ? 'Running Audit...' : '📊 Generate Full Analysis'}
+            </Button>
+          )}
         </div>
       )}
 

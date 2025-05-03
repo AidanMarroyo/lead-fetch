@@ -28,10 +28,12 @@ export default function PipelinePage({ userId }: { userId: string }) {
   return (
     <div className='p-6'>
       <h1 className='text-2xl font-semibold mb-6'>Webbed CRM</h1>
-      <ScraperForm
-        plan={plan}
-        onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
-      />
+      <div className='mb-4'>
+        <ScraperForm
+          plan={plan}
+          onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
+        />
+      </div>
 
       <LeadFilters
         onApply={handleApplyFilters}

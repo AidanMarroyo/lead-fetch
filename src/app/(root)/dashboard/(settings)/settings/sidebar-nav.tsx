@@ -34,7 +34,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                 'w-full justify-start rounded-xl text-sm px-4 py-2 transition-all',
                 'hover:bg-accent hover:text-accent-foreground',
                 isActive
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-md'
+                  ? 'bg-primary text-white font-semibold shadow-md'
                   : 'text-muted-foreground'
               )}
             >

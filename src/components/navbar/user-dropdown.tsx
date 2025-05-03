@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Button } from '../ui/button';
 import {
@@ -75,13 +74,7 @@ export default function UserDropdown({
             </span>
           </div>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href='/dashboard/analytics'>Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href='/dashboard/settings'>Settings</Link>
-        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <form action='/auth/signout' method='post'>
           <DropdownMenuItem asChild>

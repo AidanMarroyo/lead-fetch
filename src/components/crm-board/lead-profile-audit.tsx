@@ -74,7 +74,7 @@ export function LeadProfileAudit({
         lead.user_ratings_total >= 10,
     },
     {
-      label: `Rating 4.0+ (${lead.rating ?? 'N/A'})`,
+      label: `Rating +4.0 stars (${lead.rating ? `${lead.rating} stars` : 'N/A'})`,
       value: typeof lead.rating === 'number' ? lead.rating >= 4.0 : false,
     },
   ];

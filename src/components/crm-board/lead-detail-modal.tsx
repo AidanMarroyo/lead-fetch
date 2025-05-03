@@ -298,7 +298,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                 </div>
               )}
 
-              {plan !== 'free' && (
+              {['unlimted', 'team'].some((p) => plan.includes(p)) && (
                 <div className='border-t pt-4'>
                   {internalLead.website && !tech_stack?.length && (
                     <div className='flex justify-between items-center mb-3'>

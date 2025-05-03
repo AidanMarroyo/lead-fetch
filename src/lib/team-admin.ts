@@ -1,20 +1,25 @@
-'use client';
-
+'use client';;
 import { useEffect, useState } from 'react';
 
 export function useTeamAdmin() {
-  const [adminId, setAdminId] = useState<string>('');
+  const [admin, setAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTeamAdmin() {
       const res = await fetch('/api/team/admin');
       const data = await res.json();
-      setAdminId(data.ownderId || '');
+        if (data.role === 'admin') {
+          setAdmin(true);
+        } else {
+          setAdmin(false);
+        }
+    
       setLoading(false);
     }
+  
     fetchTeamAdmin();
   }, []);
 
-  return { adminId, loading };
+  return { admin, loading };
 }

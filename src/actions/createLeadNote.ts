@@ -41,6 +41,6 @@ export async function createLeadNote(leadId: string, message: string) {
     teamId: profile?.team_id,
     leadId,
     action: 'note_added',
-    message: `${fullName} added a note to lead ${lead?.name}`,
+    message: `${fullName} added a note to lead ${lead?.name}. ${message}`,
   });
 }

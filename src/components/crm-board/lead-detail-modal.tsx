@@ -200,7 +200,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     .replace(/(\d+)\s*\.\s*/g, '\n\n$1. ') // Add line breaks before each numbered point
     .trim();
 
-  const today = new Date();
+  const today = new Date().toLocaleDateString().split('T')[0];
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -224,11 +224,13 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
                   <div className='text-xs text-muted-foreground'>
                     Next Recommended Follow-Up:{' '}
-                    {internalLead.next_follow_up_date
-                      ? new Date(internalLead.next_follow_up_date)
-                          .toISOString()
-                          .split('T')[0]
-                      : today.toISOString().split('T')[0]}
+                    {internalLead.contact_attempts === 0
+                      ? today
+                      : internalLead.next_follow_up_date
+                        ? new Date(internalLead.next_follow_up_date)
+                            .toISOString()
+                            .split('T')[0]
+                        : today}
                   </div>
                 </div>
               )}

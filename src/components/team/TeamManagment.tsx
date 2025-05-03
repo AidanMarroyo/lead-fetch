@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTeamAdmin } from '@/lib/team-admin';
 
 type Member = {
   id: string;
@@ -18,6 +19,7 @@ type Member = {
 export function TeamManagement() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
+  const { admin } = useTeamAdmin();
   console.log('members', members);
   useEffect(() => {
     const fetchMembers = async () => {
@@ -67,7 +69,7 @@ export function TeamManagement() {
                 </p>
                 <p className='text-sm text-muted-foreground'>{member.email}</p>
               </div>
-              {member.profiles?.owner_id === member.id && (
+              {admin && (
                 <Button
                   variant='destructive'
                   onClick={() => handleRemove(member.id)}

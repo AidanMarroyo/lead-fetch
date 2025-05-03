@@ -49,14 +49,14 @@ export function getColumns(teamId: string | null): ColumnDef<Lead>[] {
     },
     teamId
       ? {
-          accessorKey: 'assigned_to',
+          accessorKey: 'assigned_to_user_id',
           header: 'Assigned To',
           cell: ({ row }) => {
             const lead = row.original;
             return (
               <AssignUserDropdown
                 leadId={lead.id}
-                currentAssignedId={lead.assigned_to}
+                currentAssignedId={lead.assigned_to_user_id}
                 teamId={teamId}
               />
             );

@@ -17,8 +17,8 @@ export default function PipelinePage({ userId }: { userId: string }) {
     location: '',
     minScore: 0,
     maxScore: 100,
-    dueOnly: false,
-    assignedTo: userId || undefined,
+
+    assignedTo: undefined,
   });
 
   const handleApplyFilters = useCallback((filters: LeadFilter) => {
@@ -33,7 +33,11 @@ export default function PipelinePage({ userId }: { userId: string }) {
         onScrapeComplete={() => setScrapeKey((prev) => prev + 1)}
       />
 
-      <LeadFilters onApply={handleApplyFilters} scrapeKey={scrapeKey} />
+      <LeadFilters
+        onApply={handleApplyFilters}
+        scrapeKey={scrapeKey}
+        userId={userId}
+      />
       <LeadScoreLegend />
       <KanbanBoard filters={filters} key={`${scrapeKey}-${filters.dueOnly}`} />
     </div>

@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTeamAdmin } from '@/lib/team-admin';
 
 export function InviteForm({ onInvited }: { onInvited?: () => void }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const { admin } = useTeamAdmin();
 
   const handleInvite = async () => {
     setLoading(true);
@@ -28,6 +30,8 @@ export function InviteForm({ onInvited }: { onInvited?: () => void }) {
 
     setLoading(false);
   };
+
+  if (!admin) return null; // Only show the invite form if the user is an admin
 
   return (
     <div className='space-y-2 mb-6'>

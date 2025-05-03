@@ -18,9 +18,11 @@ type StatusOption = LeadFilter['status'];
 export function LeadFilters({
   onApply,
   scrapeKey,
+  userId,
 }: {
   onApply: (filters: LeadFilter) => void;
   scrapeKey: number;
+  userId: string;
 }) {
   const [location, setLocation] = useState('');
   const [name, setName] = useState('');
@@ -31,17 +33,24 @@ export function LeadFilters({
     useState<LeadFilter['websiteStatus']>();
   const [categories, setCategories] = useState<string[]>([]);
   const [category, setCategory] = useState<string>('all');
-  const [dueOnly, setDueOnly] = useState(false);
-  const [assignedTo, setAssignedTo] = useState('');
+  const [dueOnly, setDueOnly] = useState(true);
+  const [assignedTo, setAssignedTo] = useState(userId);
   const [teamMembers, setTeamMembers] = useState<
-    { id: string; first_name: string; last_name: string }[]
+    {
+      id: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+      teams: { owner_id: string };
+    }[]
   >([]);
+  console.log('teamMembers', teamMembers);
 
   useEffect(() => {
     const fetchMembers = async () => {
       const res = await fetch('/api/team/members');
       const data = await res.json();
-      setTeamMembers(data || []);
+      setTeamMembers(data.members || []);
     };
     fetchMembers();
   }, []);
@@ -57,7 +66,7 @@ export function LeadFilters({
       recentOnly,
       category: category === 'all' ? undefined : category,
       dueOnly,
-      assignedTo: assignedTo || undefined,
+      assignedTo: assignedTo === 'all' ? undefined : assignedTo,
     });
   }, [
     location,
@@ -175,7 +184,7 @@ export function LeadFilters({
           </Label>
         </div>
 
-        {teamMembers.length > 0 && (
+        {teamMembers && (
           <div className='w-48'>
             <Label htmlFor='assignedTo' className='text-xs mb-1 block'>
               Assigned To
@@ -185,10 +194,12 @@ export function LeadFilters({
                 <SelectValue placeholder='All Assignees' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=''>All</SelectItem>
+                <SelectItem value='all'>All</SelectItem>
                 {teamMembers.map((member) => (
                   <SelectItem key={member.id} value={member.id}>
-                    {member.first_name} {member.last_name}
+                    {member.first_name === null || member.last_name === null
+                      ? member.email
+                      : `${member.first_name} ${member.last_name}`}
                   </SelectItem>
                 ))}
               </SelectContent>

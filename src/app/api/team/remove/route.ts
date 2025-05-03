@@ -36,6 +36,7 @@ export async function POST(req: Request) {
     .eq('user_id', memberId);
 
   await supabase.from('profiles').update({ team_id: null }).eq('id', memberId);
+  await supabase.from('leads').update({assigned_to_user_id: null}).eq('assigned_to_user_id', memberId);
 
   const { data: teamData } = await supabase
     .from('teams')

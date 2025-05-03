@@ -1,6 +1,9 @@
 'use client';
 
 import { Kanban, LayoutGrid, ScanSearch, Ticket } from 'lucide-react';
+import { PiUsersThree } from 'react-icons/pi';
+import { VscTools } from 'react-icons/vsc';
+import { CiSettings } from 'react-icons/ci';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -43,4 +46,7 @@ const menuItems = [
   { icon: ScanSearch, label: 'Leads', href: '/dashboard/leads' },
   { icon: Kanban, label: 'Pipeline', href: '/dashboard/crm' },
   { icon: Ticket, label: 'Billing', href: '/dashboard/settings/billing' },
+  { icon: PiUsersThree, label: 'Teams', href: '/dashboard/settings/team' },
+  { icon: CiSettings, label: 'Settings', href: '/dashboard/settings' },
+  { icon: VscTools, label: 'Tools', href: '/dashboard/tools' },
 ];

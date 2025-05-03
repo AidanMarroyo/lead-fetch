@@ -1,0 +1,105 @@
+'use client';
+
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+type FAQItem = {
+  question: string;
+  answer: string;
+};
+
+const faqs: FAQItem[] = [
+  {
+    question: 'Who is WebbedLeads for?',
+    answer:
+      'WebbedLeads is built for freelance web designers, developers, and digital agencies who want to fill their pipeline with qualified leads without cold calling or random outreach.',
+  },
+  {
+    question: 'How does lead scoring work?',
+    answer:
+      'Our system analyzes Google Business profiles and websites, assigning a score based on web presence gaps, site quality, profile completeness, and more. Higher scores mean higher potential.',
+  },
+  {
+    question: 'Can I use this for local clients?',
+    answer:
+      'Yes — WebbedLeads is especially powerful for targeting local businesses who are missing a site or need a modern upgrade. Filter by city, state, or postal code.',
+  },
+  {
+    question: 'Do I need to install anything?',
+    answer:
+      'Nope. WebbedLeads is fully cloud-based. Just sign up, log in, and start discovering leads.',
+  },
+  {
+    question: 'What’s included in the free plan?',
+    answer:
+      'You get 3 qualified leads per month, limited dashboard access, and basic audit features — perfect for testing the platform.',
+  },
+  {
+    question: 'Can I upgrade or cancel anytime?',
+    answer:
+      'Absolutely. Upgrade, downgrade, or cancel directly from your billing dashboard at any time.',
+  },
+];
+
+export default function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex(index === openIndex ? null : index);
+  };
+
+  return (
+    <section className='bg-muted border-t border-border py-24 px-6'>
+      <div className='max-w-4xl mx-auto text-center'>
+        <motion.h2
+          className='text-4xl font-bold mb-6'
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          Frequently Asked Questions
+        </motion.h2>
+        <p className='text-muted-foreground max-w-xl mx-auto mb-12'>
+          Still curious? Here are answers to the most common questions from
+          freelancers and agencies using WebbedLeads.
+        </p>
+
+        <div className='space-y-4 text-left'>
+          {faqs.map((faq, i) => (
+            <div
+              key={i}
+              className='border border-border rounded-lg bg-background'
+            >
+              <button
+                onClick={() => toggle(i)}
+                className='w-full flex items-center justify-between p-4 text-left'
+              >
+                <span className='font-medium'>{faq.question}</span>
+                <ChevronDown
+                  className={`h-5 w-5 transition-transform ${
+                    openIndex === i ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {openIndex === i && (
+                  <motion.div
+                    className='px-4 pb-4 text-sm text-muted-foreground'
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {faq.answer}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

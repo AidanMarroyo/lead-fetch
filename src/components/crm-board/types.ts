@@ -20,4 +20,5 @@ export type Lead = {
   contact_attempts: number;
   last_contacted_at?: string
   next_follow_up_date?: Date
+  reviews?: string[];
 };

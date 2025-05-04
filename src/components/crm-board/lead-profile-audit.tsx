@@ -35,11 +35,13 @@ export function LeadProfileAudit({
   address,
   compact = false, // ✅ NEW: allow compact mode
   googlePlaceId,
+  reviews,
 }: {
   lead: Place;
   address: string;
   compact?: boolean;
   googlePlaceId?: string;
+  reviews?: string[];
 }) {
   const auditItems = [
     {
@@ -85,7 +87,6 @@ export function LeadProfileAudit({
     },
   ];
 
-  console.log('GoogleProfileImprovement', googlePlaceId);
   return (
     <div
       className={
@@ -111,7 +112,7 @@ export function LeadProfileAudit({
       {!compact && (
         <GoogleProfileImprovement
           place={lead}
-          reviews={lead.reviews?.map((review) => ({ text: review }))}
+          reviews={reviews}
           googlePlaceId={googlePlaceId}
           address={address}
         />

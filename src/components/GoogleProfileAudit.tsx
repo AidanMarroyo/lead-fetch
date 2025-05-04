@@ -31,8 +31,6 @@ export type Place = {
   reviews?: string[];
 };
 
-type Review = { text: string };
-
 export function GoogleProfileImprovement({
   place,
   reviews,
@@ -40,14 +38,14 @@ export function GoogleProfileImprovement({
   address,
 }: {
   place: Place;
-  reviews?: Review[];
+  reviews?: string[];
   googlePlaceId?: string;
   address: string;
 }) {
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  console.log('Google Audit Place Send', place);
+  console.log('Google Audit Reviews Send', reviews);
 
   const runAnalysis = async () => {
     try {

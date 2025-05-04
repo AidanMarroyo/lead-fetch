@@ -37,15 +37,17 @@ export function GoogleProfileImprovement({
   place,
   reviews,
   googlePlaceId,
+  address,
 }: {
   place: Place;
   reviews?: Review[];
   googlePlaceId?: string;
+  address: string;
 }) {
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  console.log('googlePlaceId', googlePlaceId);
+  console.log('Google Audit Place Send', place);
 
   const runAnalysis = async () => {
     try {
@@ -58,7 +60,7 @@ export function GoogleProfileImprovement({
       const analysisRes = await fetch(`${api}/google-profile-audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ place, reviews, googlePlaceId }),
+        body: JSON.stringify({ place, reviews, googlePlaceId, address }),
       });
 
       const data = await analysisRes.json();

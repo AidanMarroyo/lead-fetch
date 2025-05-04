@@ -113,6 +113,7 @@ export function LeadProfileAudit({
           place={lead}
           reviews={lead.reviews?.map((review) => ({ text: review }))}
           googlePlaceId={googlePlaceId}
+          address={address}
         />
       )}
       {!compact

@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
     
 
     const { data, error } = await query;
+    console.log('Leads query:', data);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

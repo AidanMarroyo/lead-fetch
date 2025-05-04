@@ -25,6 +25,7 @@ export type Place = {
   website?: string;
   score?: number;
   phone?: string;
+  google_place_id?: string;
   reviews?: string[];
 };
 
@@ -32,10 +33,12 @@ export function LeadProfileAudit({
   lead,
   address,
   compact = false, // ✅ NEW: allow compact mode
+  googlePlaceId,
 }: {
   lead: Place;
   address: string;
   compact?: boolean;
+  googlePlaceId?: string;
 }) {
   const auditItems = [
     {
@@ -81,6 +84,7 @@ export function LeadProfileAudit({
     },
   ];
 
+  console.log('GoogleProfileImprovement', lead.google_place_id);
   return (
     <div
       className={
@@ -107,6 +111,7 @@ export function LeadProfileAudit({
         <GoogleProfileImprovement
           lead={lead}
           reviews={lead.reviews?.map((review) => ({ text: review }))}
+          googlePlaceId={googlePlaceId}
         />
       )}
       {!compact && ( // ✅ Only show download button outside tooltips

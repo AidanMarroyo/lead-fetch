@@ -34,12 +34,15 @@ type Review = { text: string };
 export function GoogleProfileImprovement({
   lead,
   reviews,
+  googlePlaceId,
 }: {
   lead: Place;
   reviews?: Review[];
+  googlePlaceId?: string;
 }) {
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  console.log('googlePlaceId', googlePlaceId);
 
   const runAnalysis = async () => {
     setLoading(true);
@@ -47,6 +50,7 @@ export function GoogleProfileImprovement({
       const result = await analyzeGoogleProfile({
         place: lead,
         reviews,
+        googlePlaceId,
       });
       setAnalysis(result);
     } catch (error) {

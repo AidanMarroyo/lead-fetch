@@ -26,9 +26,11 @@ export type Place = {
 export async function analyzeGoogleProfile({
   place,
   reviews,
+  googlePlaceId,
 }: {
   place: Place;
   reviews?: { text: string }[];
+  googlePlaceId?: string;
 }) {
   try {
     const res = await fetch(
@@ -38,7 +40,7 @@ export async function analyzeGoogleProfile({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ place, reviews }),
+        body: JSON.stringify({ place, reviews, googlePlaceId }),
       }
     );
 

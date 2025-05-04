@@ -17,6 +17,7 @@ export function KanbanBoard({ filters }: { filters: LeadFilter }) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
+  console.log('selectedLead', selectedLead);
 
   useEffect(() => {
     const fetchLeads = async () => {

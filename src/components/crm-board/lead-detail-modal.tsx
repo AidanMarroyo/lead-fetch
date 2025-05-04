@@ -54,6 +54,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [competitorLoading, setCompetitorLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  console.log('internalLead', internalLead);
 
   const {
     tech_stack,
@@ -265,6 +266,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                 <LeadProfileAudit
                   lead={placeDetails}
                   address={internalLead.address}
+                  googlePlaceId={internalLead.google_place_id}
                 />
               )}
 

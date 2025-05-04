@@ -46,7 +46,7 @@ export async function googlePlacesSearch(keyword: string, location: string) {
           types: string[];
         }) => {
           const detailsRes = await fetch(
-            `https://maps.googleapis.com/maps/api/place/details/json?place_id=${biz.place_id}&fields=name,formatted_phone_number,website,opening_hours,photos,types,rating,user_ratings_total&key=${apiKey}`
+            `https://maps.googleapis.com/maps/api/place/details/json?place_id=${biz.place_id}&fields=name,formatted_phone_number,website,opening_hours,photos,types,rating,user_ratings_total,reviews&key=${apiKey}`
           );
 
           const detailsData = await detailsRes.json();
@@ -65,6 +65,9 @@ export async function googlePlacesSearch(keyword: string, location: string) {
             address: biz.vicinity || null,
             phone: detailsData.result?.formatted_phone_number || null,
             website: detailsData.result?.website || null,
+            reviews: detailsData.result?.reviews
+              ? detailsData.result.reviews.map((review: { text: string }) => review.text)
+              : null
           };
         }
       )

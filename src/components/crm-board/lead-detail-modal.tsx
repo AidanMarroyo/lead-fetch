@@ -97,7 +97,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
         throw new Error('API URL is not defined');
       }
 
-      const scrapeRes = await fetch(api, {
+      const scrapeRes = await fetch(`${api}/scrape`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: internalLead.website }),

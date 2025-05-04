@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
-import { analyzeGoogleProfile } from '@/actions/analyzeGoogleProfile';
+
+import { toast } from 'sonner';
+import { saveGoogleAnalysis } from '@/actions/saveGoogleAnalysis';
 
 type LeadPhoto = {
   height: number;
@@ -40,19 +42,39 @@ export function GoogleProfileImprovement({
   reviews?: Review[];
   googlePlaceId?: string;
 }) {
+  const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   console.log('googlePlaceId', googlePlaceId);
 
   const runAnalysis = async () => {
-    setLoading(true);
     try {
-      const result = await analyzeGoogleProfile({
-        place: lead,
-        reviews,
-        googlePlaceId,
+      setLoading(true);
+
+      if (!api) {
+        throw new Error('API URL is not defined');
+      }
+
+      const analysisRes = await fetch(`${api}/google-profile-audit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead, reviews, googlePlaceId }),
       });
-      setAnalysis(result);
+
+      const data = await analysisRes.json();
+      if (!data.success) return toast.error('Profile analysis failed.');
+
+      const saveRes = await saveGoogleAnalysis({
+        analysis: data.analysis,
+        placeId: googlePlaceId || '',
+      });
+
+      if (saveRes.success) {
+        toast.success('Profile analysis saved successfully!');
+        setAnalysis(data.analysis);
+      } else {
+        toast.error('Failed to save profile analysis.');
+      }
     } catch (error) {
       console.error(error);
       setAnalysis((error as Error).message);

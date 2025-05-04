@@ -37,6 +37,7 @@ export type Place = {
   lng?: number;
   assigned_to_user_id?: string;
   next_follow_up_date?: string;
+  reviews?: string[];
 };
 
 export async function fetchLeadsFromGoogle({
@@ -186,7 +187,8 @@ if (monthlyLimit > 0) {
           lng: coords?.lng || null,
           website: lead.website || null,
           next_follow_up_date: today,
-          assigned_to_user_id: userId
+          assigned_to_user_id: userId,
+          reviews: lead.reviews || null,
         };
       })
     );

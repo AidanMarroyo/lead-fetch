@@ -81,13 +81,16 @@ export default function PrivacyPolicyPage() {
 
         <h2 className='text-lg font-semibold'>3. Email Marketing</h2>
         <p>
-          If you opt-in during sign-up, we may send marketing emails via
-          Mailchimp. You may unsubscribe at any time via a link in any email.
+          When you sign up for WebbedLeads, your email address will
+          automatically be added to our marketing mailing list powered by
+          Mailchimp. You may receive newsletters, promotional offers, or product
+          updates. You can unsubscribe from marketing communications at any time
+          by clicking the “Unsubscribe” link in any email.
         </p>
         <div className='pl-4 my-6 border-l border-white'>
           <strong>
-            You will not be added to our mailing list unless you check the
-            consent box during signup.
+            We do not send marketing emails unrelated to WebbedLeads and we
+            never sell your personal information.
           </strong>
         </div>
 
@@ -165,6 +168,8 @@ export default function PrivacyPolicyPage() {
           </li>
         </ul>
         <p>You may disable cookies via your browser settings.</p>
+
+        <Separator className='my-4' />
 
         <h2 className='text-lg font-semibold'>8. Security</h2>
         <p>

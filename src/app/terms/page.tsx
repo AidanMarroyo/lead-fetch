@@ -94,11 +94,17 @@ export default function TermsPage() {
 
         <h2 className='text-lg font-semibold'>5. Email Communication</h2>
         <p>
-          By signing up, you consent to receive account-related notifications
-          (e.g. billing, updates). You may also opt-in to receive newsletters or
-          promotional emails via Mailchimp. You may unsubscribe at any time.
+          By creating an account on WebbedLeads, you agree to receive
+          transactional and administrative emails (e.g., billing notices,
+          service updates, system alerts) as well as marketing communications.
         </p>
-        <p>We do not share or sell your email address.</p>
+        <p>
+          Marketing emails will be sent and may include newsletters, feature
+          announcements, and promotions. You may unsubscribe from marketing
+          emails at any time using the link provided in each message, though
+          transactional communications are required for your continued use of
+          the service.
+        </p>
 
         <Separator className='my-4' />
 

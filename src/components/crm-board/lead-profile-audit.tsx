@@ -110,7 +110,7 @@ export function LeadProfileAudit({
       </ul>
       {!compact && (
         <GoogleProfileImprovement
-          lead={lead}
+          place={lead}
           reviews={lead.reviews?.map((review) => ({ text: review }))}
           googlePlaceId={googlePlaceId}
         />

@@ -34,11 +34,11 @@ export type Place = {
 type Review = { text: string };
 
 export function GoogleProfileImprovement({
-  lead,
+  place,
   reviews,
   googlePlaceId,
 }: {
-  lead: Place;
+  place: Place;
   reviews?: Review[];
   googlePlaceId?: string;
 }) {
@@ -58,7 +58,7 @@ export function GoogleProfileImprovement({
       const analysisRes = await fetch(`${api}/google-profile-audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lead, reviews, googlePlaceId }),
+        body: JSON.stringify({ place, reviews, googlePlaceId }),
       });
 
       const data = await analysisRes.json();

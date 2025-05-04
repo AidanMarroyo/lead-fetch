@@ -4,7 +4,6 @@ import Footer from '@/components/marketing/Footer';
 import Hero from '@/components/marketing/Hero';
 
 import LivePreview from '@/components/marketing/LivePreview';
-import Navbar from '@/components/marketing/Navbar';
 import Pricing from '@/components/marketing/Pricing';
 
 export default function MarketingHomePage() {

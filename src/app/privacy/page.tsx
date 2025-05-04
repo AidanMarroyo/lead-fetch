@@ -101,30 +101,100 @@ export default function PrivacyPolicyPage() {
           following service providers solely to operate our platform:
         </p>
 
-        <h2 className='text-lg font-semibold'>5. Cookies & Tracking</h2>
+        <ul className='pl-4 list-disc list-inside space-y-1'>
+          <li>
+            <strong> Supabase</strong> – Authentication, database, storage
+          </li>
+          <li>
+            <strong> OpenAI</strong> – AI-powered website analysis
+          </li>
+          <li>
+            <strong> Google Places API & Maps</strong> – Lead enrichment
+          </li>
+          <li>
+            <strong> Stripe</strong> – Secure billing and subscription
+            processing
+          </li>
+          <li>
+            <strong> Mailchimp </strong>– Email newsletter and updates
+          </li>
+          <li>
+            <strong> Render</strong> – Web scraping backend infrastructure
+          </li>
+        </ul>
         <p>
-          We use cookies to track usage and preferences. You can control cookies
-          through your browser settings.
+          All partners are bound by strict confidentiality and data protection
+          agreements.
         </p>
+
+        <Separator className='my-4' />
+
+        <h2 className='text-lg font-semibold'>5. Data Retention</h2>
+        <p>
+          We retain your data as long as your account is active, or as needed to
+          provide you services. You may request deletion of your data by
+          contacting us at{' '}
+          <span className='text-primary'> support@webbedleads.com</span>.
+        </p>
+
+        <Separator className='my-4' />
 
         <h2 className='text-lg font-semibold'>6. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul className='pl-4 list-disc list-inside space-y-1'>
+          <li>Access or correct your data</li>
+          <li>Request deletion of your account</li>
+          <li>Withdraw marketing consent at any time</li>
+          <li>File a complaint with your local privacy authority</li>
+        </ul>
         <p>
-          You may request access to or deletion of your personal data at any
-          time by contacting us at support@webbedleads.com.
+          To exercise your rights, email:{' '}
+          <span className='text-primary'> support@webbedleads.com</span>.
         </p>
 
-        <h2 className='text-lg font-semibold'>7. Changes to This Policy</h2>
+        <Separator className='my-4' />
+
+        <h2 className='text-lg font-semibold'>7. Cookies & Tracking</h2>
+        <p>We use cookies to:</p>
+        <ul className='pl-4 list-disc list-inside space-y-1'>
+          <li>Keep you logged in</li>
+          <li>Store preferences</li>
+          <li>
+            Analyze product usage (e.g., via Plausible or other privacy-focused
+            analytics)
+          </li>
+        </ul>
+        <p>You may disable cookies via your browser settings.</p>
+
+        <h2 className='text-lg font-semibold'>8. Security</h2>
         <p>
-          We may update this Privacy Policy. Changes will be posted on this page
-          with an updated effective date.
+          We take data protection seriously and implement industry-standard
+          encryption and security practices to protect your data.
         </p>
 
-        <h2 className='text-lg font-semibold'>8. Contact</h2>
+        <Separator className='my-4' />
+
+        <h2 className='text-lg font-semibold'>9. Children&apos;s Privacy</h2>
         <p>
-          For any questions or privacy-related requests, please contact us at:{' '}
-          <a className='underline' href='mailto:support@webbedleads.com'>
-            support@webbedleads.com
-          </a>
+          WebbedLeads is not intended for use by anyone under 18. We do not
+          knowingly collect personal information from children.
+        </p>
+
+        <Separator className='my-4' />
+
+        <h2 className='text-lg font-semibold'>10. Changes to This Policy</h2>
+        <p>
+          We may update this policy from time to time. The latest version will
+          always be posted on this page. We will notify you of significant
+          changes via email or within the platform.
+        </p>
+
+        <Separator className='my-4' />
+        <h2 className='text-lg font-semibold'>11. Contact Us</h2>
+        <p>
+          If you have questions about this Privacy Policy, contact us at:
+          <br /> Email:{' '}
+          <span className='text-primary'> privacy@webbedleads.com</span>
         </p>
       </div>
     </main>

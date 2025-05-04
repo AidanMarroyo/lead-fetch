@@ -27,6 +27,7 @@ export type Place = {
   phone?: string;
   google_place_id?: string;
   reviews?: string[];
+  google_analysis?: string;
 };
 
 export function LeadProfileAudit({
@@ -114,27 +115,29 @@ export function LeadProfileAudit({
           googlePlaceId={googlePlaceId}
         />
       )}
-      {!compact && ( // ✅ Only show download button outside tooltips
-        <div className='mt-4 flex items-center gap-2'>
-          <Button
-            variant='outline'
-            onClick={async () => {
-              if (!lead) return toast.error('Missing place details');
+      {!compact
+        ? null
+        : lead?.google_analysis && ( // ✅ Only show download button outside tooltips
+            <div className='mt-4 flex items-center gap-2'>
+              <Button
+                variant='outline'
+                onClick={async () => {
+                  if (!lead) return toast.error('Missing place details');
 
-              const blob = await pdf(
-                <LeadAuditPDF lead={lead} address={address} />
-              ).toBlob();
-              const url = window.URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = `${lead.name}-audit.pdf`;
-              link.click();
-            }}
-          >
-            Download Audit Report (PDF)
-          </Button>
-        </div>
-      )}
+                  const blob = await pdf(
+                    <LeadAuditPDF lead={lead} address={address} />
+                  ).toBlob();
+                  const url = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `${lead.name}-audit.pdf`;
+                  link.click();
+                }}
+              >
+                Download Audit Report (PDF)
+              </Button>
+            </div>
+          )}
     </div>
   );
 }

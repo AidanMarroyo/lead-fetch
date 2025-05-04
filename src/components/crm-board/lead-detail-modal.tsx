@@ -324,25 +324,26 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                     </div>
                   )}
 
-                  {(tech_stack ?? []).length > 0 && (
-                    <div className='space-y-4 text-sm'>
-                      <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Website Score:</span>
-                        <span
-                          className={cn(
-                            'text-xs font-bold px-2 py-1 rounded',
-                            (website_score ?? 0) >= 80
-                              ? 'bg-green-100 text-green-800'
-                              : (website_score ?? 0) >= 60
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
-                          )}
-                        >
-                          {website_score}/100
-                        </span>
-                      </div>
+                  {(tech_stack ?? []).length > 0 ||
+                    (auto_pitch && (
+                      <div className='space-y-4 text-sm'>
+                        <div className='flex items-center gap-2'>
+                          <span className='font-semibold'>Website Score:</span>
+                          <span
+                            className={cn(
+                              'text-xs font-bold px-2 py-1 rounded',
+                              (website_score ?? 0) >= 80
+                                ? 'bg-green-100 text-green-800'
+                                : (website_score ?? 0) >= 60
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-red-100 text-red-800'
+                            )}
+                          >
+                            {website_score}/100
+                          </span>
+                        </div>
 
-                      {/* <div>
+                        {/* <div>
                         <span className='font-semibold block mb-1'>
                           Tech Stack:
                         </span>
@@ -358,52 +359,54 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                         </div>
                       </div> */}
 
-                      <div className='grid grid-cols-2 gap-4'>
-                        <div>
-                          <span className='font-semibold'>Traffic Rank: </span>
-                          <span className='text-muted-foreground'>
-                            {traffic_rank ?? '—'}
-                          </span>
-                        </div>
-                        <div>
-                          <span className='font-semibold'>Ad Spend: </span>
-                          <span className='text-muted-foreground'>
-                            {ad_spend_estimate ?? '—'}
-                          </span>
-                        </div>
-                        <div>
-                          <span className='font-semibold'>
-                            Optimization Level:{' '}
-                          </span>
-                          <span className='text-muted-foreground capitalize'>
-                            {optimization_level ?? '—'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {formattedPitch && (
-                        <div className='border bg-muted p-4 rounded'>
-                          <div className='flex justify-between items-center mb-2'>
-                            <h4 className='text-sm font-semibold'>
-                              📬 AI Pitch Summary
-                            </h4>
-                            <Button
-                              variant='ghost'
-                              onClick={() => {
-                                navigator.clipboard.writeText(formattedPitch);
-                                toast.success('Pitch copied to clipboard');
-                              }}
-                            >
-                              Copy
-                            </Button>
+                        <div className='grid grid-cols-2 gap-4'>
+                          <div>
+                            <span className='font-semibold'>
+                              Traffic Rank:{' '}
+                            </span>
+                            <span className='text-muted-foreground'>
+                              {traffic_rank ?? '—'}
+                            </span>
                           </div>
-                          <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
-                            {formattedPitch}
-                          </p>
+                          <div>
+                            <span className='font-semibold'>Ad Spend: </span>
+                            <span className='text-muted-foreground'>
+                              {ad_spend_estimate ?? '—'}
+                            </span>
+                          </div>
+                          <div>
+                            <span className='font-semibold'>
+                              Optimization Level:{' '}
+                            </span>
+                            <span className='text-muted-foreground capitalize'>
+                              {optimization_level ?? '—'}
+                            </span>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  )}
+
+                        {formattedPitch && (
+                          <div className='border bg-muted p-4 rounded'>
+                            <div className='flex justify-between items-center mb-2'>
+                              <h4 className='text-sm font-semibold'>
+                                📬 AI Pitch Summary
+                              </h4>
+                              <Button
+                                variant='ghost'
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formattedPitch);
+                                  toast.success('Pitch copied to clipboard');
+                                }}
+                              >
+                                Copy
+                              </Button>
+                            </div>
+                            <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
+                              {auto_pitch}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               )}
 

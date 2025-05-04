@@ -12,10 +12,20 @@ type Subscription = {
   ends_at: string | null;
 };
 
+interface BillingHistory {
+  id: string;
+  date: string;
+  amount_paid: number;
+  currency: string;
+  status: string;
+  url: string;
+}
+
 export default function BillingPage() {
   const [sub, setSub] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [history, setHistory] = useState<BillingHistory[]>([]);
 
   useEffect(() => {
     const fetchSub = async () => {
@@ -23,6 +33,10 @@ export default function BillingPage() {
         const res = await fetch('/api/subscription');
         const data = await res.json();
         setSub(data);
+
+        const histRes = await fetch('/api/billing/history');
+        const histData = await histRes.json();
+        setHistory(histData.history);
       } catch {
         toast.error('Failed to load subscription data.');
       } finally {
@@ -236,6 +250,35 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
+      {history.length > 0 && (
+        <Card className='mt-10'>
+          <CardHeader>
+            <CardTitle>Billing History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className='space-y-3 text-sm'>
+              {history.map((inv) => (
+                <li key={inv.id} className='flex justify-between items-center'>
+                  <div>
+                    <p>
+                      <strong>{inv.date}</strong> – {inv.amount_paid}{' '}
+                      {inv.currency} ({inv.status})
+                    </p>
+                  </div>
+                  <a
+                    href={inv.url}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-blue-600 underline text-sm'
+                  >
+                    View Invoice
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

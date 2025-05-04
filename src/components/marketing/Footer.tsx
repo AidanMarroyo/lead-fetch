@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -6,7 +7,22 @@ export default function Footer() {
       <div className='max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8'>
         {/* Branding */}
         <div>
-          <h2 className='text-lg font-semibold text-foreground'>WebbedLeads</h2>
+          <Link href='/dashboard/leads' className='mr-14 flex items-center'>
+            <Image
+              className='mr-3 block dark:hidden'
+              alt=''
+              src='/webbed-logo.png'
+              width={120}
+              height={120}
+            />
+            <Image
+              className='mr-3 hidden dark:block'
+              alt=''
+              src='/webbed-logo-dark.png'
+              width={120}
+              height={120}
+            />
+          </Link>
           <p className='mt-2 text-sm'>
             We crawl. You close. Built for web pros.
           </p>

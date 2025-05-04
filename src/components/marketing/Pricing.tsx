@@ -3,6 +3,7 @@
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { fadeIn } from '../../../variants';
 
 const plans = [
   {
@@ -22,8 +23,7 @@ const plans = [
     name: 'Pro',
     price: (
       <>
-        <span className='line-through text-muted-foreground mr-1'>$98</span>
-        $49/mo
+        <span className='mr-1'>$49/mo</span>
       </>
     ),
     description: 'Full access for solo freelancers and devs.',
@@ -41,8 +41,8 @@ const plans = [
     name: 'Ultimate',
     price: (
       <>
-        <span className='line-through text-muted-foreground mr-1'>$138</span>
-        $69/mo
+        <span className='line-through text-muted-foreground mr-1'>$119</span>
+        $59/mo
       </>
     ),
     description: 'Unlimited access for power users.',
@@ -83,25 +83,33 @@ export default function Pricing() {
       <div className='max-w-6xl mx-auto text-center'>
         <motion.h2
           className='text-4xl font-bold mb-6'
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          variants={fadeIn('down', 0.2)}
+          initial='hidden'
+          whileInView='show'
+          viewport={{ once: false, amount: 0.8 }}
         >
           Simple Pricing, Serious Results
         </motion.h2>
-        <p className='text-muted-foreground max-w-2xl mx-auto mb-16'>
+        <motion.p
+          variants={fadeIn('up', 0.2)}
+          initial='hidden'
+          whileInView='show'
+          viewport={{ once: false, amount: 0.8 }}
+          className='text-muted-foreground max-w-2xl mx-auto mb-16'
+        >
           Whether you’re freelancing or managing a team, WebbedLeads helps you
           fill your pipeline with qualified clients — no fluff, just results.
-        </p>
+        </motion.p>
 
         {/* Grid of main plans */}
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
           {plans.map((plan) => (
             <motion.div
               key={plan.name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+              variants={fadeIn('up', 0.2)}
+              initial='hidden'
+              whileInView='show'
+              viewport={{ once: false, amount: 0.8 }}
               className={`rounded-xl border ${
                 plan.highlighted
                   ? 'border-primary bg-muted shadow-xl'

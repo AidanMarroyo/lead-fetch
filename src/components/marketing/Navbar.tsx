@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import Image from 'next/image';
 
 export default function Navbar() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -26,11 +27,27 @@ export default function Navbar() {
     <header className='sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm'>
       <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
         {/* Logo */}
-        <Link
+        {/* <Link
           href='/'
           className='text-xl font-bold tracking-tight text-primary'
         >
           WebbedLeads
+        </Link> */}
+        <Link href='/dashboard/leads' className='mr-14 flex items-center'>
+          <Image
+            className='mr-3 block dark:hidden'
+            alt=''
+            src='/webbed-logo.png'
+            width={120}
+            height={120}
+          />
+          <Image
+            className='mr-3 hidden dark:block'
+            alt=''
+            src='/webbed-logo-dark.png'
+            width={120}
+            height={120}
+          />
         </Link>
 
         {/* Desktop Nav */}

@@ -71,6 +71,29 @@ export default function SignupPage() {
                 required
               />
             </div>
+            <p className='text-xs text-muted-foreground mt-3'>
+              By signing up, you agree to our{' '}
+              <a
+                href='/terms'
+                className='underline text-primary'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a
+                href='/privacy'
+                className='underline text-primary'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Privacy Policy
+              </a>
+              . You consent to receive emails from WebbedLeads. You may
+              unsubscribe from marketing emails at any time using the link
+              provided in those messages.
+            </p>
           </CardContent>
 
           <CardFooter className='flex flex-col gap-3'>

@@ -2,6 +2,7 @@
 
 import { Brain, Globe, ScanLine, BarChart3, Users, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { fadeIn } from '../../../variants';
 
 const features = [
   {
@@ -47,9 +48,10 @@ export default function Features() {
     <section className='bg-card py-20 px-6 border-t border-border'>
       <div className='max-w-6xl mx-auto'>
         <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          variants={fadeIn('down', 0.2)}
+          initial='hidden'
+          whileInView='show'
+          viewport={{ once: false, amount: 0.8 }}
           className='text-3xl md:text-4xl font-bold text-center mb-12'
         >
           Everything You Need to Fill Your Pipeline
@@ -59,8 +61,10 @@ export default function Features() {
           {features.map((feature, idx) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              variants={fadeIn('up', 0.2)}
+              initial='hidden'
+              whileInView='show'
+              viewport={{ once: false, amount: 0.8 }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
               className='bg-background p-6 rounded-2xl border shadow-sm'
             >

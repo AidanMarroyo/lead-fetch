@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fadeIn } from '../../../variants';
 
 type FAQItem = {
   question: string;
@@ -51,15 +52,14 @@ export default function FAQ() {
 
   return (
     <section className='bg-muted border-t border-border py-24 px-6'>
-      <div className='max-w-4xl mx-auto text-center'>
-        <motion.h2
-          className='text-4xl font-bold mb-6'
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          Frequently Asked Questions
-        </motion.h2>
+      <motion.div
+        className='max-w-4xl mx-auto text-center'
+        variants={fadeIn('up', 0.2)}
+        initial='hidden'
+        whileInView='show'
+        viewport={{ once: false, amount: 0.8 }}
+      >
+        <h2 className='text-4xl font-bold mb-6'>Frequently Asked Questions</h2>
         <p className='text-muted-foreground max-w-xl mx-auto mb-12'>
           Still curious? Here are answers to the most common questions from
           freelancers and agencies using WebbedLeads.
@@ -99,7 +99,7 @@ export default function FAQ() {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

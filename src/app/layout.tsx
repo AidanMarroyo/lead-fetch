@@ -5,8 +5,6 @@ import { Toaster } from '@/components/ui/sonner';
 import { Inter } from 'next/font/google';
 import { Providers } from './theme-provider';
 import Script from 'next/script';
-import Navbar from '@/components/marketing/Navbar';
-import Footer from '@/components/marketing/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,9 +29,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <Navbar />
           {children}
-          <Footer />
           <Toaster />
         </Providers>
       </body>

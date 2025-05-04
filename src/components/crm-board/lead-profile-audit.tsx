@@ -85,7 +85,7 @@ export function LeadProfileAudit({
     },
   ];
 
-  console.log('GoogleProfileImprovement', lead.google_place_id);
+  console.log('GoogleProfileImprovement', googlePlaceId);
   return (
     <div
       className={

@@ -55,7 +55,7 @@ export function GoogleProfileImprovement({
       setAnalysis(result);
     } catch (error) {
       console.error(error);
-      setAnalysis('❌ Failed to generate improvement suggestions.');
+      setAnalysis((error as Error).message);
     } finally {
       setLoading(false);
     }

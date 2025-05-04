@@ -3,6 +3,7 @@ import { Button } from '../ui/button';
 import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 import { toast } from 'sonner';
 import { pdf } from '@react-pdf/renderer';
+import { GoogleProfileImprovement } from '../GoogleProfileAudit';
 
 type LeadPhoto = {
   height: number;
@@ -15,7 +16,7 @@ export type Place = {
   name: string;
   rating?: number;
   user_ratings_total?: number;
-  opening_hours?: { weekday_text?: string[]; open_now?: boolean };
+  opening_hours?: { weekday_text: string[]; open_now?: boolean };
   photos?: LeadPhoto[];
   types?: string[];
   place_id?: string;
@@ -24,6 +25,7 @@ export type Place = {
   website?: string;
   score?: number;
   phone?: string;
+  reviews?: string[];
 };
 
 export function LeadProfileAudit({
@@ -101,6 +103,12 @@ export function LeadProfileAudit({
           </li>
         ))}
       </ul>
+      {!compact && (
+        <GoogleProfileImprovement
+          lead={lead}
+          reviews={lead.reviews?.map((review) => ({ text: review }))}
+        />
+      )}
       {!compact && ( // ✅ Only show download button outside tooltips
         <div className='mt-4 flex items-center gap-2'>
           <Button

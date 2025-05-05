@@ -220,9 +220,9 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   <div className='text-xs text-muted-foreground'>
                     Next Recommended Follow-Up:{' '}
                     {internalLead.next_follow_up_date
-                      ? internalLead?.next_follow_up_date
-                          .toLocaleDateString()
-                          .split('T')[0]
+                      ? new Date(
+                          internalLead.next_follow_up_date
+                        ).toLocaleDateString()
                       : today}
                   </div>
                 </div>

@@ -1,8 +1,13 @@
+import { getCurrentUser } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const placeId = req.nextUrl.searchParams.get('placeId');
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   if (!placeId) {
     return NextResponse.json({ error: 'Missing placeId' }, { status: 400 });

@@ -1,8 +1,13 @@
+import { getCurrentUser } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const domain = req.nextUrl.searchParams.get('domain');
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   if (!domain) {
     return NextResponse.json({ error: 'Missing domain' }, { status: 400 });

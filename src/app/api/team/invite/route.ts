@@ -11,6 +11,10 @@ type UserRecord = {
 
 export async function POST(req: Request) {
   const supabase = await createClient();
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const { email } = await req.json();
 
   const inviter = await getCurrentUser();

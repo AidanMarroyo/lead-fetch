@@ -1,6 +1,12 @@
+import { getCurrentUser } from "@/lib/auth";
+
 export async function geocodeFromPlaceId(
   placeId: string
 ): Promise<{ lat: number; lng: number } | null> {
+  const user = await getCurrentUser()
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   if (!apiKey) throw new Error('Missing Google Maps API key');
 

@@ -1,5 +1,6 @@
 'use server';
 
+import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
 
 type LogInput = {
@@ -19,6 +20,11 @@ export async function logActivity({
 }: LogInput) {
   const supabase = await createClient();
 
+  const user = await getCurrentUser()
+  if (!user) {
+    console.error('🔴 User not found');
+    return;
+  }
   const { error } = await supabase.from('activity_logs').insert([
     {
       user_id: userId,

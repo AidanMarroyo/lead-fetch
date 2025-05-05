@@ -1,9 +1,14 @@
 // app/actions/analyzeWebsite.ts
 'use server';
 
+import { getCurrentUser } from '@/lib/auth';
 import { JSDOM } from 'jsdom';
 
 export async function analyzeWebsite(url: string) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
+  }
   try {
     if (!url.startsWith('http')) {
       url = 'http://' + url;

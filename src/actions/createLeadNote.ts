@@ -32,6 +32,7 @@ export async function createLeadNote(leadId: string, message: string) {
     author_id: user.id,
     author_name: fullName,
     message,
+    team_id: profile?.team_id,
   });
 
   if (error) throw new Error(error.message);

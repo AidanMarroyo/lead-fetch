@@ -1,7 +1,14 @@
 // app/actions/getPlaceDetails.ts
 'use server';
 
+import { getCurrentUser } from "@/lib/auth";
+
 export async function getPlaceDetails(placeId: string) {
+  const user = await getCurrentUser();
+  if (!user) {
+    console.error('User not authenticated');
+    return null;
+  }
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
 
   const fields = [

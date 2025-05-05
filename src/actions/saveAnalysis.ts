@@ -1,5 +1,6 @@
 'use server';;
 import { Lead } from '@/components/crm-board/types';
+import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
 
 
@@ -8,6 +9,11 @@ export async function saveAnalysis(
 internalLead: Lead
 ) {
   const supabase = await createClient();
+  const user = await getCurrentUser()
+  if (!user) {
+    console.error('🔴 User not found');
+    return;
+  }
 
   const { error } = await supabase
     .from('leads')

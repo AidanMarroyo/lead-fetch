@@ -192,8 +192,8 @@ export default function ScraperForm({
                 <FormLabel className='flex items-center gap-1'>
                   Include businesses with existing websites
                   {plan === 'free' && (
-                    <span className='text-[10px] font-bold bg-yellow-400 text-black px-1 py-0.5 rounded'>
-                      PRO
+                    <span className='text-[10px] font-bold bg-purple-100 text-purple-700 px-1 py-0.5 rounded'>
+                      UNLIMITED
                     </span>
                   )}
                 </FormLabel>

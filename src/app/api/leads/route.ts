@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (filters.dueOnly) {
-      const today = new Date()
+      const today = new Date().toISOString().split('T')[0]; // '2025-05-01'
       query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`);  
     }
     

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     ad_spend_estimate: lead.ad_spend_estimate || null,
     optimization_level: lead.optimization_level || null,
     tech_stack: lead.tech_stack || null,
-    next_follow_up_date: new Date().toLocaleDateString()
+    next_follow_up_date: new Date()
   });
 
   if (error) {

@@ -263,7 +263,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                 />
               )}
 
-              {plan !== 'free' && websiteData && (
+              {plan !== 'free' && plan !== 'pro' && websiteData && (
                 <div className='border-t pt-4 mt-6 space-y-4'>
                   <div className='bg-card'>
                     <h3 className='text-sm font-semibold mb-2'>
@@ -402,8 +402,16 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
               {plan === 'free' && (
                 <div className='border-t pt-4'>
                   <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
-                    🔒 Upgrade to Pro to unlock website audits, Google profile
-                    analysis, and AI-powered recommendations.
+                    🔒 Upgrade to Pro to unlock Google profile analysis, and
+                    AI-powered recommendations.
+                  </div>
+                </div>
+              )}
+              {plan === 'pro' && (
+                <div className='border-t pt-4'>
+                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
+                    🔒 Upgrade to Unlimited to unlock website audits and
+                    AI-powered recommendations.
                   </div>
                 </div>
               )}

@@ -46,6 +46,9 @@ export async function POST(req: NextRequest) {
   const location = lead.address.split(',')[1].trim()
    const coords = await geocodeFromPlaceId(lead.google_place_id);
 
+
+   const today = new Date()
+
   const { error } = await supabase.from('leads').insert({
     address: lead.address,
     google_place_id: lead.google_place_id,
@@ -67,7 +70,7 @@ export async function POST(req: NextRequest) {
     ad_spend_estimate: lead.ad_spend_estimate || null,
     optimization_level: lead.optimization_level || null,
     tech_stack: lead.tech_stack || null,
-    next_follow_up_date: new Date()
+    next_follow_up_date: today
   });
 
   if (error) {

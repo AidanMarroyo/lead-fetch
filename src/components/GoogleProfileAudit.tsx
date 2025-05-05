@@ -116,7 +116,7 @@ export function GoogleProfileImprovement({
         </div>
       ) : (
         <Button variant='outline' disabled={loading} onClick={runAnalysis}>
-          {loading && analysis ? (
+          {loading ? (
             <span className='flex items-center gap-2'>
               <Loader2 className='animate-spin h-4 w-4' />
               Generating...

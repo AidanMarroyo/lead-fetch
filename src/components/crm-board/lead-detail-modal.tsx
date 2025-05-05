@@ -23,6 +23,7 @@ import { saveAnalysis } from '@/actions/saveAnalysis';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { logFollowUp } from '@/actions/logFollowup';
 import { getNextFollowUpDate } from '@/lib/followup';
+import WebsiteAnalysis from '../ai/WebsiteAnalysis';
 
 type Props = {
   lead: Lead;
@@ -56,7 +57,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const {
-    tech_stack,
     traffic_rank,
     ad_spend_estimate,
     optimization_level,
@@ -195,11 +195,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
     }
   };
 
-  const formattedPitch = auto_pitch
-    ?.replace(/\n+/g, ' ') // Remove accidental newlines
-    .replace(/(\d+)\s*\.\s*/g, '\n\n$1. ') // Add line breaks before each numbered point
-    .trim();
-
   const today = new Date().toLocaleDateString().split('T')[0];
 
   return (
@@ -224,13 +219,11 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
                   <div className='text-xs text-muted-foreground'>
                     Next Recommended Follow-Up:{' '}
-                    {internalLead.contact_attempts === 0
-                      ? today
-                      : internalLead.next_follow_up_date
-                        ? new Date(internalLead.next_follow_up_date)
-                            .toISOString()
-                            .split('T')[0]
-                        : today}
+                    {internalLead.next_follow_up_date
+                      ? internalLead?.next_follow_up_date
+                          .toLocaleDateString()
+                          .split('T')[0]
+                      : today}
                   </div>
                 </div>
               )}
@@ -302,7 +295,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
 
               {['unlimted', 'team'].some((p) => plan.includes(p)) && (
                 <div className='border-t pt-4'>
-                  {internalLead.website && !tech_stack?.length && (
+                  {internalLead.website && !auto_pitch ? (
                     <div className='flex justify-between items-center mb-3'>
                       <h3 className='text-sm font-semibold'>
                         📈 Website Audit
@@ -322,10 +315,8 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                         )}
                       </Button>
                     </div>
-                  )}
-
-                  {(tech_stack ?? []).length > 0 ||
-                    (auto_pitch && (
+                  ) : (
+                    auto_pitch && (
                       <div className='space-y-4 text-sm'>
                         <div className='flex items-center gap-2'>
                           <span className='font-semibold'>Website Score:</span>
@@ -342,22 +333,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                             {website_score}/100
                           </span>
                         </div>
-
-                        {/* <div>
-                        <span className='font-semibold block mb-1'>
-                          Tech Stack:
-                        </span>
-                        <div className='flex flex-wrap gap-1 text-xs'>
-                          {tech_stack?.map((tech: string) => (
-                            <span
-                              key={tech}
-                              className='rounded bg-muted px-2 py-0.5 border text-muted-foreground'
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div> */}
 
                         <div className='grid grid-cols-2 gap-4'>
                           <div>
@@ -384,29 +359,10 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                           </div>
                         </div>
 
-                        {formattedPitch && (
-                          <div className='border bg-muted p-4 rounded'>
-                            <div className='flex justify-between items-center mb-2'>
-                              <h4 className='text-sm font-semibold'>
-                                📬 AI Pitch Summary
-                              </h4>
-                              <Button
-                                variant='ghost'
-                                onClick={() => {
-                                  navigator.clipboard.writeText(formattedPitch);
-                                  toast.success('Pitch copied to clipboard');
-                                }}
-                              >
-                                Copy
-                              </Button>
-                            </div>
-                            <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
-                              {auto_pitch}
-                            </p>
-                          </div>
-                        )}
+                        <WebsiteAnalysis auto_pitch={auto_pitch} />
                       </div>
-                    ))}
+                    )
+                  )}
                 </div>
               )}
 

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 
 import { toast } from 'sonner';
 import { saveGoogleAnalysis } from '@/actions/saveGoogleAnalysis';
+import { createClient } from '@/utils/supabase/client';
+import fetchGoogleAnalysis from '@/actions/fetchGoogleAnalysis';
 
 type LeadPhoto = {
   height: number;
@@ -42,10 +44,30 @@ export function GoogleProfileImprovement({
   googlePlaceId?: string;
   address: string;
 }) {
+  const supabase = createClient();
   const api = process.env.NEXT_PUBLIC_SCRAPER_API_URL;
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  console.log('Google Audit Reviews Send', reviews);
+  console.log('GooglePlaceId', googlePlaceId);
+  console.log('Analysis', analysis);
+
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      if (!googlePlaceId) return;
+      setLoading(true);
+      try {
+        const data = await fetchGoogleAnalysis(googlePlaceId);
+        setAnalysis(data?.google_analysis);
+      } catch (error) {
+        toast.error('Failed to fetch analysis');
+        console.error('Failed to fetch analysis', (error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [googlePlaceId, supabase]);
 
   const runAnalysis = async () => {
     try {
@@ -84,23 +106,25 @@ export function GoogleProfileImprovement({
   };
 
   return (
-    <div className='mt-6'>
+    <div className='mt-6 '>
       <h3 className='text-sm font-semibold mb-2'>🔍 AI Suggestions</h3>
-      <Button variant='outline' disabled={loading} onClick={runAnalysis}>
-        {loading ? (
-          <span className='flex items-center gap-2'>
-            <Loader2 className='animate-spin h-4 w-4' />
-            Generating...
-          </span>
-        ) : (
-          '📊 Generate Google Analysis'
-        )}
-      </Button>
-
-      {analysis && (
-        <pre className='text-sm whitespace-pre-wrap text-muted-foreground bg-muted rounded-lg p-4 border border-border mt-4'>
-          {analysis}
-        </pre>
+      {analysis ? (
+        <div className='border bg-muted p-4 rounded'>
+          <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
+            {analysis}
+          </p>
+        </div>
+      ) : (
+        <Button variant='outline' disabled={loading} onClick={runAnalysis}>
+          {loading && analysis ? (
+            <span className='flex items-center gap-2'>
+              <Loader2 className='animate-spin h-4 w-4' />
+              Generating...
+            </span>
+          ) : (
+            '📊 Generate Google Analysis'
+          )}
+        </Button>
       )}
     </div>
   );

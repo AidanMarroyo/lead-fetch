@@ -12,7 +12,7 @@ internalLead: Lead
   const user = await getCurrentUser()
   if (!user) {
     console.error('🔴 User not found');
-    return;
+    throw new Error('User not authenticated');
   }
 
   const { error } = await supabase

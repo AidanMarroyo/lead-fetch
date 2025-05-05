@@ -152,10 +152,9 @@ export default function BillingPage() {
             <p className='text-muted-foreground pb-4'>$49/month USD</p>
             <ul className='list-disc list-inside space-y-1'>
               <li>35 leads/month</li>
-              <li>Access USA + Canada</li>
-              <li>Map View & CSV Export</li>
-              <li>Website filters & audits</li>
-              <li>AI-powered improvement suggestions</li>
+              <li>Activity Logs</li>
+              <li>CRM table + map view</li>
+              <li>CSV export & filters</li>
             </ul>
             <Button
               onClick={
@@ -172,7 +171,7 @@ export default function BillingPage() {
                   Redirecting...
                 </>
               ) : sub?.plan === 'pro' ? (
-                'Manage Billing'
+                'Already on Pro'
               ) : (
                 'Upgrade to Pro'
               )}
@@ -190,7 +189,9 @@ export default function BillingPage() {
             <ul className='list-disc list-inside space-y-1'>
               <li>Unlimited leads</li>
               <li>All Pro features included</li>
-              <li>No monthly caps or limits</li>
+              <li>Google Profile insights</li>
+              <li>AI Google Profile Audit</li>
+              <li>AI Website Analyzer</li>
             </ul>
             <Button
               onClick={
@@ -207,7 +208,7 @@ export default function BillingPage() {
                   Redirecting...
                 </>
               ) : sub?.plan === 'unlimited' ? (
-                'Manage Billing'
+                'Already on Unlimited'
               ) : (
                 'Upgrade to Unlimited'
               )}
@@ -223,9 +224,10 @@ export default function BillingPage() {
           <CardContent className='flex flex-col h-full justify-between text-sm'>
             <p className='text-muted-foreground pb-4'>$179/month USD</p>
             <ul className='list-disc list-inside space-y-1'>
-              <li>Everything in Unlimited</li>
-              <li>Team access & collaboration</li>
-              <li>Up to 5 Users</li>
+              <li>Everything in Unlimited & Pro</li>
+              <li>Team access (up to 5 users)</li>
+              <li>Shared pipelines & notes</li>
+              <li>Lead Assignments</li>
             </ul>
             <Button
               onClick={
@@ -242,7 +244,7 @@ export default function BillingPage() {
                   Redirecting...
                 </>
               ) : sub?.plan === 'team' ? (
-                'Manage Billing'
+                'Already on Team'
               ) : (
                 'Upgrade to Team'
               )}
@@ -250,11 +252,11 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
-      {history.length > 0 && (
-        <Card className='mt-10'>
-          <CardHeader>
-            <CardTitle>Billing History</CardTitle>
-          </CardHeader>
+      <Card className='mt-10'>
+        <CardHeader>
+          <CardTitle>Billing History</CardTitle>
+        </CardHeader>
+        {history.length > 0 ? (
           <CardContent>
             <ul className='space-y-3 text-sm'>
               {history.map((inv) => (
@@ -277,8 +279,12 @@ export default function BillingPage() {
               ))}
             </ul>
           </CardContent>
-        </Card>
-      )}
+        ) : (
+          <div>
+            <p>No subscriptions paid for</p>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

@@ -12,9 +12,9 @@ const plans = [
     description: 'Get started with 3 leads/month and core tools.',
     features: [
       '3 leads/month',
-      'Limited dashboard access',
-      'Basic audit reports',
-      '1 location filter',
+      'CRM Pipeline',
+      'Follow Ups & Notes',
+      'Access USA & Canada',
     ],
     cta: 'Get Started Free',
     highlighted: false,
@@ -29,16 +29,15 @@ const plans = [
     description: 'Full access for solo freelancers and devs.',
     features: [
       '35 leads/month',
-      'Google Business scanner',
-      'AI audit & pitch builder',
-      'CRM dashboard + map view',
+      'Activity Logs',
+      'CRM table + map view',
       'CSV export & filters',
     ],
     cta: 'Upgrade to Pro',
     highlighted: false,
   },
   {
-    name: 'Ultimate',
+    name: 'Unlimited',
     price: (
       <>
         <span className='line-through text-muted-foreground mr-1'>$119</span>
@@ -49,11 +48,11 @@ const plans = [
     features: [
       'Unlimited leads',
       'All Pro features',
-      'Priority AI audits',
-      'Export insights & trends',
-      'Faster sync & analysis',
+      'Google Profile insights',
+      'AI Google Profile Audit',
+      'AI Website Analyzer',
     ],
-    cta: 'Go Ultimate',
+    cta: 'Go Unlimited',
     highlighted: true,
   },
   {
@@ -67,10 +66,10 @@ const plans = [
     description: 'All features plus team collaboration tools.',
     features: [
       'Unlimited leads',
-      'Everything in Pro',
+      'Everything in Unlimited & Pro',
       'Team access (up to 5 users)',
       'Shared pipelines & notes',
-      'Activity tracking',
+      'Lead Assignments',
     ],
     cta: 'Scale with Team Plan',
     highlighted: false,

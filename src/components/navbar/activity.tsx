@@ -117,7 +117,7 @@ export default function ActivityDropdown() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
-                href='/activity'
+                href='/dashboard/settings/activity-logs'
                 className='block text-center text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600'
               >
                 <div className='inline-flex items-center gap-x-2'>

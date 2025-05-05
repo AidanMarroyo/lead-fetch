@@ -177,7 +177,7 @@ export default function ScraperForm({
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={(val) => {
-                    if (plan === 'free') {
+                    if (plan === 'free' || plan === 'pro') {
                       toast.error(
                         'Upgrade to Pro to include businesses with websites.'
                       );
@@ -191,17 +191,19 @@ export default function ScraperForm({
               <div className='space-y-1 leading-none'>
                 <FormLabel className='flex items-center gap-1'>
                   Include businesses with existing websites
-                  {plan === 'free' && (
-                    <span className='text-[10px] font-bold bg-purple-100 text-purple-700 px-1 py-0.5 rounded'>
-                      UNLIMITED
-                    </span>
-                  )}
+                  {plan === 'free' ||
+                    (plan === 'pro' && (
+                      <span className='text-[10px] font-bold bg-purple-100 text-purple-700 px-1 py-0.5 rounded'>
+                        UNLIMITED
+                      </span>
+                    ))}
                 </FormLabel>
-                {plan === 'free' && (
-                  <p className='text-xs text-muted-foreground'>
-                    Upgrade to unlock this feature.
-                  </p>
-                )}
+                {plan === 'free' ||
+                  (plan === 'pro' && (
+                    <p className='text-xs text-muted-foreground'>
+                      Upgrade to unlock this feature.
+                    </p>
+                  ))}
               </div>
             </FormItem>
           )}

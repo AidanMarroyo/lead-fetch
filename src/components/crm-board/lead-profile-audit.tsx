@@ -115,7 +115,7 @@ export function LeadProfileAudit({
         </ul>
       </>
 
-      {!compact && (
+      {!compact && (plan === 'unlimited' || plan === 'team') && (
         <GoogleProfileImprovement
           place={lead}
           reviews={reviews}

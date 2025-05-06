@@ -263,6 +263,21 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   plan={plan}
                 />
               )}
+              {plan === 'free' && (
+                <div className='border-t pt-4'>
+                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
+                    🔒 Upgrade to Pro to unlock Google Profile insights
+                  </div>
+                </div>
+              )}
+              {plan === 'pro' && (
+                <div className='border-t pt-4'>
+                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
+                    🔒 Upgrade to Unlimited to unlock website audits and Google
+                    Profile audits powered by AI
+                  </div>
+                </div>
+              )}
 
               {plan !== 'free' && plan !== 'pro' && websiteData && (
                 <div className='border-t pt-4 mt-6 space-y-4'>
@@ -400,22 +415,6 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   ))}
                 </div>
               </div>
-              {plan === 'free' && (
-                <div className='border-t pt-4'>
-                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
-                    🔒 Upgrade to Pro to unlock Google profile analysis, and
-                    AI-powered recommendations.
-                  </div>
-                </div>
-              )}
-              {plan === 'pro' && (
-                <div className='border-t pt-4'>
-                  <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
-                    🔒 Upgrade to Unlimited to unlock website audits and
-                    AI-powered recommendations.
-                  </div>
-                </div>
-              )}
 
               <div className='border-t pt-4'>
                 <p className='text-sm font-medium mb-2'>Google Maps</p>

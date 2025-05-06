@@ -129,11 +129,7 @@ export default function ScraperForm({
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        country === 'Canada' ? 'Ontario' : 'California'
-                      }
-                    />
+                    <SelectValue />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

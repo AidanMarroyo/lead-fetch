@@ -68,11 +68,6 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
     <main className='max-w-full mx-auto mt-10 p-6 border rounded-lg'>
       <h1 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
         Webbed Leads
-        {plan === 'free' && (
-          <span className='text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium'>
-            Free Plan
-          </span>
-        )}
       </h1>
       <ScraperForm
         plan={plan}

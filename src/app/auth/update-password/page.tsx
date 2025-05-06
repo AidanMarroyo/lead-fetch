@@ -1,7 +1,6 @@
 'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { login } from '@/actions/login'; // Assuming you have a validation schema for login
 import {
   Card,
   CardHeader,
@@ -11,15 +10,28 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import LoadingButton from '@/components/LoadingButton';
-import Link from 'next/link';
-import { LoginSchema, LoginValues } from '@/lib/validation';
+import { z } from 'zod';
+import resetPassword from './update-password';
+import { toast } from 'sonner';
 
-export default function LoginPage() {
-  const form = useForm<LoginValues>({
-    resolver: zodResolver(LoginSchema),
+export default function UpdatePasswordPage() {
+  const updatePasswordSchema = z
+    .object({
+      password: z
+        .string()
+        .min(8, { message: 'Password must be at least 8 characters' }),
+      confirmPassword: z
+        .string()
+        .min(8, { message: 'Confirm password is required' }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Passwords do not match',
+    });
+  const form = useForm<z.infer<typeof updatePasswordSchema>>({
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
-      email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
@@ -29,11 +41,16 @@ export default function LoginPage() {
     formState: { isSubmitting },
   } = form;
 
-  const onSubmit = async (data: LoginValues) => {
+  const onSubmit = async (data: z.infer<typeof updatePasswordSchema>) => {
     const formData = new FormData();
-    formData.append('email', data.email);
     formData.append('password', data.password);
-    await login(formData);
+    formData.append('confirmPassword', data.confirmPassword);
+    try {
+      await resetPassword(formData);
+      toast.success('Password successfully reset');
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   };
 
   return (
@@ -42,15 +59,11 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardHeader>
             <h1 className='text-xl font-semibold text-center'>
-              Welcome back to Webbed Leads 👋
+              Reset Your Password
             </h1>
           </CardHeader>
 
           <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='email'>Email</Label>
-              <Input id='email' type='email' {...register('email')} required />
-            </div>
             <div className='space-y-2'>
               <Label htmlFor='password'>Password</Label>
               <Input
@@ -60,13 +73,14 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <div className='flex items-center justify-between'>
-              <Link
-                href='/auth/forgot-password'
-                className='text-primary-600  text-sm font-medium hover:underline hover:text-primary'
-              >
-                Forgot password?
-              </Link>
+            <div className='space-y-2'>
+              <Label htmlFor='confirmPassword'>Confirm Password</Label>
+              <Input
+                id='confirmPassword'
+                type='password'
+                {...register('confirmPassword')}
+                required
+              />
             </div>
           </CardContent>
 
@@ -76,18 +90,8 @@ export default function LoginPage() {
               loading={isSubmitting}
               className='w-full'
             >
-              {isSubmitting ? 'Logging in...' : 'Log In'}
+              {isSubmitting ? 'Resetting Password...' : 'Reset Password'}
             </LoadingButton>
-
-            <p className='text-sm text-muted-foreground text-center'>
-              Need an account?{' '}
-              <Link
-                href='/auth/signup'
-                className='text-primary hover:underline'
-              >
-                Sign up
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Card>

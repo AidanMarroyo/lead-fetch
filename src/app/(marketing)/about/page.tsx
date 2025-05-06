@@ -18,8 +18,8 @@ export default function AboutPage() {
       <p className='text-muted-foreground text-center max-w-2xl mx-auto mb-16'>
         WebbedLeads was built for the exact people most lead gen tools ignore —
         web designers, developers, and small agencies who don’t have time to
-        cold-call or chase dead-end leads. We believe in automation, clarity,
-        and closing faster.
+        chase dead-end leads. We believe in automation, clarity, and closing
+        faster.
       </p>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-12 items-center'>

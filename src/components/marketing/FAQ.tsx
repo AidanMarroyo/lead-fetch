@@ -14,7 +14,7 @@ const faqs: FAQItem[] = [
   {
     question: 'Who is WebbedLeads for?',
     answer:
-      'WebbedLeads is built for freelance web designers, developers, and digital agencies who want to fill their pipeline with qualified leads without cold calling or random outreach.',
+      'WebbedLeads is built for freelance web designers, developers, and digital agencies who want to fill their pipeline with qualified leads.',
   },
   {
     question: 'How does lead scoring work?',
@@ -34,7 +34,7 @@ const faqs: FAQItem[] = [
   {
     question: 'What’s included in the free plan?',
     answer:
-      'You get 3 qualified leads per month, limited dashboard access, and basic audit features — perfect for testing the platform.',
+      'You get 10 qualified leads per month, limited dashboard access, and basic audit features — perfect for testing the platform.',
   },
   {
     question: 'Can I upgrade or cancel anytime?',

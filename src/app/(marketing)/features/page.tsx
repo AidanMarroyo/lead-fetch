@@ -69,7 +69,7 @@ export default function FeaturesPage() {
       </motion.h1>
       <p className='text-muted-foreground text-center max-w-xl mx-auto mb-16'>
         From solo devs to growing teams, WebbedLeads gives you the automation,
-        data, and tools to win more clients — without the cold calls.
+        data, and tools to win more clients.
       </p>
 
       <div className='space-y-24'>

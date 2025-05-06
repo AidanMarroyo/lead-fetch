@@ -15,7 +15,7 @@ const features = [
     icon: ScanLine,
     title: 'AI-Powered Website Audits',
     description:
-      'Audit any website using Puppeteer, Lighthouse, and GPT-4 to instantly uncover UX, SEO, and conversion issues — plus a pitch-ready AI summary.',
+      'Audit any website using Puppeteer and GPT-4 to instantly uncover UX, SEO, and conversion issues — plus a pitch-ready AI summary.',
   },
   {
     icon: Globe,
@@ -33,7 +33,7 @@ const features = [
     icon: Users,
     title: 'Built for Freelancers & Agencies',
     description:
-      'Whether you’re solo or scaling, WebbedLeads helps you fill your pipeline without hiring or cold-calling.',
+      'Whether you’re solo or scaling, WebbedLeads helps you fill your pipeline.',
   },
   {
     icon: Zap,

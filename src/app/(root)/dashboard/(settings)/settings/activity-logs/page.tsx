@@ -67,7 +67,8 @@ export default function ActivityPage() {
         <p className='text-muted-foreground'>
           This feature is only available on the{' '}
           <span className='font-semibold'>Pro</span> and{' '}
-          <span className='font-semibold'>Team</span> plans. <ProTag />
+          <span className='font-semibold'>Team</span> plans.{' '}
+          <ProTag plan={'pro'} />
         </p>
       </main>
     );

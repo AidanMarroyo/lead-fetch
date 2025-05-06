@@ -33,7 +33,7 @@ export default function Navbar() {
         >
           WebbedLeads
         </Link> */}
-        <Link href='/dashboard/leads' className='mr-14 flex items-center'>
+        <Link href='/' className='mr-14 flex items-center'>
           <Image
             className='mr-3 block dark:hidden'
             alt=''
@@ -53,16 +53,16 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <nav className='hidden md:flex items-center gap-4'>
           <Link
-            href='#features'
+            href='/about'
+            className='text-sm font-medium text-muted-foreground hover:text-foreground transition'
+          >
+            About
+          </Link>
+          <Link
+            href='/features'
             className='text-sm font-medium text-muted-foreground hover:text-foreground transition'
           >
             Features
-          </Link>
-          <Link
-            href='#pricing'
-            className='text-sm font-medium text-muted-foreground hover:text-foreground transition'
-          >
-            Pricing
           </Link>
           <Link
             href='#faq'
@@ -83,7 +83,7 @@ export default function Navbar() {
             )}
           </Button>
 
-          <Link href='/dashboard/leads'>
+          <Link href='/dashboard/leads' className='hover:cursor-pointer'>
             <Button>Launch App</Button>
           </Link>
         </nav>
@@ -99,10 +99,10 @@ export default function Navbar() {
 
             <DropdownMenuContent align='end' className='w-48'>
               <DropdownMenuItem asChild>
-                <Link href='#features'>Features</Link>
+                <Link href='/about'>About</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href='#pricing'>Pricing</Link>
+                <Link href='/features'>Features</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href='#faq'>FAQ</Link>
@@ -125,7 +125,10 @@ export default function Navbar() {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem asChild>
-                <Link href='/app' className='w-full text-center font-medium'>
+                <Link
+                  href='/dashboard/leads'
+                  className='w-full text-center font-medium'
+                >
                   🚀 Launch App
                 </Link>
               </DropdownMenuItem>

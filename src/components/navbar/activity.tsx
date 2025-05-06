@@ -66,7 +66,7 @@ export default function ActivityDropdown() {
           <Activity className='h-6 w-6' />
           {!planLoading && !isProUser && (
             <span className='absolute -top-1.5 -right-1.5'>
-              <ProTag />
+              <ProTag plan={'pro'} />
             </span>
           )}
         </Button>

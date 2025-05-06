@@ -4,6 +4,7 @@ import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 import { toast } from 'sonner';
 import { pdf } from '@react-pdf/renderer';
 import { GoogleProfileImprovement } from '../GoogleProfileAudit';
+import { ProTag } from '../ui/ProTag';
 
 type LeadPhoto = {
   height: number;
@@ -33,15 +34,17 @@ export type Place = {
 export function LeadProfileAudit({
   lead,
   address,
-  compact = false, // ✅ NEW: allow compact mode
+  compact = false,
   googlePlaceId,
   reviews,
+  plan,
 }: {
   lead: Place;
   address: string;
   compact?: boolean;
   googlePlaceId?: string;
   reviews?: string[];
+  plan?: string;
 }) {
   const auditItems = [
     {
@@ -87,28 +90,32 @@ export function LeadProfileAudit({
     },
   ];
 
-  return (
+  return plan === 'unlimited' ? (
     <div
       className={
         compact
           ? 'p-3 rounded-md bg-white shadow-md text-black dark:bg-gray-900 dark:text-white'
           : 'mt-6 border-t pt-4'
       }
-      style={compact ? { maxWidth: '250px' } : {}}
+      style={compact ? { maxWidth: '350px' } : {}}
     >
-      <h3 className='text-sm font-semibold mb-2'>🧾 Google Profile Audit</h3>
-      <ul className='space-y-2 text-sm'>
-        {auditItems.map((item, i) => (
-          <li key={i} className='flex items-center gap-2'>
-            {item.value ? (
-              <Check className='text-green-600 w-4 h-4' />
-            ) : (
-              <X className='text-red-500 w-4 h-4' />
-            )}
-            <span>{item.label}</span>
-          </li>
-        ))}
-      </ul>
+      <>
+        <h3 className='text-sm font-semibold mb-2'>🧾 Google Profile Audit </h3>
+
+        <ul className='space-y-2 text-sm'>
+          {auditItems.map((item, i) => (
+            <li key={i} className='flex items-center gap-2'>
+              {item.value ? (
+                <Check className='text-green-600 w-4 h-4' />
+              ) : (
+                <X className='text-red-500 w-4 h-4' />
+              )}
+              <span>{item.label}</span>
+            </li>
+          ))}
+        </ul>
+      </>
+
       {!compact && (
         <GoogleProfileImprovement
           place={lead}
@@ -141,5 +148,5 @@ export function LeadProfileAudit({
             </div>
           )}
     </div>
-  );
+  ) : null;
 }

@@ -9,6 +9,7 @@ import {
 import { LeadProfileAudit, Place } from '../crm-board/lead-profile-audit';
 
 import { getPlaceDetails } from '@/actions/getPlaceDetails';
+import { useUserPlan } from '@/lib/userUserPlan';
 
 interface BusinessNameCellProps {
   lead: {
@@ -22,7 +23,7 @@ interface BusinessNameCellProps {
 
 export const BusinessNameCell: React.FC<BusinessNameCellProps> = ({ lead }) => {
   const [place, setPlace] = useState<Place | null>(null);
-
+  const { plan } = useUserPlan();
   const [loading, setLoading] = useState(false);
 
   const fetchAudit = async () => {
@@ -63,6 +64,7 @@ export const BusinessNameCell: React.FC<BusinessNameCellProps> = ({ lead }) => {
               lead={place}
               address={lead.address || ''}
               compact={true}
+              plan={plan}
             />
             <a
               href={`https://www.google.com/maps/place/?q=place_id:${lead.google_place_id}`}

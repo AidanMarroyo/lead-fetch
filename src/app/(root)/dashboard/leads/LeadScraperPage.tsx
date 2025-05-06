@@ -70,7 +70,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
       <h1 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
         Webbed Leads
         {plan === 'free' && (
-          <span className='text-xs bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded font-medium'>
+          <span className='text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium'>
             Free Plan
           </span>
         )}
@@ -95,7 +95,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
               Export CSV{' '}
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ProTag />
+                  <ProTag plan={'pro'} />
                 </TooltipTrigger>
                 <TooltipContent>Available on Pro Plan</TooltipContent>
               </Tooltip>
@@ -111,7 +111,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
             {plan === 'free' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <ProTag />
+                  <ProTag plan={'pro'} />
                 </TooltipTrigger>
                 <TooltipContent>Available on Pro Plan</TooltipContent>
               </Tooltip>

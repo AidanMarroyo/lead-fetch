@@ -51,7 +51,7 @@ export default function Features() {
           variants={fadeIn('down', 0.2)}
           initial='hidden'
           whileInView='show'
-          viewport={{ once: false, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.8 }}
           className='text-3xl md:text-4xl font-bold text-center mb-12'
         >
           Everything You Need to Fill Your Pipeline
@@ -64,7 +64,7 @@ export default function Features() {
               variants={fadeIn('up', 0.2)}
               initial='hidden'
               whileInView='show'
-              viewport={{ once: false, amount: 0.8 }}
+              viewport={{ once: true, amount: 0.8 }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
               className='bg-background p-6 rounded-2xl border shadow-sm'
             >

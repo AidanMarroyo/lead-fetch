@@ -36,10 +36,13 @@ export default function UserDropdown({
       case 'free':
         return {
           label: 'Free Plan',
-          className: 'bg-yellow-200 text-yellow-800',
+          className: 'bg-blue-100 text-blue-700',
         };
       case 'pro':
-        return { label: 'Pro Plan', className: 'bg-blue-100 text-blue-700' };
+        return {
+          label: 'Pro Plan',
+          className: 'bg-yellow-200 text-yellow-800 ',
+        };
       case 'unlimited':
         return {
           label: 'Unlimited Plan',

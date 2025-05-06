@@ -85,7 +85,7 @@ export default function Pricing() {
           variants={fadeIn('down', 0.2)}
           initial='hidden'
           whileInView='show'
-          viewport={{ once: false, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.8 }}
         >
           Simple Pricing, Serious Results
         </motion.h2>
@@ -93,7 +93,7 @@ export default function Pricing() {
           variants={fadeIn('up', 0.2)}
           initial='hidden'
           whileInView='show'
-          viewport={{ once: false, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.8 }}
           className='text-muted-foreground max-w-2xl mx-auto mb-16'
         >
           Whether you’re freelancing or managing a team, WebbedLeads helps you
@@ -108,7 +108,7 @@ export default function Pricing() {
               variants={fadeIn('up', 0.2)}
               initial='hidden'
               whileInView='show'
-              viewport={{ once: false, amount: 0.8 }}
+              viewport={{ once: true, amount: 0.8 }}
               className={`rounded-xl border ${
                 plan.highlighted
                   ? 'border-primary bg-muted shadow-xl'

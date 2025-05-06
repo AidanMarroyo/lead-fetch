@@ -25,6 +25,7 @@ import { fetchLeadsFromGoogle } from '@/actions/fetchLeads';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2 } from 'lucide-react';
+import { ProTag } from '@/components/ui/ProTag';
 
 interface ScraperFormProps {
   plan: 'free' | 'pro' | 'unlimited' | 'team' | null;
@@ -179,31 +180,26 @@ export default function ScraperForm({
                   onCheckedChange={(val) => {
                     if (plan === 'free' || plan === 'pro') {
                       toast.error(
-                        'Upgrade to Pro to include businesses with websites.'
+                        'Upgrade to Unlimited to include businesses with websites.'
                       );
                       return;
                     }
                     field.onChange(val);
                   }}
-                  disabled={plan === 'free'}
                 />
               </FormControl>
               <div className='space-y-1 leading-none'>
                 <FormLabel className='flex items-center gap-1'>
                   Include businesses with existing websites
-                  {plan === 'free' ||
-                    (plan === 'pro' && (
-                      <span className='text-[10px] font-bold bg-purple-100 text-purple-700 px-1 py-0.5 rounded'>
-                        UNLIMITED
-                      </span>
-                    ))}
+                  {(plan === 'free' || plan === 'pro') && (
+                    <ProTag plan={'unlimited'} />
+                  )}
                 </FormLabel>
-                {plan === 'free' ||
-                  (plan === 'pro' && (
-                    <p className='text-xs text-muted-foreground'>
-                      Upgrade to unlock this feature.
-                    </p>
-                  ))}
+                {(plan === 'free' || plan === 'pro') && (
+                  <p className='text-xs text-muted-foreground'>
+                    Upgrade to unlock this feature.
+                  </p>
+                )}
               </div>
             </FormItem>
           )}

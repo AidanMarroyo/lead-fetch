@@ -260,6 +260,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   address={internalLead.address}
                   googlePlaceId={internalLead.google_place_id}
                   reviews={internalLead.reviews}
+                  plan={plan}
                 />
               )}
 

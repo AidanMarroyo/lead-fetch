@@ -11,27 +11,33 @@ export default function LivePreview() {
 
   return (
     <section className='bg-muted py-20 px-6 border-t border-border'>
-      <motion.div
-        className='max-w-6xl mx-auto text-center'
-        variants={fadeIn('down', 0.2)}
-        initial='hidden'
-        whileInView='show'
-        viewport={{ once: false, amount: 0.8 }}
-      >
-        <h2 className='text-3xl md:text-4xl font-bold mb-6'>
+      <div className='max-w-6xl mx-auto text-center'>
+        <motion.h2
+          variants={fadeIn('left', 0.2)}
+          initial='hidden'
+          whileInView='show'
+          viewport={{ once: true, amount: 0.8 }}
+          className='text-3xl md:text-4xl font-bold mb-6'
+        >
           See WebbedLeads in Action
-        </h2>
-        <p className='text-muted-foreground mb-12 max-w-2xl mx-auto'>
+        </motion.h2>
+        <motion.p
+          variants={fadeIn('right', 0.2)}
+          initial='hidden'
+          whileInView='show'
+          viewport={{ once: true, amount: 0.8 }}
+          className='text-muted-foreground mb-12 max-w-2xl mx-auto'
+        >
           Instantly find, qualify, and organize high-potential leads with our
           built-in Google Business scanner, AI audit engine, and CRM-style
           pipeline.
-        </p>
+        </motion.p>
 
         <motion.div
           variants={fadeIn('up', 0.2)}
           initial='hidden'
           whileInView='show'
-          viewport={{ once: false, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.8 }}
           className='overflow-hidden rounded-2xl border shadow-xl'
         >
           <Image
@@ -47,7 +53,7 @@ export default function LivePreview() {
         <p className='text-sm text-muted-foreground mt-4'>
           Dark and light mode supported for modern workspaces.
         </p>
-      </motion.div>
+      </div>
     </section>
   );
 }

@@ -76,8 +76,8 @@ export async function fetchLeadsFromGoogle({
 let monthlyLeadCount = 0;
 let monthlyLimit = 0;
 
-if (plan === 'free') monthlyLimit = 3;
-if (plan === 'pro') monthlyLimit = 35;
+if (plan === 'free') monthlyLimit = 10;
+if (plan === 'pro') monthlyLimit = 40;
 // Pro & Team = unlimited (0 means no cap)
 
 if (monthlyLimit > 0) {

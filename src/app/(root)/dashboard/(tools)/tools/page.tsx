@@ -159,59 +159,58 @@ export default function WebsiteAnalysisPage() {
   return (
     <div className='max-w-xl mx-auto p-8 space-y-6'>
       <h1 className='text-2xl font-bold'>🧠 Website Analysis Tool</h1>
-      <Input
-        placeholder='Enter website URL'
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <Button onClick={handleAudit} disabled={loading}>
-        {loading ? 'Analyzing...' : 'Analyze & Match'}
-      </Button>
+      {['unlimted', 'team'].some((p) => plan.includes(p)) ? (
+        <>
+          <Input
+            placeholder='Enter website URL'
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <Button onClick={handleAudit} disabled={loading}>
+            {loading ? 'Analyzing...' : 'Analyze & Match'}
+          </Button>
+          {meta && (
+            <div className='border p-4 rounded space-y-2 bg-muted'>
+              <h3 className='font-semibold'>🌐 Website Metadata</h3>
+              <p>
+                <strong>Title:</strong> {meta.title}
+              </p>
+              <p>
+                <strong>Description:</strong> {meta.description}
+              </p>
+              <p>
+                <strong>URL:</strong> {meta.url}
+              </p>
 
-      {meta && (
-        <div className='border p-4 rounded space-y-2 bg-muted'>
-          <h3 className='font-semibold'>🌐 Website Metadata</h3>
-          <p>
-            <strong>Title:</strong> {meta.title}
-          </p>
-          <p>
-            <strong>Description:</strong> {meta.description}
-          </p>
-          <p>
-            <strong>URL:</strong> {meta.url}
-          </p>
-          {['unlimted', 'team'].some((p) => plan.includes(p)) && (
-            <Button
-              onClick={handleFullAudit}
-              disabled={auditing}
-              className='mt-3'
-              variant='outline'
-            >
-              {auditing ? 'Running Audit...' : '📊 Generate Full Analysis'}
-            </Button>
+              <Button
+                onClick={handleFullAudit}
+                disabled={auditing}
+                className='mt-3'
+                variant='outline'
+              >
+                {auditing ? 'Running Audit...' : '📊 Generate Full Analysis'}
+              </Button>
+            </div>
           )}
-        </div>
-      )}
-
-      {audit && (
-        <div className='border p-4 rounded bg-muted space-y-2 text-sm'>
-          <h3 className='font-semibold'>🔍 Audit Results</h3>
-          <p>
-            <strong>Score:</strong> {audit.website_score}
-          </p>
-          <p>
-            <strong>Grade:</strong> {audit.grade}
-          </p>
-          <p>
-            <strong>Optimization:</strong> {audit.optimizationLevel}
-          </p>
-          <p>
-            <strong>Traffic Rank:</strong> {audit.trafficRank}
-          </p>
-          <p>
-            <strong>Ad Spend:</strong> {audit.adSpendEstimate}
-          </p>
-          {/* <p>
+          {audit && (
+            <div className='border p-4 rounded bg-muted space-y-2 text-sm'>
+              <h3 className='font-semibold'>🔍 Audit Results</h3>
+              <p>
+                <strong>Score:</strong> {audit.website_score}
+              </p>
+              <p>
+                <strong>Grade:</strong> {audit.grade}
+              </p>
+              <p>
+                <strong>Optimization:</strong> {audit.optimizationLevel}
+              </p>
+              <p>
+                <strong>Traffic Rank:</strong> {audit.trafficRank}
+              </p>
+              <p>
+                <strong>Ad Spend:</strong> {audit.adSpendEstimate}
+              </p>
+              {/* <p>
             <strong>Tech Stack:</strong>
             <div className='flex flex-wrap gap-1 text-xs'>
               {audit.techStack?.map((tech: string) => (
@@ -224,59 +223,72 @@ export default function WebsiteAnalysisPage() {
               ))}
             </div>
           </p> */}
-          {audit.auto_pitch && (
-            <div className='bg-muted text-muted-foreground p-3 rounded'>
-              <h4 className='font-semibold mb-2'>📬 AI Pitch</h4>
-              <p className='text-sm font-semibold whitespace-pre-wrap'>
-                {audit.auto_pitch}
-              </p>
+              {audit.auto_pitch && (
+                <div className='bg-muted text-muted-foreground p-3 rounded'>
+                  <h4 className='font-semibold mb-2'>📬 AI Pitch</h4>
+                  <p className='text-sm font-semibold whitespace-pre-wrap'>
+                    {audit.auto_pitch}
+                  </p>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
-
-      {match ? (
-        <div className='border p-4 rounded space-y-2 bg-muted'>
-          <h3 className='font-semibold'>📍 Matched Google Business</h3>
-          <p>
-            <strong>Name:</strong> {match.name}
-          </p>
-          <p>
-            <strong>Address:</strong> {match.address}
-          </p>
-          {match.phone && (
-            <p>
-              <strong>Phone:</strong> {match.phone}
-            </p>
+          {match ? (
+            <div className='border p-4 rounded space-y-2 bg-muted'>
+              <h3 className='font-semibold'>📍 Matched Google Business</h3>
+              <p>
+                <strong>Name:</strong> {match.name}
+              </p>
+              <p>
+                <strong>Address:</strong> {match.address}
+              </p>
+              {match.phone && (
+                <p>
+                  <strong>Phone:</strong> {match.phone}
+                </p>
+              )}
+              <Button onClick={handleSaveLead}>💾 Save as Lead</Button>
+            </div>
+          ) : (
+            meta && (
+              <div className='border p-4 rounded space-y-4 bg-muted'>
+                <h3 className='font-semibold text-sm'>
+                  📝 No match found — Enter info manually
+                </h3>
+                <Input
+                  placeholder='Business Name'
+                  value={manual.name}
+                  onChange={(e) =>
+                    setManual({ ...manual, name: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder='Business Address'
+                  value={manual.address}
+                  onChange={(e) =>
+                    setManual({ ...manual, address: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder='Phone Number'
+                  value={manual.phone}
+                  onChange={(e) =>
+                    setManual({ ...manual, phone: e.target.value })
+                  }
+                />
+                <Button onClick={handleSaveLead}>💾 Save as Lead</Button>
+              </div>
+            )
           )}
-          <Button onClick={handleSaveLead}>💾 Save as Lead</Button>
-        </div>
+          )
+        </>
       ) : (
-        meta && (
-          <div className='border p-4 rounded space-y-4 bg-muted'>
-            <h3 className='font-semibold text-sm'>
-              📝 No match found — Enter info manually
-            </h3>
-            <Input
-              placeholder='Business Name'
-              value={manual.name}
-              onChange={(e) => setManual({ ...manual, name: e.target.value })}
-            />
-            <Input
-              placeholder='Business Address'
-              value={manual.address}
-              onChange={(e) =>
-                setManual({ ...manual, address: e.target.value })
-              }
-            />
-            <Input
-              placeholder='Phone Number'
-              value={manual.phone}
-              onChange={(e) => setManual({ ...manual, phone: e.target.value })}
-            />
-            <Button onClick={handleSaveLead}>💾 Save as Lead</Button>
+        <>
+          <Input placeholder='Enter website URL' disabled />
+          <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
+            🔒 Upgrade to Unlimited to unlock AI Website Analysis Tool
           </div>
-        )
+        </>
       )}
     </div>
   );

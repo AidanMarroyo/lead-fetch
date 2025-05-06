@@ -1,9 +1,7 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { toast } from 'sonner';
-import { ProTag } from '@/components/ui/ProTag';
 import { Card } from '@/components/ui/card';
 import { getActivityLogs } from '@/actions/getActivityLog';
 import { Loader2 } from 'lucide-react';
@@ -48,6 +46,15 @@ export default function ActivityPage() {
     fetchLogs();
   }, [isPro, planLoading]);
 
+  if (plan === 'free') {
+    return (
+      <main className='max-w-3xl mx-auto mt-10'>
+        <h1 className='text-2xl font-semibold mb-4'>Activity Log</h1>
+        <p className='text-muted-foreground'>Upgrade to unlock activity logs</p>
+      </main>
+    );
+  }
+
   if (planLoading || logsLoading) {
     return (
       <main className='max-w-3xl mx-auto mt-10'>
@@ -56,20 +63,6 @@ export default function ActivityPage() {
           <p className='text-muted-foreground'>Loading activity…</p>
           <Loader2 className='h-6 w-6 animate-spin mr-2' />
         </div>
-      </main>
-    );
-  }
-
-  if (plan === 'free') {
-    return (
-      <main className='max-w-3xl mx-auto mt-10'>
-        <h1 className='text-2xl font-semibold mb-4'>Activity Log</h1>
-        <p className='text-muted-foreground'>
-          This feature is only available on the{' '}
-          <span className='font-semibold'>Pro</span> and{' '}
-          <span className='font-semibold'>Team</span> plans.{' '}
-          <ProTag plan={'pro'} />
-        </p>
       </main>
     );
   }

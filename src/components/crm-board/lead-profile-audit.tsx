@@ -4,7 +4,6 @@ import { LeadAuditPDF } from '@/lib/pdf/LeadAuditPDF';
 import { toast } from 'sonner';
 import { pdf } from '@react-pdf/renderer';
 import { GoogleProfileImprovement } from '../GoogleProfileAudit';
-import { ProTag } from '../ui/ProTag';
 
 type LeadPhoto = {
   height: number;
@@ -90,7 +89,7 @@ export function LeadProfileAudit({
     },
   ];
 
-  return plan === 'unlimited' ? (
+  return plan !== 'free' ? (
     <div
       className={
         compact

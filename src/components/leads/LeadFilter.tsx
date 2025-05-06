@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { useUserPlan } from '@/lib/userUserPlan';
 
 type StatusOption = LeadFilter['status'];
 
@@ -47,6 +48,8 @@ export function LeadFilters({
     }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { plan } = useUserPlan();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,7 +120,7 @@ export function LeadFilters({
 
   return (
     <div className='mb-6 rounded-lg border bg-muted/50 px-4 py-4 shadow-sm'>
-      <div className='flex flex-wrap gap-4 items-start'>
+      <div className='flex flex-wrap gap-4 items-start items-center'>
         <div className='w-48'>
           <Label htmlFor='name' className='text-xs mb-1 block'>
             Business Name
@@ -169,26 +172,28 @@ export function LeadFilters({
           </Select>
         </div>
 
-        <div className='w-48'>
-          <Label htmlFor='websiteStatus' className='text-xs mb-1 block'>
-            Website Status
-          </Label>
-          <Select
-            value={websiteStatus}
-            onValueChange={(v) =>
-              setWebsiteStatus(v as LeadFilter['websiteStatus'])
-            }
-          >
-            <SelectTrigger className='w-full h-10 text-sm'>
-              <SelectValue placeholder='All' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All</SelectItem>
-              <SelectItem value='no'>No Website</SelectItem>
-              <SelectItem value='has'>Has Website</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {(plan === 'unlimited' || plan === 'team') && (
+          <div className='w-48'>
+            <Label htmlFor='websiteStatus' className='text-xs mb-1 block'>
+              Website Status
+            </Label>
+            <Select
+              value={websiteStatus}
+              onValueChange={(v) =>
+                setWebsiteStatus(v as LeadFilter['websiteStatus'])
+              }
+            >
+              <SelectTrigger className='w-full h-10 text-sm'>
+                <SelectValue placeholder='All' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>All</SelectItem>
+                <SelectItem value='no'>No Website</SelectItem>
+                <SelectItem value='has'>Has Website</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className='w-48'>
           <Label htmlFor='category' className='text-xs mb-1 block'>
@@ -209,7 +214,7 @@ export function LeadFilters({
           </Select>
         </div>
 
-        {teamMembers && (
+        {plan === 'team' && (
           <div className='w-48'>
             <Label htmlFor='assignedTo' className='text-xs mb-1 block'>
               Assigned To
@@ -246,7 +251,7 @@ export function LeadFilters({
           </p>
         </div>
 
-        <div className='flex items-center gap-2 my-6'>
+        <div className='flex items-center gap-2 my-0 sm:my-6'>
           <input
             type='checkbox'
             id='recentOnly'
@@ -258,7 +263,7 @@ export function LeadFilters({
           </Label>
         </div>
 
-        <div className='flex items-center gap-2 mb-3'>
+        <div className='flex items-center gap-2 my-0 sm:my-6'>
           <input
             type='checkbox'
             id='dueOnly'

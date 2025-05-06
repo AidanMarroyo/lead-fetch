@@ -75,9 +75,18 @@ export async function POST(req: NextRequest) {
       query = query.eq('category', filters.category);
     }
 
+    // if (filters.dueOnly) {
+    //   const today = new Date().toISOString().split('T')[0]; // '2025-05-01'
+    //   query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`);  
+    // }
+    
     if (filters.dueOnly) {
-      const today = new Date().toISOString().split('T')[0]; // '2025-05-01'
-      query = query.or(`next_follow_up_date.lte.${today},next_follow_up_date.is.null`);  
+      const tomorrow = new Date();
+      tomorrow.setUTCHours(0, 0, 0, 0);
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+      const isoTomorrow = tomorrow.toISOString(); // e.g. '2025-05-06T00:00:00.000Z'
+    
+      query = query.or(`next_follow_up_date.lt.${isoTomorrow},next_follow_up_date.is.null`);
     }
     
     if (filters.assignedTo) {

@@ -8,7 +8,6 @@ import { LeadFilters } from '@/components/leads/LeadFilter';
 import { LeadFilter } from '@/lib/types';
 import LeadsMap from '@/components/leads/LeadsMapWrapper';
 import { LeadScoreLegend } from '@/components/LeadScoreLegend';
-import { DownloadCSVButton } from '@/components/leads/DownloadCSVButton';
 import { useUserPlan } from '@/lib/userUserPlan';
 import { ProTag } from '@/components/ui/ProTag';
 import {
@@ -84,7 +83,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
       <div className='flex items-center justify-between mt-10 mb-4'>
         <h2 className='text-xl font-semibold'>Webbed Filter</h2>
         <div className='flex items-center gap-4'>
-          {plan !== 'free' ? (
+          {/* {plan !== 'free' ? (
             <DownloadCSVButton filters={filters} />
           ) : (
             <Button
@@ -100,7 +99,7 @@ export default function LeadScraperPage({ userId }: { userId: string }) {
                 <TooltipContent>Available on Pro Plan</TooltipContent>
               </Tooltip>
             </Button>
-          )}
+          )} */}
 
           <Button
             variant='outline'

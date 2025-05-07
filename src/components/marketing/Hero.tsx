@@ -26,8 +26,8 @@ export default function Hero() {
           className='mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto'
         >
           WebbedLeads automates lead discovery for freelancers and agencies by
-          scanning Google Business listings and delivering conversion-ready
-          clients with AI-driven audits and smart scoring.
+          scanning Business listings and delivering conversion-ready clients
+          with AI-driven audits and smart scoring.
         </motion.p>
 
         <motion.div

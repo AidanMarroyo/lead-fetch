@@ -65,7 +65,13 @@ export default function Navbar() {
             Features
           </Link>
           <Link
-            href='#faq'
+            href='/pricing'
+            className='text-sm font-medium text-muted-foreground hover:text-foreground transition'
+          >
+            Pricing
+          </Link>
+          <Link
+            href='/faq'
             className='text-sm font-medium text-muted-foreground hover:text-foreground transition'
           >
             FAQ
@@ -105,7 +111,10 @@ export default function Navbar() {
                 <Link href='/features'>Features</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href='#faq'>FAQ</Link>
+                <Link href='/Pricing'>Pricing</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href='/faq'>FAQ</Link>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />

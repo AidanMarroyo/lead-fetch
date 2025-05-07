@@ -19,7 +19,7 @@ const features = [
   },
   {
     icon: Globe,
-    title: 'Google Business Scanner',
+    title: 'Business Scanner',
     description:
       'Find local businesses with no website or outdated digital presence. Scan millions of profiles and filter by location, type, or quality.',
   },

@@ -19,7 +19,7 @@ const faqs: FAQItem[] = [
   {
     question: 'How does lead scoring work?',
     answer:
-      'Our system analyzes Google Business profiles and websites, assigning a score based on web presence gaps, site quality, profile completeness, and more. Higher scores mean higher potential.',
+      'Our system analyzes Business profiles and websites, assigning a score based on web presence gaps, site quality, profile completeness, and more. Higher scores mean higher potential.',
   },
   {
     question: 'Can I use this for local clients?',

@@ -49,7 +49,7 @@ const plans = [
       'Unlimited leads',
       'All Pro features',
       'AI Google Profile audit',
-      'AI Website analyzer',
+      'AI website analyzer',
     ],
     cta: 'Go Unlimited',
     highlighted: true,

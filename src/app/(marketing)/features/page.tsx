@@ -15,17 +15,17 @@ const features = [
     mediaSrc: '/scoring.mp4',
   },
   {
-    title: 'Google Business Scanner',
+    title: 'Business Scanner',
     description:
       'Find businesses with missing websites, poor descriptions, or unclaimed Google listings. Instantly preview their profile data and location.',
-    imgAlt: 'Google business search in action',
+    imgAlt: 'Business search in action',
     mediaType: 'video',
     mediaSrc: '/google-fetch.mp4',
   },
   {
     title: 'AI-Powered Website Audits',
     description:
-      'Run audits using Lighthouse and GPT-4 to generate actionable, client-facing website improvement suggestions. Delivered with clarity, no fluff.',
+      'Run audits using Puppeteer and GPT-4 to generate actionable, client-facing website improvement suggestions. Delivered with clarity, no fluff.',
     imgAlt: 'Website audit tool interface',
     mediaType: 'video',
     mediaSrc: '/website-audit.mp4',

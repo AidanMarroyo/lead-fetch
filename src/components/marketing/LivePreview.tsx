@@ -23,8 +23,7 @@ export default function LivePreview() {
           className='text-muted-foreground mb-12 max-w-2xl mx-auto'
         >
           Instantly find, qualify, and organize high-potential leads with our
-          built-in Google Business scanner, AI audit engine, and CRM-style
-          pipeline.
+          built-in Business scanner, AI audit engine, and CRM-style pipeline.
         </motion.p>
 
         <motion.div

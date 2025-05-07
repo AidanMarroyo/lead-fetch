@@ -11,48 +11,40 @@ const features = [
     description:
       'Automatically prioritize businesses that are most likely to need a website upgrade. Our scoring system analyzes profile completeness, presence of a website, reviews, and more.',
     imgAlt: 'Lead scoring example in dashboard',
-    mediaType: 'image', // use 'video' if you want to show a short screen recording instead
-    mediaSrc: '/list-light.png',
+    mediaType: 'video', // use 'video' if you want to show a short screen recording instead
+    mediaSrc: '/google-fetch.mp4',
   },
   {
     title: 'Google Business Scanner',
     description:
       'Find businesses with missing websites, poor descriptions, or unclaimed Google listings. Instantly preview their profile data and location.',
     imgAlt: 'Google business search in action',
-    mediaType: 'image',
-    mediaSrc: '/features/gmb-scanner.png',
+    mediaType: 'video',
+    mediaSrc: '/google-fetch.mp4',
   },
   {
     title: 'AI-Powered Website Audits',
     description:
       'Run audits using Lighthouse and GPT-4 to generate actionable, client-facing website improvement suggestions. Delivered with clarity, no fluff.',
     imgAlt: 'Website audit tool interface',
-    mediaType: 'image',
-    mediaSrc: '/features/website-audit.png',
+    mediaType: 'video',
+    mediaSrc: '/website-audit.mp4',
   },
   {
     title: 'Pipeline Management',
     description:
       'Organize, tag, and follow up with leads using a clean, drag-and-drop CRM interface. Add notes, assign status, and track all interactions.',
     imgAlt: 'CRM pipeline with lead statuses',
-    mediaType: 'image',
-    mediaSrc: '/features/pipeline.png',
-  },
-  {
-    title: 'Map View & CSV Export',
-    description:
-      'Pro and Team users can view leads on a map, export data, and drill into categories like industry, score, and location.',
-    imgAlt: 'Map view with colored pins',
-    mediaType: 'image',
-    mediaSrc: '/features/map-view.png',
+    mediaType: 'video',
+    mediaSrc: '/pipeline.mp4',
   },
   {
     title: 'Team Collaboration (Team Plan)',
     description:
       'Invite team members, share notes, and track activity history on every lead. Perfect for small agencies with multiple stakeholders.',
     imgAlt: 'Team member notes and log',
-    mediaType: 'image',
-    mediaSrc: '/features/team-collab.png',
+    mediaType: 'video',
+    mediaSrc: '/notes.mp4',
   },
 ];
 

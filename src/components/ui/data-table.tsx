@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className='rounded-md border'>
+    <div className='rounded-md '>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({
         <button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className='px-3 py-1 border rounded disabled:opacity-50'
+          className='px-3 py-1  rounded disabled:opacity-50'
         >
           Previous
         </button>
@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({
         <button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          className='px-3 py-1 border rounded disabled:opacity-50'
+          className='px-3 py-1  rounded disabled:opacity-50'
         >
           Next
         </button>

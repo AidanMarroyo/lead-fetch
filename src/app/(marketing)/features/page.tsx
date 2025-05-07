@@ -12,7 +12,7 @@ const features = [
       'Automatically prioritize businesses that are most likely to need a website upgrade. Our scoring system analyzes profile completeness, presence of a website, reviews, and more.',
     imgAlt: 'Lead scoring example in dashboard',
     mediaType: 'video', // use 'video' if you want to show a short screen recording instead
-    mediaSrc: '/google-fetch.mp4',
+    mediaSrc: '/scoring.mp4',
   },
   {
     title: 'Google Business Scanner',

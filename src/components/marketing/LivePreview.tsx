@@ -1,14 +1,8 @@
 'use client';
-
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { fadeIn } from '../../../variants';
 
 export default function LivePreview() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
     <section className='bg-muted py-20 px-6 border-t border-border'>
       <div className='max-w-6xl mx-auto text-center'>
@@ -40,14 +34,17 @@ export default function LivePreview() {
           viewport={{ once: true, amount: 0.8 }}
           className='overflow-hidden rounded-2xl border shadow-xl'
         >
-          <Image
-            src={isDark ? '/crm-dark.png' : '/crm-light.png'}
-            alt='WebbedLeads Dashboard Preview'
+          <video
             width={1200}
             height={700}
             className='w-full h-auto'
-            priority
-          />
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src='/compilation.mp4' type='video/mp4' />
+          </video>
         </motion.div>
 
         <p className='text-sm text-muted-foreground mt-4'>

@@ -1,7 +1,5 @@
 'use client';
-
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 export default function AboutPage() {
   return (
@@ -51,13 +49,18 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Image
-            src='/about-app-preview.png'
-            alt='WebbedLeads in action'
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
             width={600}
             height={400}
             className='rounded-xl shadow-lg'
-          />
+          >
+            {' '}
+            <source src='/google-fetch.mp4' type='video/mp4' />
+          </video>
         </motion.div>
       </div>
 

@@ -54,17 +54,32 @@ export default function AccountSettingsPage() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-      })
-      .eq('id', user?.id);
-
-    if (error) {
-      toast.error('Failed to update name.');
+    if (firstName.trim() === '' || lastName.trim() === '') {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+        })
+        .eq('id', user?.id);
+      if (error) {
+        toast.error('Failed to update name.');
+      }
+      toast.success('Name updated successfully!');
+      router.push('/dashboard/leads');
+      setSaving(false);
     } else {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+        })
+        .eq('id', user?.id);
+
+      if (error) {
+        toast.error('Failed to update name.');
+      }
       toast.success('Name updated successfully!');
       router.refresh(); // ✅ Force reload to update navbar data
     }

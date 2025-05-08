@@ -61,7 +61,7 @@ export default function Footer() {
           <Link href='/contact-us' className={linkClass}>
             Contact Us
           </Link>
-          <Link href='/blog' className={linkClass}>
+          <Link href='/maintenance' className={linkClass}>
             Blog
           </Link>
         </div>

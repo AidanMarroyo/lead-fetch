@@ -1,5 +1,4 @@
 'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { sendContactConfirmationEmail, sendContactEmail } from '@/lib/email';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -29,15 +27,16 @@ export default function ContactForm() {
 
   const onSubmit = async (data: ContactFormValues) => {
     try {
-      await sendContactEmail({
-        name: data.name,
-        email: data.email,
-        message: data.message,
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
-      await sendContactConfirmationEmail({
-        name: data.name,
-        email: data.email,
-      });
+
+      if (!res.ok) throw new Error('Failed to send email');
+
       toast.success('Message sent!');
       reset();
     } catch (error) {

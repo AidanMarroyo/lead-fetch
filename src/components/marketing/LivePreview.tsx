@@ -4,7 +4,10 @@ import { fadeIn } from '../../../variants';
 
 export default function LivePreview() {
   return (
-    <section className='bg-muted py-20 px-6 border-t border-border'>
+    <section
+      className='bg-muted py-20 px-6 border-t border-border'
+      id='preview'
+    >
       <div className='max-w-6xl mx-auto text-center'>
         <motion.h2
           variants={fadeIn('left', 0.2)}

@@ -4,6 +4,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { fadeIn } from '../../../variants';
+import Link from 'next/link';
 
 const plans = [
   {
@@ -18,6 +19,7 @@ const plans = [
     ],
     cta: 'Get Started Free',
     highlighted: false,
+    price_id: '',
   },
   {
     name: 'Pro',
@@ -35,6 +37,7 @@ const plans = [
     ],
     cta: 'Upgrade to Pro',
     highlighted: false,
+    price_id: 'pro',
   },
   {
     name: 'Unlimited',
@@ -53,6 +56,7 @@ const plans = [
     ],
     cta: 'Go Unlimited',
     highlighted: true,
+    price_id: 'unlimited',
   },
   {
     name: 'Team',
@@ -71,6 +75,7 @@ const plans = [
     ],
     cta: 'Scale with Team Plan',
     highlighted: false,
+    price_id: 'team',
   },
 ];
 
@@ -126,7 +131,15 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <Button className='w-full'>{plan.cta}</Button>
+              <Link
+                href={
+                  plan.name === 'Free'
+                    ? '/auth/signup'
+                    : `/auth/signup/${plan?.price_id}`
+                }
+              >
+                <Button className='w-full'>{plan.cta}</Button>
+              </Link>
             </motion.div>
           ))}
         </div>

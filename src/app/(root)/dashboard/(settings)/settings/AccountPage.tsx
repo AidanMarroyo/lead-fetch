@@ -54,7 +54,22 @@ export default function AccountSettingsPage() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (firstName.trim() === '' || lastName.trim() === '') {
+    if (!user) {
+      toast.error('User not logged in.');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      toast.error('Failed to load profile');
+    }
+
+    if (data?.first_name === null || data?.last_name === null) {
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -67,6 +82,7 @@ export default function AccountSettingsPage() {
       }
       toast.success('Name updated successfully!');
       router.push('/dashboard/leads');
+      router.refresh();
       setSaving(false);
     } else {
       const { error } = await supabase
@@ -99,6 +115,7 @@ export default function AccountSettingsPage() {
             onChange={(e) => setFirstName(e.target.value)}
             placeholder='Enter your first name'
             disabled={loading}
+            required
           />
         </div>
         <div>
@@ -109,6 +126,7 @@ export default function AccountSettingsPage() {
             onChange={(e) => setLastName(e.target.value)}
             placeholder='Enter your last name'
             disabled={loading}
+            required
           />
         </div>
         <Button type='submit' disabled={saving || loading}>

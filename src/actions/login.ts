@@ -68,7 +68,7 @@ export async function login(formData: FormData) {
 //   redirect('/dashboard/leads');
 // }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData, sub?: boolean) {
   const supabase = await createClient();
 
   const data = {
@@ -113,6 +113,11 @@ export async function signup(formData: FormData) {
     });
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/dashboard/settings');
+  if (sub) {
+    revalidatePath('/dashboard/settings', 'layout');
+    return {success: true}
+  } else {revalidatePath('/', 'layout');
+    redirect('/dashboard/settings');}
+
+  
 }

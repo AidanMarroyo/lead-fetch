@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { fadeIn } from '../../../variants';
+import Link from 'next/link';
+import { Link as ScrollLink } from 'react-scroll';
 
 export default function Hero() {
   return (
@@ -37,8 +39,13 @@ export default function Hero() {
           viewport={{ once: true, amount: 0.8 }}
           className='mt-8 flex justify-center gap-4'
         >
-          <Button>Get Early Access</Button>
-          <Button variant='outline'>See How It Works</Button>
+          <Link href='/auth/signup'>
+            <Button>Get Early Access</Button>
+          </Link>
+
+          <ScrollLink to='preview' spy smooth={true}>
+            <Button variant='outline'>See How It Works</Button>
+          </ScrollLink>
         </motion.div>
       </div>
     </section>

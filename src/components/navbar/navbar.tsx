@@ -18,6 +18,7 @@ import UserDropdown from './user-dropdown';
 type Props = {
   first_name: string;
   last_name: string;
+  created_at: string;
 };
 
 export function DashboardNavbar({ userData }: { userData: Props }) {

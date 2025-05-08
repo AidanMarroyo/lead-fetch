@@ -32,15 +32,12 @@ export async function login(formData: FormData) {
       console.error('No created_at data found.');
     }
 
-    const today = new Date();
+    const now = new Date();
     const createdAt = new Date(createdAtData?.created_at);
+    const msSinceSignup = now.getTime() - createdAt.getTime();
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
     
-    // Calculate the date 3 days ago
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(today.getDate() - 3);
-    
-    // If the user signed up more than 3 days ago, downgrade to free
-    if (createdAt < threeDaysAgo) {
+    if (msSinceSignup >= threeDaysInMs) {
       const { error: subscriptionUpdateError } = await supabase
         .from('subscriptions')
         .update({ plan: 'free' })
@@ -51,7 +48,6 @@ export async function login(formData: FormData) {
       }
     }
     
-
   revalidatePath('/dashboard/leads', 'layout');
   redirect('/dashboard/leads');
 }

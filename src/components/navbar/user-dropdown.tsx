@@ -11,6 +11,7 @@ import {
 type Props = {
   first_name: string;
   last_name: string;
+  created_at: string;
 };
 
 export default function UserDropdown({
@@ -52,7 +53,7 @@ export default function UserDropdown({
         return { label: 'Team Plan', className: 'bg-green-100 text-green-700' };
       case 'trial':
         return {
-          label: 'Trial Plan',
+          label: 'Trial Pro Plan',
           className: 'bg-orange-100 text-orange-700',
         };
       default:
@@ -61,6 +62,15 @@ export default function UserDropdown({
   };
 
   const { label, className } = getPlanLabel(plan);
+
+  const now = new Date();
+  const createdAt = new Date(userData.created_at);
+
+  const trialEnd = new Date(createdAt.getTime() + 3 * 24 * 60 * 60 * 1000);
+  const msRemaining = trialEnd.getTime() - now.getTime();
+
+  const daysLeft =
+    msRemaining > 0 ? Math.floor(msRemaining / (1000 * 60 * 60 * 24)) : 0;
 
   return (
     <DropdownMenu>
@@ -78,7 +88,9 @@ export default function UserDropdown({
             <span
               className={`ml-2 mt-0.5 text-xs px-2 py-0.5 rounded font-medium ${className}`}
             >
-              {label}
+              {plan === 'trial'
+                ? `${label} · ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`
+                : label}
             </span>
           </div>
         </div>

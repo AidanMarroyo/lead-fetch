@@ -12,13 +12,15 @@ export default async function Layout({
 
   const { data } = await supabase
     .from('profiles')
-    .select('first_name, last_name')
+    .select('first_name, last_name, created_at')
     .eq('id', user?.id)
     .single();
 
   return (
     <>
-      <DashboardNavbar userData={data || { first_name: '', last_name: '' }} />
+      <DashboardNavbar
+        userData={data || { first_name: '', last_name: '', created_at: '' }}
+      />
       <div className='flex h-screen pt-16'>
         <div className='flex flex-col flex-1'>
           <main className='p-4 flex-1 overflow-y-auto'>{children}</main>

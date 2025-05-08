@@ -270,7 +270,7 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                   </div>
                 </div>
               )}
-              {plan === 'pro' && (
+              {(plan === 'pro' || plan === 'trial') && (
                 <div className='border-t pt-4'>
                   <div className='bg-muted border text-sm text-muted-foreground p-4 rounded'>
                     🔒 Upgrade to Unlimited to unlock website audits and Google
@@ -279,35 +279,41 @@ export function LeadDetailModal({ lead, onClose, onUpdate }: Props) {
                 </div>
               )}
 
-              {plan !== 'free' && plan !== 'pro' && websiteData && (
-                <div className='border-t pt-4 mt-6 space-y-4'>
-                  <div className='bg-card'>
-                    <h3 className='text-sm font-semibold mb-2'>
-                      🌐 Website Metadata
-                    </h3>
-                    <div className='text-sm space-y-1'>
-                      <p>
-                        <strong>Title:</strong> {websiteData.title}
-                      </p>
-                      <p>
-                        <strong>Description:</strong> {websiteData.description}
-                      </p>
-                      <p>
-                        <strong>SSL:</strong>{' '}
-                        <span
-                          className={
-                            websiteData.usesSSL
-                              ? 'text-green-600'
-                              : 'text-red-500'
-                          }
-                        >
-                          {websiteData.usesSSL ? 'Secure (SSL)' : 'Not secure'}
-                        </span>
-                      </p>
+              {plan !== 'free' &&
+                plan !== 'pro' &&
+                plan !== 'trial' &&
+                websiteData && (
+                  <div className='border-t pt-4 mt-6 space-y-4'>
+                    <div className='bg-card'>
+                      <h3 className='text-sm font-semibold mb-2'>
+                        🌐 Website Metadata
+                      </h3>
+                      <div className='text-sm space-y-1'>
+                        <p>
+                          <strong>Title:</strong> {websiteData.title}
+                        </p>
+                        <p>
+                          <strong>Description:</strong>{' '}
+                          {websiteData.description}
+                        </p>
+                        <p>
+                          <strong>SSL:</strong>{' '}
+                          <span
+                            className={
+                              websiteData.usesSSL
+                                ? 'text-green-600'
+                                : 'text-red-500'
+                            }
+                          >
+                            {websiteData.usesSSL
+                              ? 'Secure (SSL)'
+                              : 'Not secure'}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {['unlimted', 'team'].some((p) => plan.includes(p)) && (
                 <div className='border-t pt-4'>

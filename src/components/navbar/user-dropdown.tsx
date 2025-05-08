@@ -50,6 +50,11 @@ export default function UserDropdown({
         };
       case 'team':
         return { label: 'Team Plan', className: 'bg-green-100 text-green-700' };
+      case 'trial':
+        return {
+          label: 'Trial Plan',
+          className: 'bg-orange-100 text-orange-700',
+        };
       default:
         return { label: 'Unknown', className: 'bg-gray-200 text-gray-700' };
     }

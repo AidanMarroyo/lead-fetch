@@ -15,11 +15,42 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: loginData, error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     console.error('Error logging in:', error.message);
   }
+
+  const {data: createdAtData, error: createdAtError} = await supabase
+    .from('profiles').select('created_at').eq('id', loginData.user?.id).single();
+
+    if (createdAtError) {
+      console.error('Error fetching created_at:', createdAtError.message);
+    }
+
+    if (!createdAtData) {
+      console.error('No created_at data found.');
+    }
+
+    const today = new Date();
+    const createdAt = new Date(createdAtData?.created_at);
+    
+    // Calculate the date 3 days ago
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(today.getDate() - 3);
+    
+    // If the user signed up more than 3 days ago, downgrade to free
+    if (createdAt < threeDaysAgo) {
+      const { error: subscriptionUpdateError } = await supabase
+        .from('subscriptions')
+        .update({ plan: 'free' })
+        .eq('user_id', loginData.user?.id);
+    
+      if (subscriptionUpdateError) {
+        console.error('Failed to downgrade plan:', subscriptionUpdateError);
+      }
+    }
+    
 
   revalidatePath('/dashboard/leads', 'layout');
   redirect('/dashboard/leads');
@@ -81,7 +112,7 @@ export async function signup(formData: FormData) {
   } else {
     await supabase.from('subscriptions').insert({
       user_id: userId,
-      plan: 'free',
+      plan: 'trial',
       status: 'inactive',
     });
   }

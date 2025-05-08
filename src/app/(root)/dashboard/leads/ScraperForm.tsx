@@ -28,7 +28,7 @@ import { Loader2 } from 'lucide-react';
 import { ProTag } from '@/components/ui/ProTag';
 
 interface ScraperFormProps {
-  plan: 'free' | 'pro' | 'unlimited' | 'team' | null;
+  plan: 'free' | 'pro' | 'unlimited' | 'team' | 'trial' | null;
   onScrapeComplete: () => void;
   loading: boolean; // loading refers to plan loading state
 }
@@ -174,7 +174,7 @@ export default function ScraperForm({
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={(val) => {
-                    if (plan === 'free' || plan === 'pro') {
+                    if (plan === 'free' || plan === 'pro' || plan === 'trial') {
                       toast.error(
                         'Upgrade to Unlimited to include businesses with websites.'
                       );
@@ -187,11 +187,11 @@ export default function ScraperForm({
               <div className='space-y-1 leading-none'>
                 <FormLabel className='flex items-center gap-1'>
                   Include businesses with existing websites
-                  {(plan === 'free' || plan === 'pro') && (
+                  {(plan === 'free' || plan === 'pro' || plan === 'trial') && (
                     <ProTag plan={'unlimited'} />
                   )}
                 </FormLabel>
-                {(plan === 'free' || plan === 'pro') && (
+                {(plan === 'free' || plan === 'pro' || 'trial') && (
                   <p className='text-xs text-muted-foreground'>
                     Upgrade to unlock this feature.
                   </p>

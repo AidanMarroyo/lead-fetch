@@ -76,7 +76,7 @@ export async function fetchLeadsFromGoogle({
 let monthlyLeadCount = 0;
 let monthlyLimit = 0;
 
-if (plan === 'free') monthlyLimit = 10;
+if (plan === 'free' || plan === 'trial') monthlyLimit = 10;
 if (plan === 'pro') monthlyLimit = 40;
 // Pro & Team = unlimited (0 means no cap)
 
@@ -145,8 +145,8 @@ if (monthlyLimit > 0) {
     // ✅ Enforce free-tier limit
     let allowedNewLeads = newLeads;
 
-    if (plan === 'free') {
-      const remaining = 3 - monthlyLeadCount;
+    if (plan === 'free' || plan === 'trial') {
+      const remaining = 10 - monthlyLeadCount;
 
       if (remaining <= 0) {
         return {

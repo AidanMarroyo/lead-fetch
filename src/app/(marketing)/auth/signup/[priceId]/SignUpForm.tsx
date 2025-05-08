@@ -36,7 +36,7 @@ export default function SignUpForm({ priceId }: { priceId: string }) {
     formData.append('email', data.email);
     formData.append('password', data.password);
     formData.append('confirmPassword', data.confirmPassword);
-    const auth = await signup(formData);
+    const auth = await signup(formData, true);
     if (auth.success) {
       const res = await fetch('/api/stripe/create-checkout', {
         method: 'POST',

@@ -35,7 +35,11 @@ export default function ActivityDropdown() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [logLoading, setLogLoading] = useState(false);
 
-  const isProUser = plan === 'pro' || plan === 'unlimited' || plan === 'team';
+  const isProUser =
+    plan === 'pro' ||
+    plan === 'unlimited' ||
+    plan === 'team' ||
+    plan === 'trial';
 
   useEffect(() => {
     const fetchLogs = async () => {

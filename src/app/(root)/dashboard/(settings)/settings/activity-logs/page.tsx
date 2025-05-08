@@ -25,7 +25,11 @@ export default function ActivityPage() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [logsLoading, setLogsLoading] = useState(true);
 
-  const isPro = plan === 'pro' || plan === 'unlimited' || plan === 'team';
+  const isPro =
+    plan === 'pro' ||
+    plan === 'unlimited' ||
+    plan === 'team' ||
+    plan === 'trial';
 
   useEffect(() => {
     if (!isPro || planLoading) return;

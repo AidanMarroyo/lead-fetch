@@ -40,7 +40,7 @@ export default function SignUpForm({ priceId }: { priceId: string }) {
     if (auth.success) {
       const res = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan: priceId }),
       });
       const { url } = await res.json();
 

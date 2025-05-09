@@ -64,5 +64,4 @@ export const americanStates = [
   'Wyoming',
 ];
 
-export const SOLO_PLAN_PRICE_ID = 'price_1R9uKbL5eEpzBjLUZsT4cIjz';
-export const TEAM_PLAN_PRICE_ID = 'price_1R9uN8L5eEpzBjLUmieVGXuZ';
+

@@ -4,9 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '404 | SmartMomKit - Smart tools. Calm routines. Happier toddlers',
-  description: 'This is Error page for SmartMomKit',
-  // other metaDescription
+  title: 'WebbedLeads Maintenance – We’ll Be Right Back',
+  description:
+    'WebbedLeads is currently undergoing maintenance. We’ll be back online shortly with improvements.',
 };
 
 const MaintenancePage = () => {

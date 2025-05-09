@@ -4,9 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '404 | SmartMomKit - Smart tools. Calm routines. Happier toddlers',
-  description: 'This is Error page for SmartMomKit',
-  // other metaDescription
+  title: 'Page Not Found – WebbedLeads',
+  description:
+    'Looks like you’re tangled in the web. The page you’re looking for doesn’t exist. Try heading back to the homepage.',
 };
 
 const NotFoundPage = () => {

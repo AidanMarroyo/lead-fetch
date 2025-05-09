@@ -1,4 +1,11 @@
 import { Separator } from '@/components/ui/separator';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service – WebbedLeads',
+  description:
+    'Read the full WebbedLeads terms and conditions for using our SaaS platform.',
+};
 
 export default function TermsPage() {
   return (

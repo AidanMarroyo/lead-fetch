@@ -4,9 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '404 | SmartMomKit - Smart tools. Calm routines. Happier toddlers',
-  description: 'This is Error page for SmartMomKit',
-  // other metaDescription
+  title: 'Error – Something Went Wrong | WebbedLeads',
+  description:
+    'We ran into a snag. Try again shortly or contact support if the issue persists.',
 };
 
 const ErrorPage = () => {

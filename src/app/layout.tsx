@@ -9,8 +9,9 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'WebbedLead',
-  description: 'The lead machine for web agencies',
+  title: 'WebbedLeads – AI-Powered Lead Discovery for Freelancers & Agencies',
+  description:
+    'Discover high-quality leads instantly with WebbedLeads. Our AI-powered platform finds businesses without websites so you can pitch and close faster.',
 };
 
 export default function RootLayout({

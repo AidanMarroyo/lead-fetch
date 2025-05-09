@@ -1,9 +1,16 @@
 import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
+import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 type Props = {
   params: Promise<{ confirmationId: string }>;
+};
+
+export const metadata: Metadata = {
+  title: 'Confirm Your Email – WebbedLeads',
+  description:
+    "You're almost there. Confirm your email to activate your WebbedLeads account and start discovering high-quality leads.",
 };
 
 export default async function ConfirmEmailPage(props: Props) {

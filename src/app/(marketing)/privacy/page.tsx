@@ -1,4 +1,11 @@
 import { Separator } from '@/components/ui/separator';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy – WebbedLeads',
+  description:
+    'Review how WebbedLeads protects your data and ensures privacy across all features and communications.',
+};
 
 export default function PrivacyPolicyPage() {
   return (

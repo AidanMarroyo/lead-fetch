@@ -1,4 +1,11 @@
 import ContactForm from '@/components/ContactForm';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Contact WebbedLeads – We're Here to Help",
+  description:
+    'Have questions or need support? Contact the WebbedLeads team and we’ll get back to you within 24 hours.',
+};
 
 export default function ContactPage() {
   return (

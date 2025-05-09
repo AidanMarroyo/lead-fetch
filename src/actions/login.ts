@@ -33,12 +33,20 @@ export async function login(formData: FormData) {
       console.error('No created_at data found.');
     }
 
+    const { data: subscriptionData, error: subscriptionError } = await supabase
+      .from('subscriptions').select('plan')
+      .eq('user_id', loginData.user?.id).single()
+
+    if (subscriptionError) {
+      console.error('Error fetching subscription:', subscriptionError.message);
+    }
+
     const now = new Date();
     const createdAt = new Date(createdAtData?.created_at);
     const msSinceSignup = now.getTime() - createdAt.getTime();
     const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
     
-    if (msSinceSignup >= threeDaysInMs) {
+    if (msSinceSignup >= threeDaysInMs && subscriptionData?.plan === 'trial') {
       const { error: subscriptionUpdateError } = await supabase
         .from('subscriptions')
         .update({ plan: 'free' })

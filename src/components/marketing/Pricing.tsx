@@ -112,34 +112,45 @@ export default function Pricing() {
               initial='hidden'
               whileInView='show'
               viewport={{ once: true, amount: 0.8 }}
-              className={`rounded-xl border ${
+              className={`rounded-xl border flex flex-col ${
                 plan.highlighted
                   ? 'border-primary bg-muted shadow-xl'
                   : 'border-border'
               } p-6 text-left`}
             >
-              <h3 className='text-xl font-semibold mb-2'>{plan.name}</h3>
-              <p className='text-3xl font-bold mb-2'>{plan.price}</p>
-              <p className='text-muted-foreground mb-4'>{plan.description}</p>
+              <div className='flex-1 flex flex-col'>
+                <h3 className='text-xl font-semibold mb-2'>{plan.name}</h3>
+                <p className='text-3xl font-bold mb-2'>{plan.price}</p>
+                <p className='text-muted-foreground mb-4'>{plan.description}</p>
 
-              <ul className='space-y-2 text-sm mb-6'>
-                {plan.features.map((f) => (
-                  <li key={f} className='flex items-center gap-2'>
-                    <CheckCircle2 className='text-primary w-4 h-4' />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+                {plan.name === 'Free' ? (
+                  <div className='text-xs bg-primary/10 text-primary px-3 py-1 rounded mb-4 font-medium inline-block'>
+                    Start with 3 days of Pro features — free.
+                  </div>
+                ) : (
+                  <div className='mb-4' style={{ height: '28px' }}></div> // same height spacer
+                )}
 
-              <Link
-                href={
-                  plan.name === 'Free'
-                    ? '/auth/signup'
-                    : `/auth/signup/${plan?.price_id}`
-                }
-              >
-                <Button className='w-full'>{plan.cta}</Button>
-              </Link>
+                <ul className='space-y-2 text-sm mb-6 flex-1'>
+                  {plan.features.map((f) => (
+                    <li key={f} className='flex items-center gap-2'>
+                      <CheckCircle2 className='text-primary w-4 h-4' />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={
+                    plan.name === 'Free'
+                      ? '/auth/signup'
+                      : `/auth/signup/${plan?.price_id}`
+                  }
+                  className='mt-auto'
+                >
+                  <Button className='w-full'>{plan.cta}</Button>
+                </Link>
+              </div>
             </motion.div>
           ))}
         </div>

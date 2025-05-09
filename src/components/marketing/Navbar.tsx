@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
+import PromoBanner from './PromoBanner';
 
 export default function Navbar() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -145,6 +146,7 @@ export default function Navbar() {
           </DropdownMenu>
         </nav>
       </nav>
+      <PromoBanner />
     </header>
   );
 }

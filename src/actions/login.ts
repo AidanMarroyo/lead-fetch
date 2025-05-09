@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/utils/supabase/server';
+import { sendConfirmationEmail } from '@/lib/email';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -84,6 +85,20 @@ export async function signup(formData: FormData, sub?: boolean) {
 
   if (error) console.error('Error signing up:', error.message);
 
+  const { data: confirmationData ,error: confirmationError } = await supabase
+    .from('confirmations').insert({
+      profile_id: signUpData.user?.id,
+    }).select().single();
+
+    if (confirmationError) {
+      console.error('Error inserting confirmation:', confirmationError.message);
+    }
+
+    await sendConfirmationEmail({
+      email: data.email,
+      confirmationId: confirmationData.id,
+    })
+
   const userId = signUpData.user?.id;
   if (!userId) console.error('No user ID found after sign up.');
 
@@ -118,7 +133,6 @@ export async function signup(formData: FormData, sub?: boolean) {
   }
 
   if (sub) {
-    revalidatePath('/dashboard/settings', 'layout');
     return {success: true}
   } else {revalidatePath('/', 'layout');
     redirect('/dashboard/settings');}

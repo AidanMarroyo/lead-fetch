@@ -1,7 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { toast } from 'sonner';
 
 type Props = {
   params: Promise<{ confirmationId: string }>;
@@ -32,7 +31,6 @@ export default async function ConfirmEmailPage(props: Props) {
     if (updateError) {
       console.error('Error updating confirmation:', updateError);
     }
-    toast.success('Email confirmed! You can now log in.');
 
     if (user) {
       const { error: deleteError } = await supabase

@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { SidebarNav } from './settings/sidebar-nav';
 import { getCurrentUser } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Settings',
@@ -36,7 +35,10 @@ export default async function SettingsLayout({
 }: SettingsLayoutProps) {
   const user = await getCurrentUser();
 
-  if (!user) redirect('/auth/login');
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className='container sm:ml-20 py-10'>
       <div className='flex flex-col lg:flex-row gap-8'>

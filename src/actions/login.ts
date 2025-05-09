@@ -46,7 +46,7 @@ export async function login(formData: FormData) {
     const msSinceSignup = now.getTime() - createdAt.getTime();
     const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
     
-    if (msSinceSignup >= threeDaysInMs && subscriptionData?.plan === 'trial') {
+    if ((msSinceSignup >= threeDaysInMs) && (subscriptionData?.plan === 'trial')) {
       const { error: subscriptionUpdateError } = await supabase
         .from('subscriptions')
         .update({ plan: 'free' })

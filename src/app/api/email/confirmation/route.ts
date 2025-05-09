@@ -21,21 +21,28 @@ if (confirmationError) {
     return NextResponse.json({ success: false, error: 'Database error' }, { status: 500 });
 }
 
-if (!confirmation) {
-   const {error: createConfirmationError} = await supabase.from('confirmations').insert({
-    profile_id: user.id,
-   })
+let confirmationId = confirmation?.id;
 
-    if (createConfirmationError) {
-      console.error('Error creating confirmation:', createConfirmationError);
-      return NextResponse.json({ success: false, error: 'Database error' }, { status: 500 });
-    }
+if (!confirmation) {
+  const { data: newConfirmation, error: createConfirmationError } = await supabase
+    .from('confirmations')
+    .insert({ profile_id: user.id })
+    .select()
+    .single();
+
+  if (createConfirmationError) {
+    console.error('Error creating confirmation:', createConfirmationError);
+    return NextResponse.json({ success: false, error: 'Database error' }, { status: 500 });
+  }
+
+  confirmationId = newConfirmation.id;
 }
 
- await sendConfirmationEmail({
-    email,
-    confirmationId: confirmation?.id,
-  });
+await sendConfirmationEmail({
+  email,
+  confirmationId,
+});
+
 
     return NextResponse.json({ success: true });
   } catch (err) {

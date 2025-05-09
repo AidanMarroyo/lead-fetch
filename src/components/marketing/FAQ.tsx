@@ -57,7 +57,7 @@ export default function FAQ() {
         variants={fadeIn('up', 0.2)}
         initial='hidden'
         whileInView='show'
-        viewport={{ once: false, amount: 0.8 }}
+        viewport={{ once: true, amount: 0.8 }}
       >
         <h2 className='text-4xl font-bold mb-6'>Frequently Asked Questions</h2>
         <p className='text-muted-foreground max-w-xl mx-auto mb-12'>

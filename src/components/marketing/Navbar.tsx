@@ -25,7 +25,7 @@ export default function Navbar() {
 
   return (
     <header className='sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm'>
-      <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
+      <nav className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
         {/* Logo */}
         {/* <Link
           href='/'
@@ -95,7 +95,7 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile Nav */}
-        <div className='md:hidden'>
+        <nav className='md:hidden'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' aria-label='Menu'>
@@ -111,7 +111,7 @@ export default function Navbar() {
                 <Link href='/features'>Features</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href='/Pricing'>Pricing</Link>
+                <Link href='/pricing'>Pricing</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href='/faq'>FAQ</Link>
@@ -143,8 +143,8 @@ export default function Navbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-      </div>
+        </nav>
+      </nav>
     </header>
   );
 }

@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
   }
 
   const {data: createdAtData, error: createdAtError} = await supabase
-    .from('profiles').select('created_at').eq('id', loginData.user?.id).single();
+    .from('profiles').select('created_at, first_name, last_name').eq('id', loginData.user?.id).single();
 
     if (createdAtError) {
       console.error('Error fetching created_at:', createdAtError.message);
@@ -47,6 +47,10 @@ export async function login(formData: FormData) {
         console.error('Failed to downgrade plan:', subscriptionUpdateError);
       }
     }
+
+    if (createdAtData?.first_name === null && createdAtData?.last_name === null) {
+      redirect('/dashboard/settings');
+    } 
     
   revalidatePath('/dashboard/leads', 'layout');
   redirect('/dashboard/leads');

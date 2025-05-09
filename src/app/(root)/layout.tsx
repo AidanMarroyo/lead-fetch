@@ -1,6 +1,7 @@
 import { DashboardNavbar } from '@/components/navbar/navbar';
 import { getCurrentUser } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
+import { SessionLayout } from './SessionLayout';
 
 export default async function Layout({
   children,
@@ -17,7 +18,7 @@ export default async function Layout({
     .single();
 
   return (
-    <>
+    <SessionLayout>
       <DashboardNavbar
         userData={data || { first_name: '', last_name: '', created_at: '' }}
       />
@@ -26,6 +27,6 @@ export default async function Layout({
           <main className='p-4 flex-1 overflow-y-auto'>{children}</main>
         </div>
       </div>
-    </>
+    </SessionLayout>
   );
 }

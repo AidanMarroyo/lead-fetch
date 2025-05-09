@@ -12,61 +12,47 @@ export async function sendInviteEmail({
   const { error } = await resend.emails.send({
     from: 'WebbedLeads Team <noreply@webbedleads.com>',
     to,
-    subject: `${inviterEmail} invited you to join their team`,
+    subject: `${inviterEmail} invited you to join their team on WebbedLeads`,
     html: `
-      <p>${inviterEmail} invited you to join their team on WebbedLeads.</p>
-      <p><a href="https://webbedleads.com/auth/signup">Click here to accept your invite</a></p>
+      <div style="max-width:600px;margin:0 auto;padding:40px;font-family:Helvetica,Arial,sans-serif;background-color:#ffffff;color:#0f172a;border-radius:8px;border:1px solid #e2e8f0;">
+        <div style="text-align:center;margin-bottom:30px;">
+          <img src="https://webbedleads.com/webbed-logo.png" alt="WebbedLeads Logo" style="width:120px;height:auto;" />
+        </div>
+  
+        <h2 style="font-size:22px;margin-bottom:16px;">You've been invited to WebbedLeads</h2>
+  
+        <p style="font-size:15px;">${inviterEmail} has invited you to join their team on <strong>WebbedLeads</strong> — the lead machine for freelancers and agencies.</p>
+  
+        <p style="margin:24px 0;">
+          <a href="https://webbedleads.com/auth/signup" style="display:inline-block;background-color:#3b82f6;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:6px;font-weight:bold;">
+            Join the Team
+          </a>
+        </p>
+  
+        <p style="font-size:14px;color:#64748b;">If you don’t recognize this invitation, you can safely ignore this email.</p>
+  
+        <hr style="margin-top:40px;border:none;border-top:1px solid #e2e8f0;" />
+        <p style="font-size:12px;color:#94a3b8;text-align:center;">
+          WebbedLeads • webbedleads.com
+        </p>
+      </div>
+    `,
+    text: `
+  You've been invited to WebbedLeads
+  
+  ${inviterEmail} invited you to join their team on WebbedLeads — the lead machine for freelancers and agencies.
+  
+  Click below to join:
+  https://webbedleads.com/auth/signup
+  
+  If you don’t recognize this invitation, you can safely ignore this email.
+  
+  – WebbedLeads
+  webbedleads.com
     `,
   });
+  
 
   if (error) console.error('Invite email error:', error);
 }
-
-export async function sendContactEmail({
-  name,
-  email,
-  message,
-}: {
-  name: string;
-  email: string;
-  message: string;
-}) {
-  const { error } = await resend.emails.send({
-    from: 'WebbedLeads Team <noreply@webbedleads.com>',
-    to: ['sanovasoftwareinc@gmail.com'],
-    subject: `New Contact Submission – WebbedLeads`,
-    html: `
-      <p><strong>${name}</strong> submitted a message via the WebbedLeads contact form.</p>
-      <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-      <p><strong>Message:</strong></p>
-      <blockquote style="border-left: 4px solid #ccc; padding-left: 12px; margin: 8px 0;">${message}</blockquote>
-    `,
-  });
-
-  if (error) console.error('📩 Contact notification email failed:', error);
-}
-
-
-export async function sendContactConfirmationEmail({
-  name,
-  email,
-}: {
-  name: string;
-  email: string;
-}) {
-  const { error } = await resend.emails.send({
-    from: 'WebbedLeads Team <noreply@webbedleads.com>',
-    to: [email],
-    subject: `We've received your message – WebbedLeads`,
-    html: `
-      <p>Hi ${name},</p>
-      <p>Thanks for reaching out to the WebbedLeads team. We’ve received your message and will be in touch within 24 hours.</p>
-      <p>In the meantime, feel free to explore our features or review your lead dashboard.</p>
-      <p>– The WebbedLeads Team</p>
-    `,
-  });
-
-  if (error) console.error('📩 Contact confirmation email failed:', error);
-}
-
 

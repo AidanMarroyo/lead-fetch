@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
   try {
-const { data: confirmation, error: confirmationError } = await supabase.from('confirmations').select('*').eq('profile_id', user.id).single();
+const { data: confirmation, error: confirmationError } = await supabase.from('confirmations').select('*').eq('profile_id', user.id).maybeSingle(); 
 
 if (confirmationError) {
     console.error('Error inserting confirmation:', confirmationError);
@@ -27,8 +27,7 @@ if (!confirmation) {
   const { data: newConfirmation, error: createConfirmationError } = await supabase
     .from('confirmations')
     .insert({ profile_id: user.id })
-    .select()
-    .single();
+    .select().maybeSingle(); 
 
   if (createConfirmationError) {
     console.error('Error creating confirmation:', createConfirmationError);

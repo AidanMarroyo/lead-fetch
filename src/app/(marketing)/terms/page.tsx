@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service – WebbedLeads',
@@ -51,8 +52,10 @@ export default function TermsPage() {
           To use our Service, you must provide accurate and complete
           information. You are responsible for maintaining the security of your
           account credentials. If you suspect unauthorized access, notify us
-          immediately at{' '}
-          <span className='text-primary'> support@webbedleads.com</span>.
+          immediately on our{' '}
+          <Link href={'/contact-us'} className='text-primary'>
+            support page.
+          </Link>
         </p>
 
         <Separator className='my-4' />
@@ -176,9 +179,10 @@ export default function TermsPage() {
         <Separator className='my-4' />
         <h2 className='text-lg font-semibold'>11. Contact Us</h2>
         <p>
-          If you have questions about this Privacy Policy, contact us at:
-          <br /> Email:{' '}
-          <span className='text-primary'> privacy@webbedleads.com</span>
+          If you have questions about this Privacy Policy, contact us on our{' '}
+          <Link href={'/contact-us'} className='text-primary'>
+            support page.
+          </Link>
         </p>
       </div>
     </main>

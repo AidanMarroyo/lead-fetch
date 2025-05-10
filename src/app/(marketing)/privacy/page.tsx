@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy – WebbedLeads',
@@ -143,8 +144,11 @@ export default function PrivacyPolicyPage() {
         <p>
           We retain your data as long as your account is active, or as needed to
           provide you services. You may request deletion of your data by
-          contacting us at{' '}
-          <span className='text-primary'> support@webbedleads.com</span>.
+          contacting us on our{' '}
+          <Link href='/contact-us' className='text-primary'>
+            support page.
+          </Link>
+          .
         </p>
 
         <Separator className='my-4' />
@@ -158,8 +162,10 @@ export default function PrivacyPolicyPage() {
           <li>File a complaint with your local privacy authority</li>
         </ul>
         <p>
-          To exercise your rights, email:{' '}
-          <span className='text-primary'> support@webbedleads.com</span>.
+          To exercise your rights, contact us on our{' '}
+          <Link href={'/contact-us'} className='text-primary'>
+            support page.
+          </Link>
         </p>
 
         <Separator className='my-4' />
@@ -204,9 +210,10 @@ export default function PrivacyPolicyPage() {
         <Separator className='my-4' />
         <h2 className='text-lg font-semibold'>11. Contact Us</h2>
         <p>
-          If you have questions about this Privacy Policy, contact us at:
-          <br /> Email:{' '}
-          <span className='text-primary'> privacy@webbedleads.com</span>
+          If you have questions about this Privacy Policy, contact us on our{' '}
+          <Link href={'/contact-us'} className='text-primary'>
+            support page.
+          </Link>
         </p>
       </div>
     </main>

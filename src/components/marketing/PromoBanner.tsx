@@ -11,7 +11,7 @@ export default function PromoBanner() {
 
   return (
     <div className='w-full bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 text-sm font-medium relative z-50 overflow-hidden'>
-      <div className='max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 text-center sm:text-left'>
+      <div className='max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 text-center sm:text-left'>
         <p>
           Start strong —{' '}
           <span className='font-semibold'>

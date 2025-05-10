@@ -14,8 +14,48 @@ export async function POST(req: NextRequest) {
 
   const lead = await req.json();
 
-  // Prevent duplicate by Google Place ID
-  const { data: existing } = await supabase
+   const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single();
+  
+    const plan = subscription?.plan ?? 'free';
+
+  let monthlyLeadCount = 0;
+  let monthlyLimit = 0;
+  
+  if (plan === 'free' || plan === 'trial') monthlyLimit = 10;
+  if (plan === 'pro') monthlyLimit = 40;
+  
+  if (monthlyLimit > 0) {
+    const firstOfMonth = new Date();
+    firstOfMonth.setDate(1);
+    firstOfMonth.setHours(0, 0, 0, 0);
+  
+    const { count, error: countError } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', firstOfMonth.toISOString());
+  
+    if (countError) {
+      console.error('Error checking monthly limit:', countError);
+      return { success: false, message: 'Failed to check lead limits.' };
+    }
+  
+    monthlyLeadCount = count ?? 0;
+  
+    if (monthlyLeadCount >= monthlyLimit) {
+      return {
+        success: false,
+        message: `You’ve reached your ${monthlyLimit}-lead monthly limit on the ${plan} plan.`,
+      };
+    }
+  }
+  
+    try {
+    const { data: existing } = await supabase
     .from('leads')
     .select('id')
     .eq('google_place_id', lead.google_place_id)
@@ -25,6 +65,20 @@ export async function POST(req: NextRequest) {
   if (existing) {
     return NextResponse.json({ error: 'Lead already exists.' }, { status: 400 });
   }
+  
+      if (plan === 'free' || plan === 'trial') {
+        const remaining = 10 - monthlyLeadCount;
+  
+        if (remaining <= 0) {
+          return {
+            success: false,
+            message:
+              'You’ve reached your 10-lead limit for the month on the free plan.',
+          };
+        }
+  
+      
+      }
 
   const { data: membership } = await supabase
     .from('team_members')
@@ -75,6 +129,11 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  } catch (error) {
+    console.error('Error saving lead:', error);
+    return NextResponse.json({ error: 'Failed to save lead.' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

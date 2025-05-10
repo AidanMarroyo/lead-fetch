@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -15,27 +17,62 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-export default function ContactForm() {
+export default function ContactForm({ userId }: { userId?: string }) {
+  const supabase = createClient();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
     reset,
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
 
+  useEffect(() => {
+    if (userId) {
+      const fetchUserData = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('first_name, last_name, email')
+          .eq('id', userId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user data:', error);
+          toast.error(`Failed to fetch user data, ${error.message}`);
+          return;
+        }
+        const fullName = `${data?.first_name} ${data?.last_name}`;
+        setValue('name', fullName);
+        setValue('email', data.email);
+      };
+      fetchUserData();
+    }
+  }, [userId, setValue, supabase]);
+
   const onSubmit = async (data: ContactFormValues) => {
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      if (userId) {
+        const res = await fetch('/api/support', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error('Failed to send email');
+      } else {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
 
-      if (!res.ok) throw new Error('Failed to send email');
+        if (!res.ok) throw new Error('Failed to send email');
+      }
 
       toast.success('Message sent!');
       reset();

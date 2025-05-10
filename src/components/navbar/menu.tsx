@@ -1,10 +1,17 @@
 'use client';
-
-import { Kanban, LayoutGrid, ScanSearch, Ticket } from 'lucide-react';
+import {
+  Kanban,
+  LayoutGrid,
+  LucideBrain,
+  ScanSearch,
+  Ticket,
+} from 'lucide-react';
 import { PiUsersThree } from 'react-icons/pi';
-import { VscTools } from 'react-icons/vsc';
+import { IoPersonAddOutline } from 'react-icons/io5';
 import { CiSettings } from 'react-icons/ci';
 import { Button } from '../ui/button';
+import { FiRepeat } from 'react-icons/fi';
+import { BiSupport } from 'react-icons/bi';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,7 +38,7 @@ export default function MenuDropdown() {
           <DropdownMenuItem asChild key={label}>
             <Link href={href} className='block text-center'>
               <Icon className='mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-gray-400' />
-              <div className='text-sm font-medium text-gray-900 dark:text-white'>
+              <div className='w-20 text-sm font-medium text-gray-900 dark:text-white'>
                 {label}
               </div>
             </Link>
@@ -47,6 +54,21 @@ const menuItems = [
   { icon: Kanban, label: 'Pipeline', href: '/dashboard/crm' },
   { icon: Ticket, label: 'Billing', href: '/dashboard/settings/billing' },
   { icon: PiUsersThree, label: 'Teams', href: '/dashboard/settings/team' },
+  { icon: LucideBrain, label: 'AI Audit', href: '/dashboard/tools' },
+  {
+    icon: IoPersonAddOutline,
+    label: 'Add Lead',
+    href: '/dashboard/tools/add-lead',
+  },
+  {
+    icon: FiRepeat,
+    label: 'Follow Ups',
+    href: '/dashboard/followups',
+  },
+  {
+    icon: BiSupport,
+    label: 'Support',
+    href: '/dashboard/support',
+  },
   { icon: CiSettings, label: 'Settings', href: '/dashboard/settings' },
-  { icon: VscTools, label: 'Tools', href: '/dashboard/tools' },
 ];

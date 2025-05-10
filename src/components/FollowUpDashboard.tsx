@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { Lead } from '@/components/crm-board/types';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { logFollowUp } from '@/actions/logFollowup'; // ✅ we'll create this
+import { overrideFollowUp } from '@/actions/logFollowup'; // ✅ we'll create this
 import { Loader2 } from 'lucide-react';
+import { FollowUpModal } from '@/app/(root)/dashboard/followups/FollowUpModal';
 
 export default function FollowUpDashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -28,16 +29,16 @@ export default function FollowUpDashboardPage() {
     fetchDueLeads();
   }, []);
 
-  const handleLogFollowUp = async (leadId: string) => {
+  const handleOverrideFollowUp = async (leadId: string) => {
     try {
-      await logFollowUp(leadId);
-      toast.success('Follow-up logged');
+      await overrideFollowUp(leadId);
+      toast.success('Follow-up overridden');
 
       // ✅ Update UI immediately
       setLeads((prev) => prev.filter((l) => l.id !== leadId));
     } catch (err) {
-      console.error('Failed to log follow-up', err);
-      toast.error('Failed to log follow-up');
+      console.error('Failed to override follow-up', err);
+      toast.error('Failed to override follow-up');
     }
   };
 
@@ -63,6 +64,7 @@ export default function FollowUpDashboardPage() {
             >
               <div>
                 <h2 className='text-lg font-bold'>{lead.name}</h2>
+                <p className='text-sm text-muted-foreground'>{lead.phone}</p>
                 <p className='text-sm text-muted-foreground'>{lead.address}</p>
                 {lead.contact_attempts >= 0 && (
                   <p className='text-xs text-muted-foreground mt-1'>
@@ -70,9 +72,15 @@ export default function FollowUpDashboardPage() {
                   </p>
                 )}
               </div>
-              <Button onClick={() => handleLogFollowUp(lead.id)}>
-                Log Follow-Up
-              </Button>
+              <div className='flex gap-4'>
+                <FollowUpModal leadId={lead.id} />
+                <Button
+                  variant='destructive'
+                  onClick={() => handleOverrideFollowUp(lead.id)}
+                >
+                  Override Follow-Up
+                </Button>
+              </div>
             </div>
           ))}
         </div>

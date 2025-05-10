@@ -152,7 +152,7 @@ if (monthlyLimit > 0) {
         return {
           success: false,
           message:
-            'You’ve reached your 3-lead limit for the month on the free plan.',
+            'You’ve reached your 10-lead limit for the month on the free plan.',
         };
       }
 

@@ -44,7 +44,7 @@ export function AssignUserDropdown({
 
       const { data, error } = await supabase
         .from('team_members')
-        .select('user_id, profiles!inner(first_name, last_name, email)') // ✅ Add email
+        .select('user_id, profiles(first_name, last_name, email)')
         .eq('team_id', teamId);
 
       if (error) {

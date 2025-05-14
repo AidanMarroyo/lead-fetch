@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
       const isoTomorrow = tomorrow.toISOString(); // e.g. '2025-05-06T00:00:00.000Z'
     
       query = query.or(`next_follow_up_date.lt.${isoTomorrow},next_follow_up_date.is.null`);
+      
     }
     
     if (filters.assignedTo) {

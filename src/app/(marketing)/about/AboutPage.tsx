@@ -59,7 +59,7 @@ export default function AboutPage() {
             className='rounded-xl shadow-lg'
           >
             {' '}
-            <source src='/google-fetch.mp4' type='video/mp4' />
+            <source src='/compilation.mp4' type='video/mp4' />
           </video>
         </motion.div>
       </div>

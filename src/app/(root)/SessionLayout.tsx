@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+// import Image from 'next/image';
+// import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 interface UserProfile {
@@ -60,33 +60,33 @@ export function SessionLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-    } else {
-      router.push('/auth/login');
-    }
-  };
+ // const logout = async () => {
+//   const { error } = await supabase.auth.signOut();
+//   if (error) {
+//     console.error('Error signing out:', error);
+//   } else {
+//     router.push('/auth/login');
+//   }
+// };
 
-  const onConfirmation = async () => {
-    try {
-      const res = await fetch('/api/email/confirmation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: confirmed.email }),
-      });
+// const onConfirmation = async () => {
+//   try {
+//     const res = await fetch('/api/email/confirmation', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ email: confirmed.email }),
+//     });
 
-      if (!res.ok) throw new Error('Failed to send email');
+//     if (!res.ok) throw new Error('Failed to send email');
 
-      toast.success(`Confirmaton email sent to ${confirmed.email}`);
-    } catch (error) {
-      toast.error('There was an error sending your message.');
-      console.error('Error sending message:', error);
-    }
-  };
+//     toast.success(`Confirmaton email sent to ${confirmed.email}`);
+//   } catch (error) {
+//     toast.error('There was an error sending your message.');
+//     console.error('Error sending message:', error);
+//   }
+// };
 
   // if (!confirmed.confirmed) {
 //   return (

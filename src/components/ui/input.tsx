@@ -1,0 +1,19 @@
+// components/ui/input.tsx
+import { cn } from '@/lib/utils';
+import { forwardRef } from 'react';
+
+export const Input = forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...props }, ref) => (
+  <input
+    ref={ref}
+    className={cn(
+      'w-full rounded-xl bg-card text-card-foreground border border-border px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary',
+      className
+    )}
+    {...props}
+  />
+));
+
+Input.displayName = 'Input';

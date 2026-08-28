@@ -1,4 +1,8 @@
-import { createServerClient } from '@supabase/ssr';
+import {
+  createServerClient,
+  type CookieMethodsServer,
+} from '@supabase/ssr';
+
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
@@ -6,30 +10,46 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  const cookies: CookieMethodsServer = {
+    getAll() {
+      return request.cookies.getAll();
+    },
+
+    setAll(
+      cookiesToSet,
+      headers: Record<string, string> = {}
+    ) {
+      // Update cookies on the request
+      cookiesToSet.forEach(({ name, value }) => {
+        request.cookies.set(name, value);
+      });
+
+      // Create a new response with the updated request
+      supabaseResponse = NextResponse.next({
+        request,
+      });
+
+      // Update cookies on the response
+      cookiesToSet.forEach(({ name, value, options }) => {
+        supabaseResponse.cookies.set(name, value, options);
+      });
+
+      // Forward Supabase's response headers
+      Object.entries(headers).forEach(([key, value]) => {
+        supabaseResponse.headers.set(key, value);
+      });
+    },
+  };
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
+      cookies,
     }
   );
 
-  // refreshing the auth token
+  // Refresh / validate auth session
   await supabase.auth.getUser();
 
   return supabaseResponse;
